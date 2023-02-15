@@ -1,5 +1,5 @@
 virtualmachines:
   hosts:
     vagrant_box:
-      ansible_host: localhost
+      ansible_host: 127.0.0.1
       ansible_port: 2222
