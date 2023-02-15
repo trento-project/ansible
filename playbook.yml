@@ -1,0 +1,54 @@
+# code: language=ansible
+---
+- name: Install thirdparties
+  hosts: all
+  become: true
+  tasks:
+   - name: Install erlang
+     community.general.zypper:
+      name: erlang
+      state: present
+      update_cache: true
+
+   - name: Install rabbitmq
+     community.general.zypper:
+      name: rabbitmq-server
+      state: present
+      update_cache: true
+
+   - name: Install postgresql
+     community.general.zypper:
+      name:
+       - postgresql
+       - postgresql-server
+       - postgresql-contrib
+      state: present
+      update_cache: true
+
+   - name: Start postgresql service
+     ansible.builtin.service:
+      name: postgresql
+      state: started
+      enabled: true
+
+   - name: Start rabbitmq service
+     ansible.builtin.service:
+      name: rabbitmq-server
+      state: started
+      enabled: true
+
+- name: Configure thirdparties
+  hosts: all
+  become: true
+  vars:
+    trento_rabbit_username: trento
+    trento_rabbit_password: trento
+    trento_web_postgres_user: web
+    trento_web_postgres_password: pass
+    trento_wanda_postgres_user: wanda
+    trento_wanda_postgres_password: wanda
+  tasks:
+   - name: Configure rabbitmq trento user
+     community.rabbitmq.rabbitmq_user:
+      user: "{{ trento_rabbit_username }}"
+      password: "{{ trento_rabbit_password }}"
