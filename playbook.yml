@@ -40,23 +40,17 @@
        - psycopg2-binary
       state: present
 
+   - name: Install docker python management deps
+     ansible.builtin.pip:
+      name:
+       - docker
+      state: present
+
    - name: Install docker
      community.general.zypper:
       name: docker
       state: present
       update_cache: true
-
-   - name: Start postgresql service
-     ansible.builtin.service:
-      name: postgresql
-      state: started
-      enabled: true
-
-   - name: Start rabbitmq service
-     ansible.builtin.service:
-      name: rabbitmq-server
-      state: started
-      enabled: true
 
    - name: Start docker service
      ansible.builtin.service:
@@ -71,10 +65,20 @@
    trento_rabbit_username: trento
    trento_rabbit_password: trento
   tasks:
+   - name: Start rabbitmq service
+     ansible.builtin.service:
+      name: rabbitmq-server
+      state: started
+      enabled: true
    - name: Configure rabbitmq trento user
      community.rabbitmq.rabbitmq_user:
       user: "{{ trento_rabbit_username }}"
       password: "{{ trento_rabbit_password }}"
+      permissions:
+       - vhost: "/"
+         configure_priv: ".*"
+         read_priv: ".*"
+         write_priv: ".*"
 
 
 - name: Configure postgres
@@ -83,6 +87,7 @@
   become_user: postgres
   vars:
    trento_web_postgres_db: webdb
+   trento_web_postgres_event_store: event_store
    trento_web_postgres_user: web
    trento_web_postgres_password: pass
    trento_wanda_postgres_user: wanda
@@ -90,9 +95,33 @@
    trento_wanda_postgres_db: wandadb
    ansible_ssh_pipelining: true
   tasks:
+   - name: "Configure postgres to listen on *"
+     community.postgresql.postgresql_set:
+      name: listen_addresses
+      value: "*"
+      
+   - name: Configure pg_hba to accept connection from trento containers
+     community.postgresql.postgresql_pg_hba:
+      contype: host
+      dest: "/var/lib/pgsql/data/pg_hba.conf"
+      databases: all
+      users: all
+      address: "0.0.0.0/0"
+      method: "md5"
+
+   - name: Start postgresql service
+     ansible.builtin.service:
+      name: postgresql
+      state: started
+      enabled: true
+
    - name: Create postgres web database
      community.postgresql.postgresql_db:
       name: "{{ trento_web_postgres_db }}"
+      state: present
+   - name: Create postgres web event store
+     community.postgresql.postgresql_db:
+      name: "{{ trento_web_postgres_event_store }}"
       state: present
    - name: Create postgres wanda database
      community.postgresql.postgresql_db:
@@ -106,6 +135,7 @@
       password: "{{ trento_web_postgres_password }}"
       comment: "Web user provisioned by playbook"
       state: present
+
    - name: Create wanda database user
      community.postgresql.postgresql_user:
       db: "{{ trento_wanda_postgres_db }}"
@@ -121,6 +151,14 @@
       privs: ALL
       type: database
       state: present
+
+   - name: Grant privilegies to the web user for the web event store
+     community.postgresql.postgresql_privs:
+      db: "{{ trento_web_postgres_event_store }}"
+      roles: "{{ trento_web_postgres_user }}"
+      privs: ALL
+      type: database
+      state: present
    - name: Grant privilegies to the wanda user for the wanda database
      community.postgresql.postgresql_privs:
       db: "{{ trento_wanda_postgres_db }}"
@@ -128,3 +166,74 @@
       privs: ALL
       type: database
       state: present
+
+- name: Configure and start trento containers
+  become: true
+  hosts: all
+  vars:
+   trento_web_postgres_db: webdb
+   trento_web_postgres_event_store: event_store
+   trento_web_postgres_user: web
+   trento_web_postgres_password: pass
+   trento_wanda_postgres_user: wanda
+   trento_wanda_postgres_password: wanda
+   trento_wanda_postgres_db: wandadb
+   ansible_ssh_pipelining: true
+   trento_rabbit_username: trento
+   trento_rabbit_password: trento
+  tasks:
+   - name: Create trento docker network
+     community.docker.docker_network:
+      name: trentonet
+
+   - name: Grafana Container
+     community.docker.docker_container:
+      name: grafana
+      restart_policy: always
+      state: started
+      recreate: true
+      image: "grafana/grafana:latest"
+      ports:
+       - "3000:3000"
+      etc_hosts:
+       host.docker.internal: "host-gateway"
+      networks:
+       - name: trentonet
+      env:
+       GF_SECURITY_ALLOW_EMBEDDING: "true"
+       GF_AUTH_ANONYMOUS_ENABLED: "true"
+
+   - name: Web container
+     community.docker.docker_container:
+      name: trento_web
+      state: started
+      recreate: true
+      image: "ghcr.io/trento-project/trento-web:rolling"
+      networks:
+       - name: trentonet
+      command:
+       - start
+      etc_hosts:
+       host.docker.internal: "host-gateway"
+      ports:
+       - "4000:4000"
+      env:
+       AMQP_URL: "amqp://{{ trento_rabbit_username }}:{{ trento_rabbit_password }}@host.docker.internal"
+       DATABASE_URL: "ecto://{{ trento_web_postgres_user }}:{{ trento_web_postgres_password }}@host.docker.internal/{{ trento_web_postgres_db }}"
+       EVENTSTORE_URL: "ecto://{{ trento_web_postgres_user }}:{{ trento_web_postgres_password }}@host.docker.internal/{{ trento_web_postgres_event_store }}"
+       RUNNER_URL: "http://localhost"
+       ENABLE_ALERTING: "false"
+       # SMTP_SERVER: "{{ .Values.alerting.smtpServer }}"
+       # SMTP_PORT: "{{ .Values.alerting.smtpPort }}"
+       # SMTP_USER: "{{ .Values.alerting.smtpUser }}"
+       # SMTP_PASSWORD: "{{ .Values.alerting.smtpPassword }}"
+       # ALERT_SENDER: "{{ .Values.alerting.sender }}"
+       # ALERT_RECIPIENT: "{{ .Values.alerting.recipient }}"
+       GRAFANA_PUBLIC_URL: "/grafana"
+       GRAFANA_API_URL: "http://grafana:3000/api"
+       PROMETHEUS_URL: "http://localhost"
+       SECRET_KEY_BASE: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k"
+       ACCESS_TOKEN_ENC_SECRET: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k"
+       REFRESH_TOKEN_ENC_SECRET: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k"
+       ADMIN_USER: "admin"
+       ADMIN_PASSWORD: "adminpassword"
