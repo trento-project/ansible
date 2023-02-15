@@ -207,12 +207,12 @@
      community.docker.docker_container:
       name: trento_web
       state: started
+      restart_policy: unless-stopped
       recreate: true
       image: "ghcr.io/trento-project/trento-web:rolling"
       networks:
        - name: trentonet
-      command:
-       - start
+      entrypoint: ["/bin/sh", "-c", '/app/bin/trento eval "Trento.Release.init()" && /app/bin/trento start']
       etc_hosts:
        host.docker.internal: "host-gateway"
       ports:
