@@ -40,6 +40,12 @@
        - psycopg2-binary
       state: present
 
+   - name: Install docker
+     community.general.zypper:
+      name: docker
+      state: present
+      update_cache: true
+
    - name: Start postgresql service
      ansible.builtin.service:
       name: postgresql
@@ -52,6 +58,11 @@
       state: started
       enabled: true
 
+   - name: Start docker service
+     ansible.builtin.service:
+      name: docker
+      state: started
+      enabled: true
 
 - name: Configure rabbitmq
   hosts: all
