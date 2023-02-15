@@ -12,40 +12,6 @@
       state: present
       update_cache: true
 
-   - name: Install erlang
-     community.general.zypper:
-      name: erlang
-      state: present
-      update_cache: true
-
-   - name: Install rabbitmq
-     community.general.zypper:
-      name: rabbitmq-server
-      state: present
-      update_cache: true
-
-   - name: Install postgresql
-     community.general.zypper:
-      name:
-       - postgresql
-       - postgresql-server
-       - postgresql-server-devel
-       - postgresql-contrib
-      state: present
-      update_cache: true
-
-   - name: Install postgres python management deps
-     ansible.builtin.pip:
-      name:
-       - psycopg2-binary
-      state: present
-
-   - name: Install docker python management deps
-     ansible.builtin.pip:
-      name:
-       - docker
-      state: present
-
    - name: Install docker
      community.general.zypper:
       name: docker
@@ -58,115 +24,17 @@
       state: started
       enabled: true
 
-- name: Configure rabbitmq
-  hosts: all
-  become: true
-  vars:
-   trento_rabbit_username: trento
-   trento_rabbit_password: trento
-  tasks:
-   - name: Start rabbitmq service
-     ansible.builtin.service:
-      name: rabbitmq-server
-      state: started
-      enabled: true
-   - name: Configure rabbitmq trento user
-     community.rabbitmq.rabbitmq_user:
-      user: "{{ trento_rabbit_username }}"
-      password: "{{ trento_rabbit_password }}"
-      permissions:
-       - vhost: "/"
-         configure_priv: ".*"
-         read_priv: ".*"
-         write_priv: ".*"
-
-
-- name: Configure postgres
-  become: true
-  hosts: all
-  become_user: postgres
-  vars:
-   trento_web_postgres_db: webdb
-   trento_web_postgres_event_store: event_store
-   trento_web_postgres_user: web
-   trento_web_postgres_password: pass
-   trento_wanda_postgres_user: wanda
-   trento_wanda_postgres_password: wanda
-   trento_wanda_postgres_db: wandadb
-   ansible_ssh_pipelining: true
-  tasks:
-   - name: "Configure postgres to listen on *"
-     community.postgresql.postgresql_set:
-      name: listen_addresses
-      value: "*"
-      
-   - name: Configure pg_hba to accept connection from trento containers
-     community.postgresql.postgresql_pg_hba:
-      contype: host
-      dest: "/var/lib/pgsql/data/pg_hba.conf"
-      databases: all
-      users: all
-      address: "0.0.0.0/0"
-      method: "md5"
-
-   - name: Start postgresql service
-     ansible.builtin.service:
-      name: postgresql
-      state: started
-      enabled: true
-
-   - name: Create postgres web database
-     community.postgresql.postgresql_db:
-      name: "{{ trento_web_postgres_db }}"
-      state: present
-   - name: Create postgres web event store
-     community.postgresql.postgresql_db:
-      name: "{{ trento_web_postgres_event_store }}"
-      state: present
-   - name: Create postgres wanda database
-     community.postgresql.postgresql_db:
-      name: "{{ trento_wanda_postgres_db }}"
-      state: present
-
-   - name: Create web database user
-     community.postgresql.postgresql_user:
-      db: "{{ trento_web_postgres_db }}"
-      name: "{{ trento_web_postgres_user }}"
-      password: "{{ trento_web_postgres_password }}"
-      comment: "Web user provisioned by playbook"
-      state: present
-
-   - name: Create wanda database user
-     community.postgresql.postgresql_user:
-      db: "{{ trento_wanda_postgres_db }}"
-      name: "{{ trento_wanda_postgres_user }}"
-      password: "{{ trento_wanda_postgres_password }}"
-      comment: "Wanda user provisioned by playbook"
-      state: present
-
-   - name: Grant privilegies to the web user for the web database
-     community.postgresql.postgresql_privs:
-      db: "{{ trento_web_postgres_db }}"
-      roles: "{{ trento_web_postgres_user }}"
-      privs: ALL
-      type: database
-      state: present
-
-   - name: Grant privilegies to the web user for the web event store
-     community.postgresql.postgresql_privs:
-      db: "{{ trento_web_postgres_event_store }}"
-      roles: "{{ trento_web_postgres_user }}"
-      privs: ALL
-      type: database
-      state: present
-   - name: Grant privilegies to the wanda user for the wanda database
-     community.postgresql.postgresql_privs:
-      db: "{{ trento_wanda_postgres_db }}"
-      roles: "{{ trento_wanda_postgres_user }}"
-      privs: ALL
-      type: database
-      state: present
-
+  roles:
+   - name: postgres
+     become: true
+     vars:
+      web_postgres_password: pass
+      wanda_postgres_password: wanda
+   - name: rabbitmq
+     become: true
+     vars:
+      trento_rabbitmq_password: trento
+ 
 - name: Configure and start trento containers
   become: true
   hosts: all

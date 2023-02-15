@@ -1,0 +1,102 @@
+# code: language=ansible
+---
+- name: Install postgresql
+  community.general.zypper:
+   name:
+    - postgresql
+    - postgresql-server
+    - postgresql-server-devel
+    - postgresql-contrib
+   state: present
+   update_cache: true
+
+- name: Install postgres python management deps
+  ansible.builtin.pip:
+   name:
+    - psycopg2-binary
+   state: present
+
+- name: "Configure postgres to listen on *"
+  become_user: postgres
+  community.postgresql.postgresql_set:
+   name: listen_addresses
+   value: "*"
+
+- name: Configure pg_hba to accept connection from trento containers
+  become_user: postgres
+  community.postgresql.postgresql_pg_hba:
+   contype: host
+   dest: "/var/lib/pgsql/data/pg_hba.conf"
+   databases: all
+   users: all
+   address: "0.0.0.0/0"
+   method: "md5"
+
+- name: Start postgresql service
+  ansible.builtin.service:
+   name: postgresql
+   state: started
+   enabled: true
+
+- name: Create postgres web database
+  become_user: postgres
+  community.postgresql.postgresql_db:
+   name: "{{ web_postgres_db }}"
+   state: present
+
+- name: Create postgres web event store
+  become_user: postgres
+  community.postgresql.postgresql_db:
+   name: "{{ web_postgres_event_store }}"
+   state: present
+
+- name: Create postgres wanda database
+  become_user: postgres
+  community.postgresql.postgresql_db:
+   name: "{{ wanda_postgres_db }}"
+   state: present
+
+- name: Create web database user
+  become_user: postgres
+  community.postgresql.postgresql_user:
+   db: "{{ web_postgres_db }}"
+   name: "{{ web_postgres_user }}"
+   password: "{{ web_postgres_password }}"
+   comment: "Web user provisioned by playbook"
+   state: present
+
+- name: Create wanda database user
+  become_user: postgres
+  community.postgresql.postgresql_user:
+   db: "{{ wanda_postgres_db }}"
+   name: "{{ wanda_postgres_user }}"
+   password: "{{ wanda_postgres_password }}"
+   comment: "Wanda user provisioned by playbook"
+   state: present
+
+- name: Grant privilegies to the web user for the web database
+  become_user: postgres
+  community.postgresql.postgresql_privs:
+   db: "{{ web_postgres_db }}"
+   roles: "{{ web_postgres_user }}"
+   privs: ALL
+   type: database
+   state: present
+
+- name: Grant privilegies to the web user for the web event store
+  become_user: postgres
+  community.postgresql.postgresql_privs:
+   db: "{{ web_postgres_event_store }}"
+   roles: "{{ web_postgres_user }}"
+   privs: ALL
+   type: database
+   state: present
+
+- name: Grant privilegies to the wanda user for the wanda database
+  become_user: postgres
+  community.postgresql.postgresql_privs:
+   db: "{{ wanda_postgres_db }}"
+   roles: "{{ wanda_postgres_user }}"
+   privs: ALL
+   type: database
+   state: present

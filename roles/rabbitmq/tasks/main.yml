@@ -1,0 +1,23 @@
+# code: language=ansible
+---
+- name: Install erlang
+  community.general.zypper:
+   name: erlang
+   state: present
+   update_cache: true
+
+- name: Start rabbitmq service
+  ansible.builtin.service:
+   name: rabbitmq-server
+   state: started
+   enabled: true
+
+- name: Configure rabbitmq trento user
+  community.rabbitmq.rabbitmq_user:
+   user: "{{ trento_rabbitmq_username }}"
+   password: "{{ trento_rabbitmq_password }}"
+   permissions:
+    - vhost: "/"
+      configure_priv: ".*"
+      read_priv: ".*"
+      write_priv: ".*"

@@ -1,0 +1,6 @@
+web_postgres_db: webdb
+web_postgres_event_store: event_store
+web_postgres_user: web
+wanda_postgres_user: wanda
+wanda_postgres_db: wandadb
+ansible_ssh_pipelining: true
