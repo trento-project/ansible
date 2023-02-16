@@ -4,7 +4,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.box = "opensuse/Leap-15.3.x86_64"
   config.vm.provision "ansible" do |ansible|
-    ansible.verbose = "v"
+    # ansible.verbose = "v"
     ansible.playbook = "playbook.yml"
   end
   config.vm.network "forwarded_port", guest: 3000, host: 3000

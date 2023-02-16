@@ -1,0 +1,63 @@
+# code: language=ansible
+---
+- name: Install docker python management deps
+  ansible.builtin.pip:
+   name:
+    - docker
+   state: present
+
+- name: Create trento docker network
+  community.docker.docker_network:
+   name: trentonet
+
+- name: Grafana Container
+  community.docker.docker_container:
+   name: grafana
+   restart_policy: always
+   state: started
+   recreate: true
+   image: "grafana/grafana:latest"
+   ports:
+    - "3000:3000"
+   etc_hosts:
+    host.docker.internal: "host-gateway"
+   networks:
+    - name: trentonet
+   env:
+    GF_SECURITY_ALLOW_EMBEDDING: "true"
+    GF_AUTH_ANONYMOUS_ENABLED: "true"
+
+- name: Web container
+  community.docker.docker_container:
+   name: trento_web
+   state: started
+   restart_policy: unless-stopped
+   recreate: true
+   image: "ghcr.io/trento-project/trento-web:rolling"
+   networks:
+    - name: trentonet
+   entrypoint: ["/bin/sh", "-c", '/app/bin/trento eval "Trento.Release.init()" && /app/bin/trento start']
+   etc_hosts:
+    host.docker.internal: "host-gateway"
+   ports:
+    - "4000:4000"
+   env:
+    AMQP_URL: "amqp://{{ trento_rabbit_username }}:{{ trento_rabbit_password }}@host.docker.internal"
+    DATABASE_URL: "ecto://{{ trento_web_postgres_user }}:{{ trento_web_postgres_password }}@host.docker.internal/{{ trento_web_postgres_db }}"
+    EVENTSTORE_URL: "ecto://{{ trento_web_postgres_user }}:{{ trento_web_postgres_password }}@host.docker.internal/{{ trento_web_postgres_event_store }}"
+    RUNNER_URL: "{{ trento_runner_url }}"
+    ENABLE_ALERTING: "{{ trento_enable_alerting }}"
+    # SMTP_SERVER: "{{ .Values.alerting.smtpServer }}"
+    # SMTP_PORT: "{{ .Values.alerting.smtpPort }}"
+    # SMTP_USER: "{{ .Values.alerting.smtpUser }}"
+    # SMTP_PASSWORD: "{{ .Values.alerting.smtpPassword }}"
+    # ALERT_SENDER: "{{ .Values.alerting.sender }}"
+    # ALERT_RECIPIENT: "{{ .Values.alerting.recipient }}"
+    GRAFANA_PUBLIC_URL: "{{ trento_grafana_public_url }}"
+    GRAFANA_API_URL: "{{ grafana_api_url }}"
+    PROMETHEUS_URL: "{{ prometheus_url }}"
+    SECRET_KEY_BASE: "{{ trento_secret_key_base }}"
+    ACCESS_TOKEN_ENC_SECRET: "{{ trento_access_token_secret }}"
+    REFRESH_TOKEN_ENC_SECRET: "{{ trento_refresh_token_secret }}"
+    ADMIN_USER: "{{ trento_web_admin_username }}"
+    ADMIN_PASSWORD: "{{ trento_web_admin_password }}"

@@ -1,0 +1,6 @@
+# code: language=ansible
+---
+- name: Restart postgres
+  ansible.builtin.service:
+   name: postgresql
+   state: restarted

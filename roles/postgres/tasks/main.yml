@@ -16,14 +16,22 @@
     - psycopg2-binary
    state: present
 
+- name: Start postgresql service
+  ansible.builtin.service:
+   name: postgresql
+   state: started
+   enabled: true
+
 - name: "Configure postgres to listen on *"
   become_user: postgres
   community.postgresql.postgresql_set:
    name: listen_addresses
    value: "*"
+  notify: Restart postgres
 
 - name: Configure pg_hba to accept connection from trento containers
   become_user: postgres
+  notify: Restart postgres
   community.postgresql.postgresql_pg_hba:
    contype: host
    dest: "/var/lib/pgsql/data/pg_hba.conf"
@@ -31,12 +39,6 @@
    users: all
    address: "0.0.0.0/0"
    method: "md5"
-
-- name: Start postgresql service
-  ansible.builtin.service:
-   name: postgresql
-   state: started
-   enabled: true
 
 - name: Create postgres web database
   become_user: postgres

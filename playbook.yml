@@ -24,6 +24,9 @@
       state: started
       enabled: true
 
+- name: Configure trento projects
+  hosts: all
+  become: true
   roles:
    - name: postgres
      become: true
@@ -34,74 +37,13 @@
      become: true
      vars:
       trento_rabbitmq_password: trento
- 
-- name: Configure and start trento containers
-  become: true
-  hosts: all
-  vars:
-   trento_web_postgres_db: webdb
-   trento_web_postgres_event_store: event_store
-   trento_web_postgres_user: web
-   trento_web_postgres_password: pass
-   trento_wanda_postgres_user: wanda
-   trento_wanda_postgres_password: wanda
-   trento_wanda_postgres_db: wandadb
-   ansible_ssh_pipelining: true
-   trento_rabbit_username: trento
-   trento_rabbit_password: trento
-  tasks:
-   - name: Create trento docker network
-     community.docker.docker_network:
-      name: trentonet
-
-   - name: Grafana Container
-     community.docker.docker_container:
-      name: grafana
-      restart_policy: always
-      state: started
-      recreate: true
-      image: "grafana/grafana:latest"
-      ports:
-       - "3000:3000"
-      etc_hosts:
-       host.docker.internal: "host-gateway"
-      networks:
-       - name: trentonet
-      env:
-       GF_SECURITY_ALLOW_EMBEDDING: "true"
-       GF_AUTH_ANONYMOUS_ENABLED: "true"
-
-   - name: Web container
-     community.docker.docker_container:
-      name: trento_web
-      state: started
-      restart_policy: unless-stopped
-      recreate: true
-      image: "ghcr.io/trento-project/trento-web:rolling"
-      networks:
-       - name: trentonet
-      entrypoint: ["/bin/sh", "-c", '/app/bin/trento eval "Trento.Release.init()" && /app/bin/trento start']
-      etc_hosts:
-       host.docker.internal: "host-gateway"
-      ports:
-       - "4000:4000"
-      env:
-       AMQP_URL: "amqp://{{ trento_rabbit_username }}:{{ trento_rabbit_password }}@host.docker.internal"
-       DATABASE_URL: "ecto://{{ trento_web_postgres_user }}:{{ trento_web_postgres_password }}@host.docker.internal/{{ trento_web_postgres_db }}"
-       EVENTSTORE_URL: "ecto://{{ trento_web_postgres_user }}:{{ trento_web_postgres_password }}@host.docker.internal/{{ trento_web_postgres_event_store }}"
-       RUNNER_URL: "http://localhost"
-       ENABLE_ALERTING: "false"
-       # SMTP_SERVER: "{{ .Values.alerting.smtpServer }}"
-       # SMTP_PORT: "{{ .Values.alerting.smtpPort }}"
-       # SMTP_USER: "{{ .Values.alerting.smtpUser }}"
-       # SMTP_PASSWORD: "{{ .Values.alerting.smtpPassword }}"
-       # ALERT_SENDER: "{{ .Values.alerting.sender }}"
-       # ALERT_RECIPIENT: "{{ .Values.alerting.recipient }}"
-       GRAFANA_PUBLIC_URL: "/grafana"
-       GRAFANA_API_URL: "http://grafana:3000/api"
-       PROMETHEUS_URL: "http://localhost"
-       SECRET_KEY_BASE: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k"
-       ACCESS_TOKEN_ENC_SECRET: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k"
-       REFRESH_TOKEN_ENC_SECRET: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k"
-       ADMIN_USER: "admin"
-       ADMIN_PASSWORD: "adminpassword"
+   - name: containers
+     become: true
+     vars:
+      trento_web_postgres_password: pass
+      trento_wanda_postgres_password: wanda
+      trento_rabbit_password: trento
+      trento_runner_url: "http://localhost"
+      grafana_api_url: "http://locahost:3000/api"
+      prometheus_url: "http://localhost"
+      trento_web_admin_password: adminpassword

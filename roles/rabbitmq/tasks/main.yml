@@ -6,6 +6,12 @@
    state: present
    update_cache: true
 
+- name: Install rabbitmq
+  community.general.zypper:
+   name: rabbitmq-server
+   state: present
+   update_cache: true
+
 - name: Start rabbitmq service
   ansible.builtin.service:
    name: rabbitmq-server
