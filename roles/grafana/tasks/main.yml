@@ -8,6 +8,7 @@
     state: present
 
 - name: Copy Grafana configuration in place
+  notify: Restart grafana
   ansible.builtin.template:
     src: "{{ grafana_config_file }}.j2"
     dest: "{{ config_dir }}/{{ grafana_config_file }}"

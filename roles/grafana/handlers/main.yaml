@@ -1,0 +1,6 @@
+# code: language=ansible
+---
+- name: Restart grafana
+  ansible.builtin.service:
+   name: grafana-server
+   state: restarted

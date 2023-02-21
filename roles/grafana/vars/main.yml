@@ -9,3 +9,6 @@ grafana_config:
     allow_embedding: true
   auth.anonymous:
     enabled: true
+  server:
+    root_url: "%(protocol)s://%(domain)s:%(http_port)s{{ grafana_sub_path }}/"
+    serve_from_sub_path: true
