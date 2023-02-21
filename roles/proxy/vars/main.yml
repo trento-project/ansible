@@ -1,0 +1,7 @@
+---
+nginx_conf_base_dir: "/etc/nginx"
+nginx_vhost_dir: "vhosts.d"
+nginx_conf_dir: "conf.d"
+nginx_user: nginx
+nginx_group: nginx
+nginx_service: nginx

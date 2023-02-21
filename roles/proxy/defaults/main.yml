@@ -1,0 +1,4 @@
+---
+install_nginx: true
+override_nginx_default_conf: true
+

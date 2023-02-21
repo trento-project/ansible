@@ -1,0 +1,41 @@
+# code: language=ansible
+---
+- name: Install nginx
+  when: install_nginx is true
+  community.general.zypper:
+    name:
+      - nginx
+    state: present
+    update_cache: true
+
+- name: Override default nginx config
+  when: override_nginx_default_conf is true
+  ansible.builtin.template:
+    src: "nginx-default.conf.j2"
+    dest: "{{ nginx_conf_base_dir }}/nginx.conf"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    mode: 0644
+  vars:
+    conf_folder: "{{ nginx_conf_dir }}"
+    vhost_folder: "{{ nginx_vhost_dir }}"
+  notify:
+    - Restart nginx
+
+- name: Configure web project
+  ansible.builtin.template:
+    src: "trento.conf.j2"
+    dest: "{{ nginx_conf_base_dir }}/{{ nginx_vhost_dir }}/trento.conf"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    mode: 0644
+  vars:
+    server_name: "{{ web_server_name }}"
+  notify:
+    - Restart nginx
+
+- name: Start nginx service
+  ansible.builtin.service:
+    name: "{{ nginx_service }}"
+    state: started
+    enabled: true

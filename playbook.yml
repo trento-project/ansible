@@ -49,3 +49,7 @@
       grafana_api_url: "http://host.docker.internal:3000/api"
       prometheus_url: "http://localhost"
       trento_web_admin_password: adminpassword
+   - name: proxy
+     become: true
+     vars:
+      web_server_name: "trento.local trento.local:8080"
