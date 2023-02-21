@@ -10,23 +10,6 @@
   community.docker.docker_network:
    name: trentonet
 
-- name: Grafana Container
-  community.docker.docker_container:
-   name: grafana
-   restart_policy: always
-   state: started
-   recreate: true
-   image: "grafana/grafana:latest"
-   ports:
-    - "3000:3000"
-   etc_hosts:
-    host.docker.internal: "host-gateway"
-   networks:
-    - name: trentonet
-   env:
-    GF_SECURITY_ALLOW_EMBEDDING: "true"
-    GF_AUTH_ANONYMOUS_ENABLED: "true"
-
 - name: Web container
   community.docker.docker_container:
    name: trento_web

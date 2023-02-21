@@ -1,0 +1,11 @@
+# code: language=ansible
+---
+grafana_config_file: grafana.ini
+config_dir: "/etc/grafana"
+grafana_user: grafana
+grafana_group: grafana
+grafana_config:
+  security:
+    allow_embedding: true
+  auth.anonymous:
+    enabled: true
