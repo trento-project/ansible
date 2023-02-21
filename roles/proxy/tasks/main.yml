@@ -30,7 +30,7 @@
     group: "{{ nginx_group }}"
     mode: 0644
   vars:
-    server_name: "{{ web_server_name }}"
+    server_name: "{{ trento_server_name }}"
   notify:
     - Restart nginx
 
