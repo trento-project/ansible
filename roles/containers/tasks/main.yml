@@ -10,12 +10,31 @@
   community.docker.docker_network:
    name: trentonet
 
+- name: Wanda container
+  community.docker.docker_container:
+   name: trento_wanda
+   state: started
+   restart_policy: unless-stopped
+   networks:
+    - name: trentonet
+   image: "ghcr.io/trento-project/trento-wanda:rolling"
+   entrypoint: ["/bin/sh", "-c", '/app/bin/wanda eval "Wanda.Release.init()" && /app/bin/wanda start']
+   etc_hosts:
+    host.docker.internal: "host-gateway"
+   ports:
+    - "4001:4000"
+   env:
+    CORS_ORIGIN: "http://localhost" # TODO: Remove placeholder
+    SECRET_KEY_BASE: "{{ trento_secret_key_base }}"
+    ACCESS_TOKEN_ENC_SECRET: "{{ trento_access_token_secret }}"
+    AMQP_URL: "amqp://{{ trento_rabbit_username }}:{{ trento_rabbit_password }}@host.docker.internal"
+    DATABASE_URL: "ecto://{{ trento_wanda_postgres_user }}:{{ trento_wanda_postgres_password }}@host.docker.internal/{{ trento_wanda_postgres_db }}"
+
 - name: Web container
   community.docker.docker_container:
    name: trento_web
    state: started
    restart_policy: unless-stopped
-   recreate: true
    image: "ghcr.io/trento-project/trento-web:rolling"
    networks:
     - name: trentonet

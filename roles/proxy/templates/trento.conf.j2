@@ -7,6 +7,11 @@ upstream web {
   server 127.0.0.1:4000 max_fails=5 fail_timeout=60s;
 }
 
+upstream wanda {
+  server 127.0.0.1:4001 max_fails=5 fail_timeout=60s;
+}
+
+
 upstream grafana {
   server 127.0.0.1:3000 max_fails=5 fail_timeout=60s;
 }
@@ -22,7 +27,7 @@ server {
   }
 
   # Proxy Grafana Live WebSocket connections.
-  location /grafana/api/live/ {
+  location {{ grafana_sub_path }}/api/live/ {
     rewrite  ^/grafana/(.*)  /$1 break;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
@@ -31,6 +36,24 @@ server {
     proxy_pass http://grafana;
   }
 
+  # Wanda rule
+  location ~ ^/(api/checks|api/v1/checks)/  {
+    allow all;
+
+    # Proxy Headers
+    proxy_http_version 1.1;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Cluster-Client-Ip $remote_addr;
+
+    # The Important Websocket Bits!
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    proxy_pass http://wanda;
+  }
+
+  # Web rule
   location / {
     allow all;
 
