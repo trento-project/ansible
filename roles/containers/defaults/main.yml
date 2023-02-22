@@ -1,13 +1,13 @@
 ---
-trento_web_postgres_db: webdb
-trento_web_postgres_event_store: event_store
-trento_web_postgres_user: web
-trento_wanda_postgres_user: wanda
-trento_wanda_postgres_db: wandadb
-trento_rabbit_username: trento
-trento_grafana_public_url: "/grafana"
-trento_secret_key_base: "lookup('community.general.random_string', base64=True, length=64)"
-trento_access_token_secret: "lookup('community.general.random_string', base64=True, length=64)"
-trento_refresh_token_secret: "lookup('community.general.random_string', base64=True, length=64)"
-trento_web_admin_username: admin
-trento_enable_alerting: "false"
+web_postgres_db: webdb
+web_postgres_event_store: event_store
+web_postgres_user: web
+wanda_postgres_user: wanda
+wanda_postgres_db: wandadb
+rabbitmq_username: trento
+grafana_public_url: "/grafana"
+secret_key_base: "lookup('community.general.random_string', base64=True, length=64)"
+access_token_secret: "lookup('community.general.random_string', base64=True, length=64)"
+refresh_token_secret: "lookup('community.general.random_string', base64=True, length=64)"
+web_admin_username: admin
+enable_alerting: "false"

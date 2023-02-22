@@ -6,6 +6,18 @@ Vagrant.configure(2) do |config|
   config.vm.provision "ansible" do |ansible|
     # ansible.verbose = "v"
     ansible.playbook = "playbook.yml"
+    ansible.extra_vars = {
+      web_postgres_password: "pass",
+      wanda_postgres_password: "wanda",
+      web_postgres_password: "pass",
+      wanda_postgres_password: "wanda",
+      rabbitmq_password: "trento",
+      runner_url: "http://localhost",
+      grafana_api_url: "http://host.docker.internal:3000/api",
+      prometheus_url: "http://localhost",
+      web_admin_password: "adminpassword",
+      trento_server_name: "trento.local trento.local:8080"
+    }
   end
   config.vm.provider "virtualbox" do |v|
     v.memory = 4096

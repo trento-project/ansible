@@ -25,10 +25,10 @@
     - "4001:4000"
    env:
     CORS_ORIGIN: "http://localhost" # TODO: Remove placeholder
-    SECRET_KEY_BASE: "{{ trento_secret_key_base }}"
-    ACCESS_TOKEN_ENC_SECRET: "{{ trento_access_token_secret }}"
-    AMQP_URL: "amqp://{{ trento_rabbit_username }}:{{ trento_rabbit_password }}@host.docker.internal"
-    DATABASE_URL: "ecto://{{ trento_wanda_postgres_user }}:{{ trento_wanda_postgres_password }}@host.docker.internal/{{ trento_wanda_postgres_db }}"
+    SECRET_KEY_BASE: "{{ secret_key_base }}"
+    ACCESS_TOKEN_ENC_SECRET: "{{ access_token_secret }}"
+    AMQP_URL: "amqp://{{ rabbitmq_username }}:{{ rabbitmq_password }}@host.docker.internal"
+    DATABASE_URL: "ecto://{{ wanda_postgres_user }}:{{ wanda_postgres_password }}@host.docker.internal/{{ wanda_postgres_db }}"
 
 - name: Web container
   community.docker.docker_container:
@@ -44,22 +44,22 @@
    ports:
     - "4000:4000"
    env:
-    AMQP_URL: "amqp://{{ trento_rabbit_username }}:{{ trento_rabbit_password }}@host.docker.internal"
-    DATABASE_URL: "ecto://{{ trento_web_postgres_user }}:{{ trento_web_postgres_password }}@host.docker.internal/{{ trento_web_postgres_db }}"
-    EVENTSTORE_URL: "ecto://{{ trento_web_postgres_user }}:{{ trento_web_postgres_password }}@host.docker.internal/{{ trento_web_postgres_event_store }}"
-    RUNNER_URL: "{{ trento_runner_url }}"
-    ENABLE_ALERTING: "{{ trento_enable_alerting }}"
+    AMQP_URL: "amqp://{{ rabbitmq_username }}:{{ rabbitmq_password }}@host.docker.internal"
+    DATABASE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@host.docker.internal/{{ web_postgres_db }}"
+    EVENTSTORE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@host.docker.internal/{{ web_postgres_event_store }}"
+    RUNNER_URL: "{{ runner_url }}"
+    ENABLE_ALERTING: "{{ enable_alerting }}"
     # SMTP_SERVER: "{{ .Values.alerting.smtpServer }}"
     # SMTP_PORT: "{{ .Values.alerting.smtpPort }}"
     # SMTP_USER: "{{ .Values.alerting.smtpUser }}"
     # SMTP_PASSWORD: "{{ .Values.alerting.smtpPassword }}"
     # ALERT_SENDER: "{{ .Values.alerting.sender }}"
     # ALERT_RECIPIENT: "{{ .Values.alerting.recipient }}"
-    GRAFANA_PUBLIC_URL: "{{ trento_grafana_public_url }}"
+    GRAFANA_PUBLIC_URL: "{{ grafana_public_url }}"
     GRAFANA_API_URL: "{{ grafana_api_url }}"
     PROMETHEUS_URL: "{{ prometheus_url }}"
-    SECRET_KEY_BASE: "{{ trento_secret_key_base }}"
-    ACCESS_TOKEN_ENC_SECRET: "{{ trento_access_token_secret }}"
-    REFRESH_TOKEN_ENC_SECRET: "{{ trento_refresh_token_secret }}"
-    ADMIN_USER: "{{ trento_web_admin_username }}"
-    ADMIN_PASSWORD: "{{ trento_web_admin_password }}"
+    SECRET_KEY_BASE: "{{ secret_key_base }}"
+    ACCESS_TOKEN_ENC_SECRET: "{{ access_token_secret }}"
+    REFRESH_TOKEN_ENC_SECRET: "{{ refresh_token_secret }}"
+    ADMIN_USER: "{{ web_admin_username }}"
+    ADMIN_PASSWORD: "{{ web_admin_password }}"

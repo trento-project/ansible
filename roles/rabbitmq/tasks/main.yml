@@ -20,8 +20,8 @@
 
 - name: Configure rabbitmq trento user
   community.rabbitmq.rabbitmq_user:
-   user: "{{ trento_rabbitmq_username }}"
-   password: "{{ trento_rabbitmq_password }}"
+   user: "{{ rabbitmq_username }}"
+   password: "{{ rabbitmq_password }}"
    permissions:
     - vhost: "/"
       configure_priv: ".*"

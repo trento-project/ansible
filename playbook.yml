@@ -30,26 +30,11 @@
   roles:
    - name: postgres
      become: true
-     vars:
-      web_postgres_password: pass
-      wanda_postgres_password: wanda
    - name: rabbitmq
      become: true
-     vars:
-      trento_rabbitmq_password: trento
    - name: grafana
      become: true
    - name: containers
      become: true
-     vars:
-      trento_web_postgres_password: pass
-      trento_wanda_postgres_password: wanda
-      trento_rabbit_password: trento
-      trento_runner_url: "http://localhost"
-      grafana_api_url: "http://host.docker.internal:3000/api"
-      prometheus_url: "http://localhost"
-      trento_web_admin_password: adminpassword
    - name: proxy
      become: true
-     vars:
-      trento_server_name: "trento.local trento.local:8080"
