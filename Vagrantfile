@@ -9,8 +9,6 @@ Vagrant.configure(2) do |config|
     ansible.extra_vars = {
       web_postgres_password: "pass",
       wanda_postgres_password: "wanda",
-      web_postgres_password: "pass",
-      wanda_postgres_password: "wanda",
       rabbitmq_password: "trento",
       runner_url: "http://localhost",
       grafana_api_url: "http://host.docker.internal:3000/api",
