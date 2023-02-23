@@ -28,13 +28,13 @@
   hosts: all
   become: true
   roles:
-   - name: postgres
+   - role: postgres
      become: true
-   - name: rabbitmq
+   - role: rabbitmq
      become: true
-   - name: grafana
+   - role: grafana
      become: true
-   - name: containers
+   - role: containers
      become: true
-   - name: proxy
+   - role: proxy
      become: true
