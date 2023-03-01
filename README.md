@@ -24,6 +24,68 @@ The third parties are installed using `zypper` packages and configured with dedi
 
 The nginx configuration acts as a reverse proxy for all the components.
 
+## Usage
+
+You can clone this repository and use them as a normal ansible playbook, making all the updates you need to make to injected variables, embedding other tasks and so on.
+
+We provide two examples to run the playbook as-is without further modifications.
+### With local ansible
+
+- Obtain the playbook, like git cloning this repository
+- Create an [ansible inventory file](https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html)
+- Create a json file containing the variables for the playbook or pass them via cli
+- Run provision command
+
+**Example inventory**
+
+```yaml
+all:
+  hosts:
+    vitellone:
+      ansible_host: "your-host.com"
+      ansible_user: root
+```
+
+**Example json variables file**
+
+```json
+{
+    "web_postgres_password": "pass",
+    "wanda_postgres_password": "wanda",
+    "rabbitmq_password": "trento",
+    "runner_url": "http://localhost",
+    "prometheus_url": "http://localhost",
+    "web_admin_password": "adminpassword",
+    "trento_server_name": "your-server-name"
+}
+```
+
+Having an inventory file called `inventory.yml` and a vars file called `extra-vars.json`, you could run the playbook
+
+```bash
+$ ansible-playbook -i inventory.yml --extra-vars @extra-vars.json playbook.yml
+```
+
+**This is just an example you can use all the options of `ansible-playbook` with your inventory and other methods of variables injection.**
+
+### With docker container
+
+You can use the docker image `a`, to run this playbook, the image contains the playbook files ready to be provisioned.
+The docker image assumes you mount an `inventory` file and an `extra-vars` file.
+
+Mounting your ssh socket will enable you to access the remote machines like in your local environment.
+
+Assuming you have in the current folder a file called `inventory.yml` and `extra-vars.json`
+
+```bash
+    docker run \
+        -e "SSH_AUTH_SOCK=/ssh-agent" \
+        -v $(pwd)/inventory.yml:/playbook/inventory.yml \
+        -v $(pwd)/extra-vars.json:/playbook/extra-vars.json \
+        -v $SSH_AUTH_SOCK:/ssh-agent \
+        cdimonaco.dev/trento-ansible:dev /playbook/inventory.yml /playbook/extra-vars.json
+```
+
 ## Playbook variables
 
 ### Required Variables
