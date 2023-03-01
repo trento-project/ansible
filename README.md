@@ -83,7 +83,7 @@ Assuming you have in the current folder a file called `inventory.yml` and `extra
         -v $(pwd)/inventory.yml:/playbook/inventory.yml \
         -v $(pwd)/extra-vars.json:/playbook/extra-vars.json \
         -v $SSH_AUTH_SOCK:/ssh-agent \
-        cdimonaco.dev/trento-ansible:dev /playbook/inventory.yml /playbook/extra-vars.json
+        ghcr.io/cdimonaco/trento-ansible:rolling /playbook/inventory.yml /playbook/extra-vars.json
 ```
 
 ## Playbook variables
