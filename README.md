@@ -33,7 +33,6 @@ The nginx configuration acts as a reverse proxy for all the components.
 | web_postgres_password | Password of the postgres user used in web project |
 | wanda_postgres_password      | Password of the postgres user used in wanda project |
 | rabbitmq_password | Password of the rabbitmq user configured for the trento projects |
-| grafana_api_url | Base API endpoint of grafana, used for dashboard and datasources provision |
 | prometheus_url | Base url of prometheus database |
 | web_admin_password | Password of the admin user of the web application |
 | trento_server_name | Server name of the trento web application, used by nginx |
@@ -58,6 +57,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | web_admin_username | Username of the admin user in web application | admin |
 | enable_alerting | Enable the alerting mechanism on web project | false |
 | grafana_sub_path | The subpath of the grafana application | /grafana |
+| grafana_api_url | Base API endpoint of grafana, used for dashboard and datasources provision, the defaults assumes you are installing grafana on the same host of the docker container, using the defaults of this playbook | http://host.docker.internal:3000/api |
 | install_nginx | Install nginx | true |
 | override_nginx_default_conf | Override the default nginx configuration, this will delete the default nginx page and put a configuration that will use the vhosts according to an opinionated directory structure | true |
 
