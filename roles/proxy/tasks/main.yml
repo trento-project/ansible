@@ -1,7 +1,7 @@
 # code: language=ansible
 ---
 - name: Install nginx
-  when: install_nginx is true
+  when: install_nginx == 'true'
   community.general.zypper:
     name:
       - nginx
@@ -9,7 +9,7 @@
     update_cache: true
 
 - name: Override default nginx config
-  when: override_nginx_default_conf is true
+  when: override_nginx_default_conf == 'true'
   ansible.builtin.template:
     src: "nginx-default.conf.j2"
     dest: "{{ nginx_conf_base_dir }}/nginx.conf"
