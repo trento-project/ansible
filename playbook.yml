@@ -4,6 +4,13 @@
   hosts: all
   become: true
   tasks:
+   - name: Install installation prerequisites
+     community.general.zypper:
+      name:
+       - gcc
+       - python3-devel
+       - sudo
+
    - name: Install python prerequisites
      community.general.zypper:
       name:
