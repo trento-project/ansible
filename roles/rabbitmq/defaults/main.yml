@@ -1,2 +1,3 @@
 ---
 rabbitmq_username: trento
+rabbitmq_node_name: "rabbit@localhost"
