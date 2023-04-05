@@ -26,7 +26,7 @@ The nginx configuration acts as a reverse proxy for all the components.
 
 ### SUSE LINUX ENTERPRISE USERS
 
-This playbook assumes you have an activated license of `Suse Linux Enterprise 15 SP4`, with theses modules
+This playbook assumes you have an activated license of `Suse Linux Enterprise 15 SP4`, with these modules
 
 - Basesystem Module 15 SP4 x86_64 - `SUSEConnect -p sle-module-basesystem/15.4/x86_64`
 - SUSE Package Hub 15 SP4 x86_64 - ` SUSEConnect -p PackageHub/15.4/x86_64`
