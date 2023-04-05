@@ -114,6 +114,9 @@ These variables are the defaults of our roles, if you want to override the prope
 
 | Name         | Description    | Default |
 |--------------|-----------| --------- |
+| provision_postgres | Run the postgres provisioning contained into postgres role, set to false if you provide an external postgres to the services | "true" |
+| provision_rabbitmq | Run the rabbitmq provisioning contained into rabbitmq role, set to false if you provide an external rabbitmq to the services | "true" |
+| provision_proxy | Run the nginx provisioning for exposing all the services, se to false if you don't want to expose the services or you have already in place a reverse proxy infrastructure | "true" |
 | web_postgres_db | Name of the postgres database of the web application | webdb |
 | web_postgres_event_store | Name of the postgres event store database of web application | event_store |
 | web_postgres_user | Name of the postgres user used by web application | web |
