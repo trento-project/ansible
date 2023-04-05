@@ -117,6 +117,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | web_postgres_db | Name of the postgres database of the web application | webdb |
 | web_postgres_event_store | Name of the postgres event store database of web application | event_store |
 | web_postgres_user | Name of the postgres user used by web application | web |
+| install_postgres | Install postgresql in the postgres provisioning phase | "true" |
 | wanda_postgres_user | Name of the postgres user used by wanda project | wanda |
 | wanda_postgres_db | Name of the postgres database of wanda application | wanda |
 | web_postgres_host | Postgres host of web project container | host.docker.internal |

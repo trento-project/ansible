@@ -1,6 +1,7 @@
 # code: language=ansible
 ---
 - name: Install postgresql
+  when: install_postgres == 'true'
   community.general.zypper:
    name:
     - postgresql
