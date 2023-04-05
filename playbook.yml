@@ -32,16 +32,23 @@
       enabled: true
 
 - name: Configure trento projects
+  vars:
+   provision_postgres: "true"
+   provision_rabbitmq: "true"
+   provision_proxy: "true"
   hosts: all
   become: true
   roles:
    - role: postgres
+     when: provision_postgres == 'true'
      become: true
    - role: rabbitmq
+     when: provision_rabbitmq == 'true'
      become: true
    - role: grafana
      become: true
    - role: containers
      become: true
    - role: proxy
+     when: provision_proxy == 'true'
      become: true
