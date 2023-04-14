@@ -18,7 +18,7 @@
    networks:
     - name: trentonet
    image: "ghcr.io/trento-project/trento-wanda:rolling"
-   entrypoint: ["/bin/sh", "-c", '/app/bin/wanda eval "Wanda.Release.init()" && /app/bin/wanda start']
+   entrypoint: ["/bin/sh", "-c", "/app/bin/wanda eval \"Wanda.Release.init()\" && /app/bin/wanda start"]
    etc_hosts:
     host.docker.internal: "host-gateway"
    ports:
@@ -38,7 +38,7 @@
    image: "ghcr.io/trento-project/trento-web:rolling"
    networks:
     - name: trentonet
-   entrypoint: ["/bin/sh", "-c", '/app/bin/trento eval "Trento.Release.init()" && /app/bin/trento start']
+   entrypoint: ["/bin/sh", "-c", "/app/bin/trento eval \"Trento.Release.init()\" && /app/bin/trento start"]
    etc_hosts:
     host.docker.internal: "host-gateway"
    ports:
