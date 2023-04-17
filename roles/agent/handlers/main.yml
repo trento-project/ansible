@@ -1,0 +1,6 @@
+# code: language=ansible
+---
+- name: Restart Trento agent
+  ansible.builtin.service:
+   name: trento-agent
+   state: restarted

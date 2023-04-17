@@ -15,3 +15,4 @@ access_token_secret: "lookup('community.general.random_string', base64=True, len
 refresh_token_secret: "lookup('community.general.random_string', base64=True, length=64)"
 web_admin_username: admin
 enable_alerting: "false"
+enable_api_key: "true"

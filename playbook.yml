@@ -1,7 +1,7 @@
 # code: language=ansible
 ---
 - name: Install thirdparties
-  hosts: all
+  hosts: trento-server
   become: true
   tasks:
    - name: Install installation prerequisites
@@ -36,7 +36,7 @@
    provision_postgres: "true"
    provision_rabbitmq: "true"
    provision_proxy: "true"
-  hosts: all
+  hosts: trento-server
   become: true
   roles:
    - role: postgres
@@ -51,4 +51,11 @@
      become: true
    - role: proxy
      when: provision_proxy == 'true'
+     become: true
+
+- name: Configure trento agents
+  hosts: agents
+  become: true
+  roles:
+   - role: agent
      become: true
