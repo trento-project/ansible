@@ -6,7 +6,7 @@
     name: trento
     repo: "{{ trento_repository }}"
     state: present
-    auto_import_keys: yes
+    auto_import_keys: true
 
 - name: Install Trento agent
   community.general.zypper:
@@ -19,8 +19,8 @@
     dest: "/etc/trento/agent.yaml"
     mode: "0600"
   vars:
-    server_url: "{{ server_url }}"
-    api_key: "{{ api_key }}"
+    server_url: "{{ trento_server_url }}"
+    api_key: "{{ trento_api_key }}"
     facts_service_url: "amqp://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}"
   notify:
     - Restart Trento agent

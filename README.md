@@ -86,9 +86,9 @@ all:
 
 ```json
 {
-    "server_url:": "http://localhost",
+    "trento_server_url:": "http://localhost",
     "rabbitmq_host": "localhost",
-    "api_key": "api-key-obtained-from-server"
+    "trento_api_key": "api-key-obtained-from-server"
 }
 ```
 
@@ -137,7 +137,7 @@ Assuming you have in the current folder a file called `inventory.yml` and `extra
 
 | Name         | Description    |
 |--------------|-----------|
-| api_key | API key to connect to the trento-server |
+| trento_api_key | API key to connect to the trento-server |
 | rabbitmq_password | Password of the rabbitmq user configured for the trento projects |
 
 ### Optional variables
@@ -179,7 +179,7 @@ These variables are the defaults of our roles, if you want to override the prope
 
 | Name         | Description    | Default |
 |--------------|-----------| --------- |
-| server_url   | Trento server url | http://localhost:4000 |
+| trento_server_url   | Trento server url | http://localhost:4000 |
 | trento_repository | OBS repository from where trento agent is installed | https://download.opensuse.org/repositories/devel:sap:trento:factory/SLE_15_SP3/ |
 | rabbitmq_username | Username of rabbitmq user, this will be created by the rabbitmq role | trento |
 | rabbitmq_host | The rabbitmq host, used by web and wanda containers. It could include the service port |
