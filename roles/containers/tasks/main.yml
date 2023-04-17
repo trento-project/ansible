@@ -47,7 +47,6 @@
     AMQP_URL: "amqp://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}"
     DATABASE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}"
     EVENTSTORE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}"
-    RUNNER_URL: "{{ runner_url }}"
     ENABLE_ALERTING: "{{ enable_alerting }}"
     # SMTP_SERVER: "{{ .Values.alerting.smtpServer }}"
     # SMTP_PORT: "{{ .Values.alerting.smtpPort }}"
@@ -63,3 +62,4 @@
     REFRESH_TOKEN_ENC_SECRET: "{{ refresh_token_secret }}"
     ADMIN_USER: "{{ web_admin_username }}"
     ADMIN_PASSWORD: "{{ web_admin_password }}"
+    ENABLE_API_KEY: "{{ enable_api_key }}"
