@@ -33,7 +33,7 @@
 
 - name: Provision postgres
   become: true
-  vars: 
+  vars:
    provision_postgres: "true"
   hosts: postgres-hosts
   roles:
