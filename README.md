@@ -46,17 +46,29 @@ We provide two examples to run the playbook as-is without further modifications.
 - Create a json file containing the variables for the playbook or pass them via cli
 - Run provision command
 
-**Example inventory to install the trento-server**
+**Example inventory to install the trento-server and provision postgres and rabbitmq, all on the same host**
 
 ```yaml
 all:
-  trento-server:
-    vitellone:
-      ansible_host: "your-host.com"
-      ansible_user: root
+  children:
+    trento-server:
+      hosts:
+        vitellone:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
+    postgres-hosts:
+      hosts:
+        vitellone:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
+    rabbitmq-hosts:
+      hosts:
+        vitellone:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
 ```
 
-**Example json variables file to install trento-server**
+**Example json variables file to install trento-server with the all in one node configuration**
 
 ```json
 {
@@ -68,6 +80,80 @@ all:
     "trento_server_name": "your-server-name"
 }
 ```
+
+---
+
+**Example inventory to install trento-server, provision postgres and rabbitmq, each component on dedicated node**
+
+```yaml
+all:
+  children:
+    trento-server:
+      hosts:
+        vitellone:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
+    postgres-hosts:
+      hosts:
+        vitellone-pg:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
+    rabbitmq-hosts:
+      hosts:
+        vitellone-mq:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
+```
+
+**Example json variables files to install trento-server, provision postgres and rabbitmq, each component on dedicated node**
+
+```json
+{
+    "web_postgres_host": "vitellone-pg",
+    "wanda_postgres_host": "vitellone-pg",
+    "rabbitmq_host": "vitellone-mq:5671",
+    "web_postgres_password": "pass",
+    "wanda_postgres_password": "wanda",
+    "rabbitmq_password": "trento",
+    "prometheus_url": "http://localhost",
+    "web_admin_password": "adminpassword",
+    "trento_server_name": "yourserver.com",
+}
+```
+
+---
+
+**Example inventory to install trento-server with external postgres and rabbitmq**
+
+```yaml
+all:
+  children:
+    trento-server:
+      hosts:
+        vitellone:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
+```
+
+**Examle json variables file to install trento-server with external postgres and rabbitmq**
+
+```json
+{
+    "web_postgres_password": "trentoansible1",
+    "wanda_postgres_password": "trentoansible1",
+    "web_postgres_host": "yourexternalpg.com",
+    "wanda_postgres_host": "yourexternalpg.com",
+    "rabbitmq_host": "yourexternalrabbit.com:5671",
+    "rabbitmq_password": "trentoansible1",
+    "web_postgres_user": "postgres",
+    "wanda_postgres_user": "postgres",
+    "rabbitmq_username": "trentoansible",
+    "prometheus_url": "http://localhost",
+    "web_admin_password": "adminpassword",
+    "trento_server_name": "your-servername.com"
+}
+```
+---
 
 **Example inventory to install the trento agents**
 
@@ -174,7 +260,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | install_nginx | Install nginx | true |
 | override_nginx_default_conf | Override the default nginx configuration, this will delete the default nginx page and put a configuration that will use the vhosts according to an opinionated directory structure | true |
 | enable_api_key | Enable/Disable API key usage. Mostly for testing purposes | true |
-
+| amqp_protocol | Change the amqp protocol type | amqp |
 **trento agents**
 
 | Name         | Description    | Default |
