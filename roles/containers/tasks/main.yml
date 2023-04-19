@@ -27,7 +27,7 @@
     CORS_ORIGIN: "http://localhost" # TODO: Remove placeholder
     SECRET_KEY_BASE: "{{ secret_key_base }}"
     ACCESS_TOKEN_ENC_SECRET: "{{ access_token_secret }}"
-    AMQP_URL: "amqp://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}"
+    AMQP_URL: "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}"
     DATABASE_URL: "ecto://{{ wanda_postgres_user }}:{{ wanda_postgres_password }}@{{ wanda_postgres_host }}/{{ wanda_postgres_db }}"
 
 - name: Web container
@@ -44,7 +44,7 @@
    ports:
     - "4000:4000"
    env:
-    AMQP_URL: "amqp://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}"
+    AMQP_URL: "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}"
     DATABASE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}"
     EVENTSTORE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}"
     ENABLE_ALERTING: "{{ enable_alerting }}"
