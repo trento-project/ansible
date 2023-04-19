@@ -31,20 +31,31 @@
       state: started
       enabled: true
 
-- name: Configure trento projects
-  vars:
-   provision_postgres: "true"
-   provision_rabbitmq: "true"
-   provision_proxy: "true"
-  hosts: trento-server
+- name: Provision postgres
   become: true
+  vars: 
+   provision_postgres: "true"
+  hosts: postgres-hosts
   roles:
    - role: postgres
      when: provision_postgres == 'true'
      become: true
+
+- name: Provision rabbitmq
+  become: true
+  vars:
+   provision_rabbitmq: "true"
+  hosts: rabbitmq-hosts
+  roles:
    - role: rabbitmq
      when: provision_rabbitmq == 'true'
-     become: true
+
+- name: Configure trento projects
+  vars:
+   provision_proxy: "true"
+  hosts: trento-server
+  become: true
+  roles:
    - role: grafana
      become: true
    - role: containers
