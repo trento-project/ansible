@@ -178,6 +178,10 @@ all:
 }
 ```
 
+> **Note**: <br />
+> to have a fully functional deployment make sure to use either an **external IP** or an **internal IP** for `rabbitmq_host` based on the infra network configuration. <br />
+> Additionally, retrieving the actual api-key from the server is not supported yet, so use `"enable_api_key": "false"` in extra vars as any value in `trento_api_key` would be ineffective.
+
 Both trento-server and agent inventory and variables file can be combined to deploy both at the same ansible execution.
 
 Having an inventory file called `inventory.yml` and a vars file called `extra-vars.json`, you could run the playbook
