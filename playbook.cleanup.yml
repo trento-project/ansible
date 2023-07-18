@@ -1,11 +1,23 @@
 # code: language=ansible
 ---
 - name: Clean up trento projects
-
   hosts: trento-server
   become: true
   tasks:
    - name: Containers
      ansible.builtin.include_role:
       name: containers
+      tasks_from: cleanup
+   - name: Proxy
+     ansible.builtin.include_role:
+      name: proxy
+      tasks_from: cleanup
+
+- name: Clean up postgres
+  hosts: postgres-hosts
+  become: true
+  tasks:
+   - name: Postgres
+     ansible.builtin.include_role:
+      name: postgres
       tasks_from: cleanup
