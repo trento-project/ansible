@@ -5,8 +5,7 @@
   hosts: trento-server
   become: true
   tasks:
-  - name: containers
-    include_role:
+   - name: Containers
+     ansible.builtin.include_role:
       name: containers
       tasks_from: cleanup
-    

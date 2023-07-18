@@ -27,4 +27,3 @@
     name: "{{ docker_network_name }}"
     state: absent
     force: true
-
