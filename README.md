@@ -270,6 +270,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | grafana_api_url | Base API endpoint of grafana, used for dashboard and datasources provision, the defaults assumes you are installing grafana on the same host of the docker container, using the defaults of this playbook | http://host.docker.internal:3000/api |
 | install_nginx | Install nginx | true |
 | override_nginx_default_conf | Override the default nginx configuration, this will delete the default nginx page and put a configuration that will use the vhosts according to an opinionated directory structure | true |
+| nginx_conf_filename | Nginx vhost filename. "conf" suffix is added to the given name | trento |
 | enable_api_key | Enable/Disable API key usage. Mostly for testing purposes | true |
 | amqp_protocol | Change the amqp protocol type | amqp |
 
@@ -289,6 +290,8 @@ In order to clean up most of the applied changes and created resources, the `pla
 These are the cleaned resources:
 - Web and Wanda containers/images
 - Docker network
+- Postgresql database and users
+- Nginx vhost configuration file
 
 Run the playbook with:
 
