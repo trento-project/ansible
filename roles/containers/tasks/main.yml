@@ -8,22 +8,22 @@
 
 - name: Create trento docker network
   community.docker.docker_network:
-   name: trentonet
+   name: "{{ docker_network_name }}"
 
 - name: Wanda container
   community.docker.docker_container:
-   name: trento_wanda
+   name: "{{ wanda_container_name }}"
    state: started
    restart_policy: unless-stopped
    networks:
-    - name: trentonet
-   image: "ghcr.io/trento-project/trento-wanda:rolling"
+    - name: "{{ docker_network_name }}"
+   image: "{{ wanda_container_image }}"
    pull: true
    entrypoint: ["/bin/sh", "-c", "/app/bin/wanda eval \"Wanda.Release.init()\" && /app/bin/wanda start"]
    etc_hosts:
     host.docker.internal: "host-gateway"
    ports:
-    - "4001:4000"
+    - "{{ wanda_container_port }}:4000"
    env:
     CORS_ORIGIN: "http://localhost" # TODO: Remove placeholder
     SECRET_KEY_BASE: "{{ secret_key_base }}"
@@ -33,18 +33,18 @@
 
 - name: Web container
   community.docker.docker_container:
-   name: trento_web
+   name: "{{ web_container_name }}"
    state: started
    restart_policy: unless-stopped
-   image: "ghcr.io/trento-project/trento-web:rolling"
+   image: "{{ web_container_image }}"
    pull: true
    networks:
-    - name: trentonet
+    - name: "{{ docker_network_name }}"
    entrypoint: ["/bin/sh", "-c", "/app/bin/trento eval \"Trento.Release.init()\" && /app/bin/trento start"]
    etc_hosts:
     host.docker.internal: "host-gateway"
    ports:
-    - "4000:4000"
+    - "{{ web_container_port }}:4000"
    env:
     AMQP_URL: "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}"
     DATABASE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}"

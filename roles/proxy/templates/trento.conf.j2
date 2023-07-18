@@ -4,11 +4,11 @@ map $http_upgrade $connection_upgrade {
 }
 
 upstream web {
-  server 127.0.0.1:4000 max_fails=5 fail_timeout=60s;
+  server 127.0.0.1:{{ web_port }} max_fails=5 fail_timeout=60s;
 }
 
 upstream wanda {
-  server 127.0.0.1:4001 max_fails=5 fail_timeout=60s;
+  server 127.0.0.1:{{ wanda_port }} max_fails=5 fail_timeout=60s;
 }
 
 
