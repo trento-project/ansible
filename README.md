@@ -242,6 +242,13 @@ These variables are the defaults of our roles, if you want to override the prope
 | provision_postgres | Run the postgres provisioning contained into postgres role, set to false if you provide an external postgres to the services | "true" |
 | provision_rabbitmq | Run the rabbitmq provisioning contained into rabbitmq role, set to false if you provide an external rabbitmq to the services | "true" |
 | provision_proxy | Run the nginx provisioning for exposing all the services, se to false if you don't want to expose the services or you have already in place a reverse proxy infrastructure | "true" |
+| docker_network_name | Name of the docker network interface | trentonet |
+| web_container_image | Name of the Web container image to use to create the container | ghcr.io/trento-project/trento-web:rolling |
+| web_container_name | Name of the Web container | trento_web |
+| web_container_port | Port where the Web container is exposed | 4000 |
+| wanda_container_image | Name of the Wanda container image to use to create the container | ghcr.io/trento-project/trento-wanda:rolling |
+| wanda_container_name | Name of the Wanda container | trento_wanda |
+| wanda_container_port | Port where the Wanda container is exposed | 4001 |
 | web_postgres_db | Name of the postgres database of the web application | webdb |
 | web_postgres_event_store | Name of the postgres event store database of web application | event_store |
 | web_postgres_user | Name of the postgres user used by web application | web |
@@ -265,6 +272,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | override_nginx_default_conf | Override the default nginx configuration, this will delete the default nginx page and put a configuration that will use the vhosts according to an opinionated directory structure | true |
 | enable_api_key | Enable/Disable API key usage. Mostly for testing purposes | true |
 | amqp_protocol | Change the amqp protocol type | amqp |
+
 **trento agents**
 
 | Name         | Description    | Default |
@@ -273,6 +281,22 @@ These variables are the defaults of our roles, if you want to override the prope
 | trento_repository | OBS repository from where trento agent is installed | https://download.opensuse.org/repositories/devel:sap:trento:factory/SLE_15_SP3/ |
 | rabbitmq_username | Username of rabbitmq user, this will be created by the rabbitmq role | trento |
 | rabbitmq_host | The rabbitmq host, used by web and wanda containers. It could include the service port |
+
+## Clean up
+
+In order to clean up most of the applied changes and created resources, the `playbook.cleanup` playbook could be used. It uses the same inventory and variables file than the main playbook.
+
+These are the cleaned resources:
+- Web and Wanda containers/images
+- Docker network
+
+Run the playbook with:
+
+```bash
+$ ansible-playbook -i inventory.yml --extra-vars @extra-vars.json playbook.cleanup.yml
+```
+
+**Disclaimer: The installed packages are not removed as most of the times they are of general usage, and this could have impact in many other services.**
 
 ## Usage with vagrant
 

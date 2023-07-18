@@ -1,0 +1,11 @@
+# code: language=ansible
+---
+- name: Clean up trento projects
+
+  hosts: trento-server
+  become: true
+  tasks:
+   - name: Containers
+     ansible.builtin.include_role:
+      name: containers
+      tasks_from: cleanup

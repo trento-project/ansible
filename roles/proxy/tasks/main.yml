@@ -31,6 +31,8 @@
     mode: "0644"
   vars:
     server_name: "{{ trento_server_name }}"
+    wanda_port: "{{ wanda_container_port }}"
+    web_port: "{{ web_container_port }}"
   notify:
     - Restart nginx
 
