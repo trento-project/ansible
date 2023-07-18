@@ -1,0 +1,31 @@
+# code: language=ansible
+---
+- name: Remove web database
+  become_user: postgres
+  community.postgresql.postgresql_db:
+   name: "{{ web_postgres_db }}"
+   state: absent
+
+- name: Remove web event store database
+  become_user: postgres
+  community.postgresql.postgresql_db:
+   name: "{{ web_postgres_event_store }}"
+   state: absent
+
+- name: Remove wanda event store database
+  become_user: postgres
+  community.postgresql.postgresql_db:
+   name: "{{ wanda_postgres_db }}"
+   state: absent
+
+- name: Remove web database user
+  become_user: postgres
+  community.postgresql.postgresql_user:
+   name: "{{ web_postgres_user }}"
+   state: absent
+
+- name: Remove wanda database user
+  become_user: postgres
+  community.postgresql.postgresql_user:
+   name: "{{ wanda_postgres_user }}"
+   state: absent
