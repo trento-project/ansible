@@ -257,6 +257,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | wanda_postgres_db | Name of the postgres database of wanda application | wanda |
 | web_postgres_host | Postgres host of web project container | host.docker.internal |
 | wanda_postgres_host | Postgres host of wanda project container | host.docker.internal |
+| rabbitmq_vhost | The rabbitmq vhost used for the current deployment. Don't add trailling slashes to the value such as `/myvhost` | trento |
 | rabbitmq_username | Username of rabbitmq user, this will be created by the rabbitmq role | trento |
 | rabbitmq_node_name | The name of rabbitmq node | rabbit@localhost | host.docker.internal |
 | rabbitmq_host | The rabbitmq host, used by web and wanda containers. It could include the service port |
@@ -292,6 +293,7 @@ These are the cleaned resources:
 - Docker network
 - Postgresql database and users
 - Nginx vhost configuration file
+- RabbitMQ vhost
 
 Run the playbook with:
 
