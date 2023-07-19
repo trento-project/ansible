@@ -1,0 +1,8 @@
+# code: language=ansible
+---
+- name: Remove nginx vhost file
+  ansible.builtin.file:
+    path: "{{ nginx_conf_base_dir }}/{{ nginx_vhost_dir }}/{{ nginx_vhost_filename }}.conf"
+    state: absent
+  notify:
+    - Restart nginx

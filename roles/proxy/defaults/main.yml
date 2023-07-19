@@ -2,3 +2,4 @@
 install_nginx: 'true'
 override_nginx_default_conf: 'true'
 grafana_sub_path: "/grafana"
+nginx_conf_filename: "trento"

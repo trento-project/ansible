@@ -25,7 +25,7 @@
 - name: Configure web project
   ansible.builtin.template:
     src: "trento.conf.j2"
-    dest: "{{ nginx_conf_base_dir }}/{{ nginx_vhost_dir }}/trento.conf"
+    dest: "{{ nginx_conf_base_dir }}/{{ nginx_vhost_dir }}/{{ nginx_vhost_filename }}.conf"
     owner: "{{ nginx_user }}"
     group: "{{ nginx_group }}"
     mode: "0644"
