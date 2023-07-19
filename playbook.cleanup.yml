@@ -21,3 +21,12 @@
      ansible.builtin.include_role:
       name: postgres
       tasks_from: cleanup
+
+- name: Clean up rabbitmq
+  hosts: rabbitmq-hosts
+  become: true
+  tasks:
+   - name: Rabbitmq
+     ansible.builtin.include_role:
+      name: rabbitmq
+      tasks_from: cleanup
