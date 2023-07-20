@@ -15,6 +15,7 @@ wanda_postgres_user: wanda
 wanda_postgres_db: wandadb
 rabbitmq_username: trento
 rabbitmq_host: host.docker.internal
+rabbitmq_vhost: "trento"
 grafana_public_url: "/grafana"
 grafana_api_url: "http://host.docker.internal:3000/api"
 secret_key_base: "lookup('community.general.random_string', base64=True, length=64)"
