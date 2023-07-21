@@ -6,6 +6,17 @@
     - docker
    state: present
 
+- name: Force pull trento images
+  when: force_pull_images == 'true'
+  loop:
+   - "{{ wanda_container_image }}"
+   - "{{ web_container_image }}"
+  community.docker.docker_image:
+   name: "{{ item }}"
+   force_source: true
+   source: pull
+
+
 - name: Create trento docker network
   community.docker.docker_network:
    name: "{{ docker_network_name }}"

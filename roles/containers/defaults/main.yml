@@ -7,6 +7,7 @@ web_postgres_db: webdb
 web_postgres_event_store: event_store
 web_postgres_user: web
 web_postgres_host: "host.docker.internal"
+force_pull_images: "false"
 wanda_container_image: ghcr.io/trento-project/trento-wanda:rolling
 wanda_container_name: trento_wanda
 wanda_container_port: "{{ 32767 | random(start=1024, seed=trento_server_name) + 1 }}"
