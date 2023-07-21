@@ -249,6 +249,9 @@ These variables are the defaults of our roles, if you want to override the prope
 | wanda_container_image | Name of the Wanda container image to use to create the container | ghcr.io/trento-project/trento-wanda:rolling |
 | wanda_container_name | Name of the Wanda container | trento_wanda |
 | wanda_container_port | Port where the Wanda container is exposed | 4001 |
+| force_pull_images | Force pull the container images for trento components | false |
+| force_recreate_wanda_container | Recreate the wanda container | false |
+| force_recreate_web_container | Recreate the web container | false |
 | web_postgres_db | Name of the postgres database of the web application | webdb |
 | web_postgres_event_store | Name of the postgres event store database of web application | event_store |
 | web_postgres_user | Name of the postgres user used by web application | web |
