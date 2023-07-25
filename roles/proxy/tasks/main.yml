@@ -33,6 +33,7 @@
     server_name: "{{ trento_server_name }}"
     wanda_port: "{{ wanda_container_port }}"
     web_port: "{{ web_container_port }}"
+    listen_port: "{{ nginx_vhost_listen_port }}"
   notify:
     - Restart nginx
 

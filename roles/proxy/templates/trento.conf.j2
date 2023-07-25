@@ -17,7 +17,7 @@ upstream grafana {
 
 server {
   server_name {{ server_name }};
-  listen 80;
+  listen {{ listen_port }};
 
   location {{ grafana_sub_path }}/ {
     rewrite  ^{{ grafana_sub_path }}/(.*)  /$1 break;
