@@ -275,6 +275,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | install_nginx | Install nginx | true |
 | override_nginx_default_conf | Override the default nginx configuration, this will delete the default nginx page and put a configuration that will use the vhosts according to an opinionated directory structure | true |
 | nginx_conf_filename | Nginx vhost filename. "conf" suffix is added to the given name | trento |
+| nginx_vhost_listen_port | Configure the listen port for nginx trento server block | 80 |
 | enable_api_key | Enable/Disable API key usage. Mostly for testing purposes | true |
 | amqp_protocol | Change the amqp protocol type | amqp |
 
