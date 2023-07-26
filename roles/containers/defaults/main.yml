@@ -10,6 +10,8 @@ web_postgres_host: "host.docker.internal"
 force_pull_images: "false"
 force_recreate_wanda_container: "false"
 force_recreate_web_container: "false"
+remove_web_container_image: "true"
+remove_wanda_container_image: "true"
 wanda_container_image: ghcr.io/trento-project/trento-wanda:rolling
 wanda_container_name: trento_wanda
 wanda_container_port: "{{ 32767 | random(start=1024, seed=trento_server_name) + 1 }}"
