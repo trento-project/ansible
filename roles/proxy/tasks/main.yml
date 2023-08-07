@@ -34,6 +34,9 @@
     wanda_port: "{{ wanda_container_port }}"
     web_port: "{{ web_container_port }}"
     listen_port: "{{ nginx_vhost_listen_port }}"
+    wanda_upstream: "{{ wanda_upstream_name }}"
+    web_upstream: "{{ web_upstream_name }}"
+    grafana_upstream: "{{ grafana_upstream_name }}"
   notify:
     - Restart nginx
 
