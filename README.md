@@ -279,6 +279,9 @@ These variables are the defaults of our roles, if you want to override the prope
 | nginx_conf_filename | Nginx vhost filename. "conf" suffix is added to the given name | trento |
 | nginx_vhost_listen_port | Configure the listen port for nginx trento server block | 80 |
 | enable_api_key | Enable/Disable API key usage. Mostly for testing purposes | true |
+| web_upstream_name | Web nginx upstream name | web |
+| wanda_upstream_name | Wanda nginx upstream name | wanda |
+| grafana_upstream_name | Grafana nginx upstream name | grafana |
 | amqp_protocol | Change the amqp protocol type | amqp |
 
 **trento agents**
