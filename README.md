@@ -2,7 +2,7 @@
 
 **THIS IS NOT PRODUCTION READY, HIGHLY WIP, USE AT OWN RISK**
 
-**THE PLAYBOOK ASSUMES YOU ARE ON AN OPENSUSE LEAP 15.3 OR SUSE LINUX ENTERPRISE 15 SP4**
+**THE PLAYBOOK ASSUMES YOU ARE ON AN OPENSUSE LEAP 15.5 OR SUSE LINUX ENTERPRISE 15 SP5**
 
 This playbook aims to install Trento components and the belonging third parties.
 
@@ -27,11 +27,11 @@ The nginx configuration acts as a reverse proxy for all the components.
 
 ### SUSE LINUX ENTERPRISE USERS
 
-This playbook assumes you have an activated license of `Suse Linux Enterprise 15 SP4`, with these modules
+This playbook assumes you have an activated license of `Suse Linux Enterprise 15 SP5`, with these modules
 
-- Basesystem Module 15 SP4 x86_64 - `SUSEConnect -p sle-module-basesystem/15.4/x86_64`
-- SUSE Package Hub 15 SP4 x86_64 - ` SUSEConnect -p PackageHub/15.4/x86_64`
-- Containers Module 15 SP4 x86_64 - `SUSEConnect -p sle-module-containers/15.4/x86_64`
+- Basesystem Module 15 SP5 x86_64 - `SUSEConnect -p sle-module-basesystem/15.5/x86_64`
+- SUSE Package Hub 15 SP5 x86_64 - ` SUSEConnect -p PackageHub/15.5/x86_64`
+- Containers Module 15 SP5 x86_64 - `SUSEConnect -p sle-module-containers/15.5/x86_64`
 
 ## Usage
 
@@ -339,7 +339,6 @@ Use this command when you want to reprovision (re-run the ansible playbook) the 
 - [ ] Roles with more granular options
 - [ ] Task tagging
 - [ ] More examples
-- [ ] Add prometheus
 - [ ] Proper configure the alerting
 - [ ] Pipeline
 - More..

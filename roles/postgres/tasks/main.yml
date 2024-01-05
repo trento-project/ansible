@@ -81,25 +81,28 @@
   become_user: postgres
   community.postgresql.postgresql_privs:
    db: "{{ web_postgres_db }}"
+   objs: public
    roles: "{{ web_postgres_user }}"
    privs: ALL
-   type: database
+   type: schema
    state: present
 
 - name: Grant privilegies to the web user for the web event store
   become_user: postgres
   community.postgresql.postgresql_privs:
    db: "{{ web_postgres_event_store }}"
+   objs: public
    roles: "{{ web_postgres_user }}"
    privs: ALL
-   type: database
+   type: schema
    state: present
 
 - name: Grant privilegies to the wanda user for the wanda database
   become_user: postgres
   community.postgresql.postgresql_privs:
    db: "{{ wanda_postgres_db }}"
+   objs: public
    roles: "{{ wanda_postgres_user }}"
    privs: ALL
-   type: database
+   type: schema
    state: present
