@@ -8,6 +8,17 @@
     state: present
     update_cache: true
 
+- name: Copy SSL certificate and key
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - { src: "{{ nginx_ssl_cert }}", dest: "/etc/ssl/certs/trento.crt" }
+    - { src: "{{ nginx_ssl_key }}", dest: "/etc/ssl/private/trento.key" }
+
 - name: Override default nginx config
   when: override_nginx_default_conf == 'true'
   ansible.builtin.template:
@@ -33,7 +44,8 @@
     server_name: "{{ trento_server_name }}"
     wanda_port: "{{ wanda_container_port }}"
     web_port: "{{ web_container_port }}"
-    listen_port: "{{ nginx_vhost_listen_port }}"
+    http_listen_port: "{{ nginx_vhost_http_listen_port }}"
+    https_listen_port: "{{ nginx_vhost_https_listen_port }}"
     wanda_upstream: "{{ wanda_upstream_name }}"
     web_upstream: "{{ web_upstream_name }}"
     grafana_upstream: "{{ grafana_upstream_name }}"
@@ -45,3 +57,13 @@
     name: "{{ nginx_service }}"
     state: started
     enabled: true
+
+- name: Open HTTP and HTTPS ports in firewalld
+  ansible.posix.firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  loop:
+    - "{{ nginx_vhost_http_listen_port }}/tcp"
+    - "{{ nginx_vhost_https_listen_port }}/tcp"

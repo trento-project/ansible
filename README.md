@@ -14,7 +14,7 @@ This playbook aims to install Trento components and the belonging third parties.
 - postgresql
 - rabbitmq
 - grafana
-- prometheus (WIP)
+- prometheus
 - nginx
 
 The third parties are installed using `zypper` packages and configured with dedicated roles.
@@ -150,7 +150,9 @@ all:
     "rabbitmq_username": "trentoansible",
     "prometheus_url": "http://localhost",
     "web_admin_password": "adminpassword",
-    "trento_server_name": "your-servername.com"
+    "trento_server_name": "your-servername.com",
+    "nginx_ssl_cert": "ssl/trento.crt",
+    "nginx_ssl_key": "ssl/trento.key"
 }
 ```
 ---
@@ -222,6 +224,8 @@ Assuming you have in the current folder a file called `inventory.yml` and `extra
 | prometheus_url | Base url of prometheus database |
 | web_admin_password | Password of the admin user of the web application |
 | trento_server_name | Server name of the trento web application, used by nginx |
+| nginx_ssl_cert | Location of the .crt file to be used for nginx for https |
+| nginx_ssl_key | Location of the .key file used to generate the certificate |
 
 ### Required Variables to install trento agents
 
@@ -277,7 +281,8 @@ These variables are the defaults of our roles, if you want to override the prope
 | install_nginx | Install nginx | true |
 | override_nginx_default_conf | Override the default nginx configuration, this will delete the default nginx page and put a configuration that will use the vhosts according to an opinionated directory structure | true |
 | nginx_conf_filename | Nginx vhost filename. "conf" suffix is added to the given name | trento |
-| nginx_vhost_listen_port | Configure the listen port for nginx trento server block | 80 |
+| nginx_vhost_http_listen_port | Configure the http listen port for trento (redirects to https by default) | 80 |
+| nginx_vhost_https_listen_port | Configure the https listen port for trento | 443 |
 | enable_api_key | Enable/Disable API key usage. Mostly for testing purposes | true |
 | web_upstream_name | Web nginx upstream name | web |
 | wanda_upstream_name | Wanda nginx upstream name | wanda |
