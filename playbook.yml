@@ -16,6 +16,7 @@
       name:
        - python3-setuptools
        - python3-pip
+       - python3-pexpect
       state: present
       update_cache: true
 
@@ -39,6 +40,16 @@
   roles:
    - role: postgres
      when: provision_postgres == 'true'
+     become: true
+
+- name: Provision prometheus
+  become: true
+  vars:
+   provision_prometheus: "true"
+  hosts: prometheus-hosts
+  roles:
+   - role: prometheus
+     when: provision_prometheus == 'true'
      become: true
 
 - name: Provision rabbitmq
