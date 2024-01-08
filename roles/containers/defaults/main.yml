@@ -30,3 +30,4 @@ web_admin_username: admin
 enable_alerting: "false"
 enable_api_key: "true"
 amqp_protocol: amqp
+prometheus_url: "http://host.docker.internal:9090"

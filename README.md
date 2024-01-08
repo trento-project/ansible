@@ -288,6 +288,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | wanda_upstream_name | Wanda nginx upstream name | wanda |
 | grafana_upstream_name | Grafana nginx upstream name | grafana |
 | amqp_protocol | Change the amqp protocol type | amqp |
+| prometheus_url | Base url of prometheus database | http://host.docker.internal:9090 |
 
 **trento agents**
 
