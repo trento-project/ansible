@@ -11,29 +11,9 @@ upstream {{ wanda_upstream }} {
   server 127.0.0.1:{{ wanda_port }} max_fails=5 fail_timeout=60s;
 }
 
-upstream {{ grafana_upstream }} {
-  server 127.0.0.1:3000 max_fails=5 fail_timeout=60s;
-}
-
 server {
   server_name {{ server_name }};
   listen {{ listen_port }};
-
-  location {{ grafana_sub_path }}/ {
-    rewrite  ^{{ grafana_sub_path }}/(.*)  /$1 break;
-    proxy_set_header Host $http_host;
-    proxy_pass http://grafana;
-  }
-
-  # Proxy Grafana Live WebSocket connections.
-  location {{ grafana_sub_path }}/api/live/ {
-    rewrite  ^/grafana/(.*)  /$1 break;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection $connection_upgrade;
-    proxy_set_header Host $http_host;
-    proxy_pass http://{{ grafana_upstream }};
-  }
 
   # Wanda rule
   location ~ ^/(api/checks|api/v1/checks|api/v2/checks)/  {

@@ -69,8 +69,6 @@
     # SMTP_PASSWORD: "{{ .Values.alerting.smtpPassword }}"
     # ALERT_SENDER: "{{ .Values.alerting.sender }}"
     # ALERT_RECIPIENT: "{{ .Values.alerting.recipient }}"
-    GRAFANA_PUBLIC_URL: "{{ grafana_public_url }}"
-    GRAFANA_API_URL: "{{ grafana_api_url }}"
     PROMETHEUS_URL: "{{ prometheus_url }}"
     SECRET_KEY_BASE: "{{ secret_key_base }}"
     ACCESS_TOKEN_ENC_SECRET: "{{ access_token_secret }}"
