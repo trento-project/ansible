@@ -2,8 +2,14 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    tags-ignore:
+      - "*"
+    branches:
+      - "main"
   pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
 
 jobs:
   ansible-lint:
@@ -55,4 +61,51 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  create-artifact:
+    runs-on: ubuntu-20.04
+    needs: [ansible-lint]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Compress tarball
+        run: |
+          tar -zcf trento-ansible.tgz roles/ playbook.yml playbook.cleanup.yml requirements.yml README.md
+      - uses: actions/upload-artifact@v3
+        with:
+          name: trento-ansible
+          path: |
+            *.tgz
+
+  release-rolling:
+    runs-on: ubuntu-20.04
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs: [create-artifact]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: trento-ansible
+      - uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "rolling"
+          prerelease: true
+          title: "Cutting Edge"
+          files: |
+            trento-ansible.tgz
+
+  release:
+    runs-on: ubuntu-20.04
+    if: github.event.release
+    needs: [create-artifact]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: trento-ansible
+      - uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: trento-ansible.tgz
+          tag: ${{ github.ref }}
       
