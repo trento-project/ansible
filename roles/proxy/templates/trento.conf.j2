@@ -18,7 +18,7 @@ upstream {{ grafana_upstream }} {
 server {
     # Redirect HTTP to HTTPS
     listen {{ http_listen_port }};
-    server_name trento.example.com;
+    server_name  {{ server_name }};
     return 301 https://$host$request_uri;
 }
 

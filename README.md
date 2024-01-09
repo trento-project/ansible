@@ -224,7 +224,7 @@ Assuming you have in the current folder a file called `inventory.yml` and `extra
 | prometheus_url | Base url of prometheus database |
 | web_admin_password | Password of the admin user of the web application |
 | trento_server_name | Server name of the trento web application, used by nginx |
-| nginx_ssl_cert | Location of the .crt file to be used for nginx for https |
+| nginx_ssl_cert | Location of the .crt file to be used by nginx for https |
 | nginx_ssl_key | Location of the .key file used to generate the certificate |
 
 ### Required Variables to install trento agents
@@ -246,6 +246,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | provision_postgres | Run the postgres provisioning contained into postgres role, set to false if you provide an external postgres to the services | "true" |
 | provision_rabbitmq | Run the rabbitmq provisioning contained into rabbitmq role, set to false if you provide an external rabbitmq to the services | "true" |
 | provision_proxy | Run the nginx provisioning for exposing all the services, se to false if you don't want to expose the services or you have already in place a reverse proxy infrastructure | "true" |
+| provision_prometheus | Run the prometheus provisioning used by trento to store metrics send by agents | "true" |
 | docker_network_name | Name of the docker network interface | trentonet |
 | web_container_image | Name of the Web container image to use to create the container | ghcr.io/trento-project/trento-web:rolling |
 | web_container_name | Name of the Web container | trento_web |
@@ -288,7 +289,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | wanda_upstream_name | Wanda nginx upstream name | wanda |
 | grafana_upstream_name | Grafana nginx upstream name | grafana |
 | amqp_protocol | Change the amqp protocol type | amqp |
-| prometheus_url | Base url of prometheus database | http://host.docker.internal:9090 |
+| prometheus_url | Prometheus server url | http://host.docker.internal:9090 |
 
 **trento agents**
 
