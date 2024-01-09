@@ -8,16 +8,18 @@
     state: present
     update_cache: true
 
-- name: Copy SSL certificate and key
+- name: Create the SSL certificate and key
   ansible.builtin.copy:
-    src: "{{ item.src }}"
+    content: "{{ item.content }}"
     dest: "{{ item.dest }}"
     owner: root
     group: root
     mode: "0644"
   loop:
-    - { src: "{{ nginx_ssl_cert }}", dest: "/etc/ssl/certs/trento.crt" }
-    - { src: "{{ nginx_ssl_key }}", dest: "/etc/ssl/private/trento.key" }
+    - content: "{{ nginx_ssl_cert }}"
+      dest: "/etc/ssl/certs/trento.crt"
+    - content: "{{ nginx_ssl_key }}"
+      dest: "/etc/ssl/private/trento.key"
 
 - name: Override default nginx config
   when: override_nginx_default_conf == 'true'
