@@ -1,9 +1,7 @@
 ---
 install_nginx: 'true'
 override_nginx_default_conf: 'true'
-grafana_sub_path: "/grafana"
 nginx_conf_filename: "trento"
 nginx_vhost_listen_port: "80"
 web_upstream_name: "web"
 wanda_upstream_name: "wanda"
-grafana_upstream_name: "grafana"
