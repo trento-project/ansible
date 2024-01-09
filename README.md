@@ -150,8 +150,8 @@ all:
     "prometheus_url": "http://localhost",
     "web_admin_password": "adminpassword",
     "trento_server_name": "your-servername.com",
-    "nginx_ssl_cert": "ssl/trento.crt",
-    "nginx_ssl_key": "ssl/trento.key"
+    "nginx_ssl_cert": "-----BEGIN CERTIFICATE-----\nMIIEKTCCAxGgAwIBAgIUbIzbLpJrkKk8vs1oLzFDpPL...",
+    "nginx_ssl_key": "-----BEGIN CERTIFICATE-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDNdvcVnqJAY32h..."
 }
 ```
 ---
