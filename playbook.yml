@@ -67,8 +67,6 @@
   hosts: trento-server
   become: true
   roles:
-   - role: grafana
-     become: true
    - role: containers
      become: true
    - role: proxy
