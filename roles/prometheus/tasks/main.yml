@@ -1,0 +1,34 @@
+# code: language=ansible
+---
+- name: Ensure prometheus group is present
+  ansible.builtin.group:
+    name: prometheus
+    system: true
+
+- name: Create Prometheus system user
+  ansible.builtin.user:
+    name: prometheus
+    system: true
+    group: prometheus
+    shell: /sbin/nologin
+    comment: "User for Prometheus service"
+
+- name: Install package using expect
+  ansible.builtin.expect:
+    command: zypper install golang-github-prometheus-prometheus
+    responses:
+      (?i)Choose from above solutions by number or cancel: "2"
+      (?i)Continue?: "y"
+
+- name: Enable prometheus service
+  ansible.builtin.service:
+    name: prometheus
+    state: started
+    enabled: true
+
+- name: Open prometheus port using firewalld
+  ansible.posix.firewalld:
+    port: "{{ prometheus_port }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: true

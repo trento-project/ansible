@@ -2,7 +2,7 @@
 
 **THIS IS NOT PRODUCTION READY, HIGHLY WIP, USE AT OWN RISK**
 
-**THE PLAYBOOK ASSUMES YOU ARE ON AN OPENSUSE LEAP 15.3 OR SUSE LINUX ENTERPRISE 15 SP4**
+**THE PLAYBOOK ASSUMES YOU ARE ON AN OPENSUSE LEAP 15.5 OR SUSE LINUX ENTERPRISE 15 SP5**
 
 This playbook aims to install Trento components and the belonging third parties.
 
@@ -13,7 +13,7 @@ This playbook aims to install Trento components and the belonging third parties.
 - [agent](https://github.com/trento-project/agent)
 - postgresql
 - rabbitmq
-- prometheus (WIP)
+- prometheus
 - nginx
 
 The third parties are installed using `zypper` packages and configured with dedicated roles.
@@ -26,11 +26,11 @@ The nginx configuration acts as a reverse proxy for all the components.
 
 ### SUSE LINUX ENTERPRISE USERS
 
-This playbook assumes you have an activated license of `Suse Linux Enterprise 15 SP4`, with these modules
+This playbook assumes you have an activated license of `Suse Linux Enterprise 15 SP5`, with these modules
 
-- Basesystem Module 15 SP4 x86_64 - `SUSEConnect -p sle-module-basesystem/15.4/x86_64`
-- SUSE Package Hub 15 SP4 x86_64 - ` SUSEConnect -p PackageHub/15.4/x86_64`
-- Containers Module 15 SP4 x86_64 - `SUSEConnect -p sle-module-containers/15.4/x86_64`
+- Basesystem Module 15 SP5 x86_64 - `SUSEConnect -p sle-module-basesystem/15.5/x86_64`
+- SUSE Package Hub 15 SP5 x86_64 - ` SUSEConnect -p PackageHub/15.5/x86_64`
+- Containers Module 15 SP5 x86_64 - `SUSEConnect -p sle-module-containers/15.5/x86_64`
 
 ## Usage
 
@@ -149,7 +149,9 @@ all:
     "rabbitmq_username": "trentoansible",
     "prometheus_url": "http://localhost",
     "web_admin_password": "adminpassword",
-    "trento_server_name": "your-servername.com"
+    "trento_server_name": "your-servername.com",
+    "nginx_ssl_cert": "-----BEGIN CERTIFICATE-----\nMIIEKTCCAxGgAwIBAgIUbIzbLpJrkKk8vs1oLzFDpPL...",
+    "nginx_ssl_key": "-----BEGIN CERTIFICATE-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDNdvcVnqJAY32h..."
 }
 ```
 ---
@@ -221,6 +223,8 @@ Assuming you have in the current folder a file called `inventory.yml` and `extra
 | prometheus_url | Base url of prometheus database |
 | web_admin_password | Password of the admin user of the web application |
 | trento_server_name | Server name of the trento web application, used by nginx |
+| nginx_ssl_cert | String with the content of the .crt file to be used by nginx for https |
+| nginx_ssl_key | String with the content of the .key file used to generate the certificate |
 
 ### Required Variables to install trento agents
 
@@ -241,6 +245,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | provision_postgres | Run the postgres provisioning contained into postgres role, set to false if you provide an external postgres to the services | "true" |
 | provision_rabbitmq | Run the rabbitmq provisioning contained into rabbitmq role, set to false if you provide an external rabbitmq to the services | "true" |
 | provision_proxy | Run the nginx provisioning for exposing all the services, se to false if you don't want to expose the services or you have already in place a reverse proxy infrastructure | "true" |
+| provision_prometheus | Run the prometheus provisioning used by trento to store metrics send by agents | "true" |
 | docker_network_name | Name of the docker network interface | trentonet |
 | web_container_image | Name of the Web container image to use to create the container | ghcr.io/trento-project/trento-web:rolling |
 | web_container_name | Name of the Web container | trento_web |
@@ -273,11 +278,13 @@ These variables are the defaults of our roles, if you want to override the prope
 | install_nginx | Install nginx | true |
 | override_nginx_default_conf | Override the default nginx configuration, this will delete the default nginx page and put a configuration that will use the vhosts according to an opinionated directory structure | true |
 | nginx_conf_filename | Nginx vhost filename. "conf" suffix is added to the given name | trento |
-| nginx_vhost_listen_port | Configure the listen port for nginx trento server block | 80 |
+| nginx_vhost_http_listen_port | Configure the http listen port for trento (redirects to https by default) | 80 |
+| nginx_vhost_https_listen_port | Configure the https listen port for trento | 443 |
 | enable_api_key | Enable/Disable API key usage. Mostly for testing purposes | true |
 | web_upstream_name | Web nginx upstream name | web |
 | wanda_upstream_name | Wanda nginx upstream name | wanda |
 | amqp_protocol | Change the amqp protocol type | amqp |
+| prometheus_url | Prometheus server url | http://host.docker.internal:9090 |
 
 **trento agents**
 
@@ -334,7 +341,6 @@ Use this command when you want to reprovision (re-run the ansible playbook) the 
 - [ ] Roles with more granular options
 - [ ] Task tagging
 - [ ] More examples
-- [ ] Add prometheus
 - [ ] Proper configure the alerting
 - [ ] Pipeline
 - More..

@@ -12,8 +12,23 @@ upstream {{ wanda_upstream }} {
 }
 
 server {
+    # Redirect HTTP to HTTPS
+    listen {{ http_listen_port }};
+    server_name  {{ server_name }};
+    return 301 https://$host$request_uri;
+}
+
+server {
   server_name {{ server_name }};
-  listen {{ listen_port }};
+  listen {{ https_listen_port }} ssl;
+
+  ssl_certificate /etc/ssl/certs/trento.crt;
+  ssl_certificate_key /etc/ssl/private/trento.key;
+
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384';
+  ssl_prefer_server_ciphers on;
+  ssl_session_cache shared:SSL:10m;
 
   # Wanda rule
   location ~ ^/(api/checks|api/v1/checks|api/v2/checks)/  {
