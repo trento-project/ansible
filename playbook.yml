@@ -5,7 +5,7 @@
   become: true
   pre_tasks:
     - name: Check SLES distribution and version
-      fail:
+      ansible.builtin.fail:
         msg: "This playbook only runs on SLES for SAP 15 SP3 or above. Detected: {{ ansible_distribution }} {{ ansible_distribution_version }}"
       when: >
         (ansible_distribution != "SLES_SAP") or
