@@ -1,9 +1,5 @@
 # code: language=ansible
 ---
-- name: Gather the version of SLES_SAP
-  ansible.builtin.setup:
-    filter: ansible_distribution_version
-
 - name: Ensure prometheus group is present
   ansible.builtin.group:
     name: prometheus
