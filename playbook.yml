@@ -4,87 +4,87 @@
   hosts: trento-server
   become: true
   pre_tasks:
-    - name: Check SLES distribution and version
-      ansible.builtin.fail:
-        msg: "This playbook only runs on SLES for SAP 15 SP3 or above. Detected: {{ ansible_distribution }} {{ ansible_distribution_version }}"
-      when: >
-        ((ansible_distribution != "SLES_SAP") and
-        (ansible_distribution != "openSUSE Leap")) or
-        (ansible_distribution_version is version('15.3', '<'))
+   - name: Check SLES distribution and version
+     ansible.builtin.fail:
+      msg: "This playbook only runs on SLES for SAP 15 SP3 or above. Detected: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+     when: >
+      ((ansible_distribution != "SLES_SAP") and
+      (ansible_distribution != "openSUSE Leap")) or
+      (ansible_distribution_version is version('15.3', '<'))
 
   tasks:
-    - name: Install installation prerequisites
-      community.general.zypper:
-        name:
-          - gcc
-          - python3-devel
-          - sudo
+   - name: Install installation prerequisites
+     community.general.zypper:
+      name:
+       - gcc
+       - python3-devel
+       - sudo
 
-    - name: Install python prerequisites
-      community.general.zypper:
-        name:
-          - python3-setuptools
-          - python3-pip
-          - python3-pexpect
-        state: present
-        update_cache: true
+   - name: Install python prerequisites
+     community.general.zypper:
+      name:
+       - python3-setuptools
+       - python3-pip
+       - python3-pexpect
+      state: present
+      update_cache: true
 
-    - name: Install docker
-      community.general.zypper:
-        name: docker
-        state: present
-        update_cache: true
+   - name: Install docker
+     community.general.zypper:
+      name: docker
+      state: present
+      update_cache: true
 
-    - name: Start docker service
-      ansible.builtin.service:
-        name: docker
-        state: started
-        enabled: true
+   - name: Start docker service
+     ansible.builtin.service:
+      name: docker
+      state: started
+      enabled: true
 
 - name: Provision postgres
   become: true
   vars:
-    provision_postgres: "true"
+   provision_postgres: "true"
   hosts: postgres-hosts
   roles:
-    - role: postgres
-      when: provision_postgres == 'true'
-      become: true
+   - role: postgres
+     when: provision_postgres == 'true'
+     become: true
 
 - name: Provision prometheus
   become: true
   vars:
-    provision_prometheus: "true"
+   provision_prometheus: "true"
   hosts: prometheus-hosts
   roles:
-    - role: prometheus
-      when: provision_prometheus == 'true'
-      become: true
+   - role: prometheus
+     when: provision_prometheus == 'true'
+     become: true
 
 - name: Provision rabbitmq
   become: true
   vars:
-    provision_rabbitmq: "true"
+   provision_rabbitmq: "true"
   hosts: rabbitmq-hosts
   roles:
-    - role: rabbitmq
-      when: provision_rabbitmq == 'true'
+   - role: rabbitmq
+     when: provision_rabbitmq == 'true'
 
 - name: Configure trento projects
   vars:
-    provision_proxy: "true"
+   provision_proxy: "true"
   hosts: trento-server
   become: true
   roles:
-    - role: containers
-      become: true
-    - role: proxy
-      when: provision_proxy == 'true'
-      become: true
+   - role: containers
+     become: true
+   - role: proxy
+     when: provision_proxy == 'true'
+     become: true
 
 - name: Configure trento agents
   hosts: agents
   become: true
   roles:
-    - role: agent
-      become: true
+   - role: agent
+     become: true
