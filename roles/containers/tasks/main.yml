@@ -2,77 +2,96 @@
 ---
 - name: Install docker python management deps
   ansible.builtin.pip:
-   name:
-    - docker
-   state: present
+    name:
+      - docker
+    state: present
 
 - name: Force pull trento images
   when: force_pull_images == 'true'
   loop:
-   - "{{ wanda_container_image }}"
-   - "{{ web_container_image }}"
+    - "{{ wanda_container_image }}"
+    - "{{ web_container_image }}"
   community.docker.docker_image:
-   name: "{{ item }}"
-   force_source: true
-   source: pull
-
+    name: "{{ item }}"
+    force_source: true
+    source: pull
 
 - name: Create trento docker network
   community.docker.docker_network:
-   name: "{{ docker_network_name }}"
+    name: "{{ docker_network_name }}"
 
 - name: Wanda container
   community.docker.docker_container:
-   name: "{{ wanda_container_name }}"
-   state: started
-   restart_policy: unless-stopped
-   recreate: "{{ force_recreate_wanda_container == 'true' }}"
-   networks:
-    - name: "{{ docker_network_name }}"
-   image: "{{ wanda_container_image }}"
-   pull: true
-   entrypoint: ["/bin/sh", "-c", "/app/bin/wanda eval \"Wanda.Release.init()\" && /app/bin/wanda start"]
-   etc_hosts:
-    host.docker.internal: "host-gateway"
-   ports:
-    - "{{ wanda_container_port }}:4000"
-   env:
-    CORS_ORIGIN: "http://localhost" # TODO: Remove placeholder
-    SECRET_KEY_BASE: "{{ secret_key_base }}"
-    ACCESS_TOKEN_ENC_SECRET: "{{ access_token_secret }}"
-    AMQP_URL: "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
-    DATABASE_URL: "ecto://{{ wanda_postgres_user }}:{{ wanda_postgres_password }}@{{ wanda_postgres_host }}/{{ wanda_postgres_db }}"
+    name: "{{ wanda_container_name }}"
+    state: started
+    restart_policy: unless-stopped
+    recreate: "{{ force_recreate_wanda_container == 'true' }}"
+    networks:
+      - name: "{{ docker_network_name }}"
+    image: "{{ wanda_container_image }}"
+    pull: true
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        '/app/bin/wanda eval "Wanda.Release.init()" && /app/bin/wanda start',
+      ]
+    etc_hosts:
+      host.docker.internal: "host-gateway"
+    ports:
+      - "{{ wanda_container_port }}:4000"
+    env:
+      CORS_ORIGIN: "http://localhost" # TODO: Remove placeholder
+      SECRET_KEY_BASE: "{{ secret_key_base }}"
+      ACCESS_TOKEN_ENC_SECRET: "{{ access_token_secret }}"
+      AMQP_URL: >-
+        "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}"
+        "@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
+      DATABASE_URL: >-
+        "ecto://{{ wanda_postgres_user }}:{{ wanda_postgres_password }}"
+        "@{{ wanda_postgres_host }}/{{ wanda_postgres_db }}"
 
 - name: Web container
   community.docker.docker_container:
-   name: "{{ web_container_name }}"
-   state: started
-   recreate: "{{ force_recreate_web_container == 'true' }}"
-   restart_policy: unless-stopped
-   image: "{{ web_container_image }}"
-   pull: true
-   networks:
-    - name: "{{ docker_network_name }}"
-   entrypoint: ["/bin/sh", "-c", "/app/bin/trento eval \"Trento.Release.init()\" && /app/bin/trento start"]
-   etc_hosts:
-    host.docker.internal: "host-gateway"
-   ports:
-    - "{{ web_container_port }}:4000"
-   env:
-    AMQP_URL: "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
-    DATABASE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}"
-    EVENTSTORE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}"
-    ENABLE_ALERTING: "{{ enable_alerting }}"
-    # SMTP_SERVER: "{{ .Values.alerting.smtpServer }}"
-    # SMTP_PORT: "{{ .Values.alerting.smtpPort }}"
-    # SMTP_USER: "{{ .Values.alerting.smtpUser }}"
-    # SMTP_PASSWORD: "{{ .Values.alerting.smtpPassword }}"
-    # ALERT_SENDER: "{{ .Values.alerting.sender }}"
-    # ALERT_RECIPIENT: "{{ .Values.alerting.recipient }}"
-    PROMETHEUS_URL: "{{ prometheus_url }}"
-    SECRET_KEY_BASE: "{{ secret_key_base }}"
-    ACCESS_TOKEN_ENC_SECRET: "{{ access_token_secret }}"
-    REFRESH_TOKEN_ENC_SECRET: "{{ refresh_token_secret }}"
-    ADMIN_USER: "{{ web_admin_username }}"
-    ADMIN_PASSWORD: "{{ web_admin_password }}"
-    ENABLE_API_KEY: "{{ enable_api_key }}"
+    name: "{{ web_container_name }}"
+    state: started
+    recreate: "{{ force_recreate_web_container == 'true' }}"
+    restart_policy: unless-stopped
+    image: "{{ web_container_image }}"
+    pull: true
+    networks:
+      - name: "{{ docker_network_name }}"
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        '/app/bin/trento eval "Trento.Release.init()" && /app/bin/trento start',
+      ]
+    etc_hosts:
+      host.docker.internal: "host-gateway"
+    ports:
+      - "{{ web_container_port }}:4000"
+    env:
+      AMQP_URL: >-
+        "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}"
+        "@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
+      DATABASE_URL: >-
+        "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}"
+        "@{{ web_postgres_host }}/{{ web_postgres_db }}"
+      EVENTSTORE_URL: >-
+        "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}"
+        "@{{ web_postgres_host }}/{{ web_postgres_event_store }}"
+      ENABLE_ALERTING: "{{ enable_alerting }}"
+      # SMTP_SERVER: "{{ .Values.alerting.smtpServer }}"
+      # SMTP_PORT: "{{ .Values.alerting.smtpPort }}"
+      # SMTP_USER: "{{ .Values.alerting.smtpUser }}"
+      # SMTP_PASSWORD: "{{ .Values.alerting.smtpPassword }}"
+      # ALERT_SENDER: "{{ .Values.alerting.sender }}"
+      # ALERT_RECIPIENT: "{{ .Values.alerting.recipient }}"
+      PROMETHEUS_URL: "{{ prometheus_url }}"
+      SECRET_KEY_BASE: "{{ secret_key_base }}"
+      ACCESS_TOKEN_ENC_SECRET: "{{ access_token_secret }}"
+      REFRESH_TOKEN_ENC_SECRET: "{{ refresh_token_secret }}"
+      ADMIN_USER: "{{ web_admin_username }}"
+      ADMIN_PASSWORD: "{{ web_admin_password }}"
+      ENABLE_API_KEY: "{{ enable_api_key }}"
