@@ -44,12 +44,8 @@
       CORS_ORIGIN: "http://localhost" # TODO: Remove placeholder
       SECRET_KEY_BASE: "{{ secret_key_base }}"
       ACCESS_TOKEN_ENC_SECRET: "{{ access_token_secret }}"
-      AMQP_URL: >-
-        "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}"
-        "@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
-      DATABASE_URL: >-
-        "ecto://{{ wanda_postgres_user }}:{{ wanda_postgres_password }}"
-        "@{{ wanda_postgres_host }}/{{ wanda_postgres_db }}"
+      AMQP_URL: "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
+      DATABASE_URL: "ecto://{{ wanda_postgres_user }}:{{ wanda_postgres_password }}@{{ wanda_postgres_host }}/{{ wanda_postgres_db }}"
 
 - name: Web container
   community.docker.docker_container:
@@ -72,15 +68,9 @@
     ports:
       - "{{ web_container_port }}:4000"
     env:
-      AMQP_URL: >-
-        "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}"
-        "@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
-      DATABASE_URL: >-
-        "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}"
-        "@{{ web_postgres_host }}/{{ web_postgres_db }}"
-      EVENTSTORE_URL: >-
-        "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}"
-        "@{{ web_postgres_host }}/{{ web_postgres_event_store }}"
+      AMQP_URL: "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
+      DATABASE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}"
+      EVENTSTORE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}"
       ENABLE_ALERTING: "{{ enable_alerting }}"
       # SMTP_SERVER: "{{ .Values.alerting.smtpServer }}"
       # SMTP_PORT: "{{ .Values.alerting.smtpPort }}"
