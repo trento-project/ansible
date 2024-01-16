@@ -85,4 +85,4 @@
       ADMIN_USER: "{{ web_admin_username }}"
       ADMIN_PASSWORD: "{{ web_admin_password }}"
       ENABLE_API_KEY: "{{ enable_api_key }}"
-      ENABLE_CHARTS: "{{ enable_charts }}"
+      CHARTS_ENABLED: "{{ enable_charts }}"
