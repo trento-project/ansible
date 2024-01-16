@@ -1,6 +1,5 @@
 # code: language=ansible
 ---
-
 - name: Add Trento agent repository
   community.general.zypper_repository:
     name: trento
