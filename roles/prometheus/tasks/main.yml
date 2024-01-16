@@ -4,6 +4,7 @@
   ansible.builtin.group:
     name: prometheus
     system: true
+  when: ansible_distribution_version >= "15.4"
 
 - name: Create Prometheus system user
   ansible.builtin.user:
@@ -12,13 +13,21 @@
     group: prometheus
     shell: /sbin/nologin
     comment: "User for Prometheus service"
+  when: ansible_distribution_version >= "15.4"
 
-- name: Install package using expect
+- name: Install package manually using expect module
   ansible.builtin.expect:
     command: zypper install golang-github-prometheus-prometheus
     responses:
       (?i)Choose from above solutions by number or cancel: "2"
       (?i)Continue?: "y"
+  when: ansible_distribution_version >= "15.4"
+
+- name: Install package using zypper module
+  ansible.builtin.package:
+    name: golang-github-prometheus-prometheus
+    state: present
+  when: ansible_distribution_version is version('15.4', '<')
 
 - name: Enable prometheus service
   ansible.builtin.service:
