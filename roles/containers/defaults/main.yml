@@ -27,5 +27,6 @@ refresh_token_secret: "lookup('community.general.random_string', base64=True, le
 web_admin_username: admin
 enable_alerting: "false"
 enable_api_key: "true"
+enable_charts: "true"
 amqp_protocol: amqp
 prometheus_url: "http://host.docker.internal:9090"
