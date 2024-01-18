@@ -29,6 +29,11 @@
     state: present
   when: ansible_distribution_version is version('15.4', '<')
 
+- name: Place prometheus config
+  ansible.builtin.template:
+    src: prometheus.yaml.j2
+    dest: /etc/prometheus/prometheus.yaml
+
 - name: Enable prometheus service
   ansible.builtin.service:
     name: prometheus
