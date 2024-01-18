@@ -33,6 +33,7 @@
   ansible.builtin.template:
     src: prometheus.yaml.j2
     dest: /etc/prometheus/prometheus.yaml
+    mode: "0644"
 
 - name: Enable prometheus service
   ansible.builtin.service:
