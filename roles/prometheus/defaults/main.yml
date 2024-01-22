@@ -1,1 +1,2 @@
 prometheus_port: 9090
+webhost: http://localhost
