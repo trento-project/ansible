@@ -11,4 +11,4 @@
         http_sd_configs:
         - follow_redirects: true
           refresh_interval: 1m
-          url: http://localhost:{{ web_container_port }}/api/prometheus/targets
+          url: {{ webhost }}:{{ web_container_port }}/api/prometheus/targets
