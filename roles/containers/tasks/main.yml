@@ -85,3 +85,7 @@
       ADMIN_USER: "{{ web_admin_username }}"
       ADMIN_PASSWORD: "{{ web_admin_password }}"
       ENABLE_API_KEY: "{{ enable_api_key }}"
+
+- name: Expose web_container_port for prometheus role
+  ansible.builtin.set_fact:
+    web_container_port: "{{ web_container_port }}"
