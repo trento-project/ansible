@@ -322,6 +322,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | wanda_upstream_name | Wanda nginx upstream name | wanda |
 | amqp_protocol | Change the amqp protocol type | amqp |
 | prometheus_url | Prometheus server url | http://host.docker.internal:9090 |
+| web_container_host | Host where the web container is listening | http://localhost |
 
 **trento agents**
 
