@@ -9,6 +9,7 @@
     update_cache: true
 
 - name: Create the SSL certificate and key
+  no_log: true
   ansible.builtin.copy:
     content: "{{ item.content | b64decode if item.base64 else item.content }}"
     dest: "{{ item.dest }}"
@@ -22,7 +23,6 @@
     - content: "{{ nginx_ssl_key }}"
       dest: "/etc/ssl/private/trento.key"
       base64: "{{ nginx_ssl_key_as_base64 }}"
-
 
 - name: Override default nginx config
   when: override_nginx_default_conf == 'true'
