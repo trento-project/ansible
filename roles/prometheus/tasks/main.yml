@@ -35,9 +35,16 @@
     state: started
     enabled: true
 
+- name: Check the status of firewalld
+  ansible.builtin.systemd:
+    name: firewalld.service
+  register: firewalld_status
+
 - name: Open prometheus port using firewalld
   ansible.posix.firewalld:
     port: "{{ prometheus_port }}/tcp"
     permanent: true
     state: enabled
     immediate: true
+    offline: true
+  when: firewalld_status.status.ActiveState == "active"

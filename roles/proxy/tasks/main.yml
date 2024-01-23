@@ -59,12 +59,19 @@
     state: started
     enabled: true
 
+- name: Check the status of firewalld
+  ansible.builtin.systemd:
+    name: firewalld.service
+  register: firewalld_status
+
 - name: Open HTTP and HTTPS ports in firewalld
   ansible.posix.firewalld:
     port: "{{ item }}"
     permanent: true
     state: enabled
     immediate: true
+    offline: true
   loop:
     - "{{ nginx_vhost_http_listen_port }}/tcp"
     - "{{ nginx_vhost_https_listen_port }}/tcp"
+  when: firewalld_status.status.ActiveState == "active"
