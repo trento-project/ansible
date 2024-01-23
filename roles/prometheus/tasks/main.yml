@@ -36,6 +36,8 @@
     owner: prometheus
     group: prometheus
     mode: "0644"
+  notify:
+    - Restart prometheus
 
 - name: Enable prometheus service
   ansible.builtin.service:
