@@ -1,15 +1,11 @@
 # code: language=ansible
 ---
-- name: Check the status of firewalld
-  ansible.builtin.systemd:
-    name: firewalld.service
-  register: firewalld_status
-
 - name: Close prometheus port using firewalld
   ansible.posix.firewalld:
     port: "{{ prometheus_port }}/tcp"
     permanent: true
     state: disabled
-    immediate: true
     offline: true
-  when: firewalld_status.status.ActiveState == "active"
+  when: firewalld_installed
+  notify:
+    - Restart firewalld if running
