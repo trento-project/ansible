@@ -286,6 +286,8 @@ These variables are the defaults of our roles, if you want to override the prope
 | web_admin_username | Username of the admin user in web application | admin |
 | enable_alerting | Enable the alerting mechanism on web project | false |
 | install_nginx | Install nginx | true |
+| nginx_ssl_cert_as_base64 | Nginx ssl certificate provided as base64 string | false |
+| nginx_ssl_key_as_base64 | Nginx ssl key provided as base64 string | false |
 | override_nginx_default_conf | Override the default nginx configuration, this will delete the default nginx page and put a configuration that will use the vhosts according to an opinionated directory structure | true |
 | nginx_conf_filename | Nginx vhost filename. "conf" suffix is added to the given name | trento |
 | nginx_vhost_http_listen_port | Configure the http listen port for trento (redirects to https by default) | 80 |
