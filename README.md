@@ -45,7 +45,7 @@ We provide two examples to run the playbook as-is without further modifications.
 - Create a json file containing the variables for the playbook or pass them via cli
 - Run provision command
 
-**Example inventory to install the trento-server and provision postgres and rabbitmq, all on the same host**
+**Example inventory to install the trento-server and provision postgres, rabbitmq and prometheus all on the same host**
 
 ```yaml
 all:
@@ -61,6 +61,11 @@ all:
           ansible_host: "your-host"
           ansible_user: "your-user"
     rabbitmq-hosts:
+      hosts:
+        vitellone:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
+    prometheus-hosts:
       hosts:
         vitellone:
           ansible_host: "your-host"
@@ -82,7 +87,7 @@ all:
 
 ---
 
-**Example inventory to install trento-server, provision postgres and rabbitmq, each component on dedicated node**
+**Example inventory to install trento-server, provision postgres, rabbitmq and prometheus each component on dedicated node**
 
 ```yaml
 all:
@@ -102,9 +107,14 @@ all:
         vitellone-mq:
           ansible_host: "your-host"
           ansible_user: "your-user"
+    prometheus-hosts:
+      hosts:
+        vitellone-metrics:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
 ```
 
-**Example json variables files to install trento-server, provision postgres and rabbitmq, each component on dedicated node**
+**Example json variables files to install trento-server, provision postgres, prometheus and rabbitmq, each component on dedicated node**
 
 ```json
 {
@@ -319,7 +329,11 @@ $ ansible-playbook -i inventory.yml --extra-vars @extra-vars.json playbook.clean
 
 You can test the playbook using vagrant, the default configuration in this repository assumes that you have VirtualBox, change it to what matches your setup.
 
-The `Vagrantfile` contains sane defaults for running the playbook, you can find the application running on `localhost:8080` or `trento.local:8080` if you have `trento.local` as `localhost` alias in your `/etc/hosts`.
+The `Vagrantfile` contains sane defaults for running the playbook, it assumes that you have `trento.local` as `localhost` alias in your `/etc/hosts`.
+
+You can reach the trento application using `https://trento.local:8443`.
+
+The Vagrantfile contains a self signed certificate for `trento.local` domain, make sure you accept the exception when prompted by your browser.
 
 Start the vagrant box
 
@@ -327,7 +341,7 @@ Start the vagrant box
 $ vagrant up
 ```
 
-This will spawn a vagrant box with `Opensuse Leap 15.3` as base box. The provisioning will be automatic after the box starts.
+This will spawn a vagrant box with `Opensuse Leap 15.4` as base box. The provisioning will be automatic after the box starts.
 
 Force provision the vagrant box
 

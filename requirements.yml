@@ -4,3 +4,4 @@ collections:
   - community.general
   - community.rabbitmq
   - community.postgresql
+  - ansible.posix
