@@ -281,6 +281,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | nginx_vhost_http_listen_port | Configure the http listen port for trento (redirects to https by default) | 80 |
 | nginx_vhost_https_listen_port | Configure the https listen port for trento | 443 |
 | enable_api_key | Enable/Disable API key usage. Mostly for testing purposes | true |
+| enable_charts | Enable/Disable charts display based on Prometheus metrics | true |
 | web_upstream_name | Web nginx upstream name | web |
 | wanda_upstream_name | Wanda nginx upstream name | wanda |
 | amqp_protocol | Change the amqp protocol type | amqp |
