@@ -1,5 +1,19 @@
 # code: language=ansible
 ---
+- name: Check firewalld package on prometheus and trento-server hosts
+  hosts: prometheus-hosts:trento-server
+  tasks:
+    - name: Collect package facts
+      ansible.builtin.package_facts:
+        manager: auto
+    - name: Check if a specific package is installed
+      ansible.builtin.set_fact:
+        firewalld_installed: "{{ 'firewalld' in ansible_facts.packages }}"
+    - name: Check the status of firewalld
+      ansible.builtin.systemd:
+        name: firewalld.service
+      register: firewalld_status
+
 - name: Clean up trento projects
   hosts: trento-server
   become: true
@@ -29,4 +43,13 @@
     - name: Rabbitmq
       ansible.builtin.include_role:
         name: rabbitmq
+        tasks_from: cleanup
+
+- name: Prometheus cleanup
+  hosts: prometheus-hosts
+  become: true
+  tasks:
+    - name: Prometheus
+      ansible.builtin.include_role:
+        name: prometheus
         tasks_from: cleanup

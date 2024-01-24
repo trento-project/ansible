@@ -40,4 +40,7 @@
     port: "{{ prometheus_port }}/tcp"
     permanent: true
     state: enabled
-    immediate: true
+    offline: true
+  when: firewalld_installed
+  notify:
+    - Restart firewalld if running

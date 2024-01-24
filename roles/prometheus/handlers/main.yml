@@ -1,10 +1,5 @@
 # code: language=ansible
 ---
-- name: Restart nginx
-  ansible.builtin.service:
-    name: nginx
-    state: restarted
-
 - name: Restart firewalld if running
   ansible.builtin.service:
     name: firewalld
