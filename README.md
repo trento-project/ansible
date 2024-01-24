@@ -328,7 +328,11 @@ $ ansible-playbook -i inventory.yml --extra-vars @extra-vars.json playbook.clean
 
 You can test the playbook using vagrant, the default configuration in this repository assumes that you have VirtualBox, change it to what matches your setup.
 
-The `Vagrantfile` contains sane defaults for running the playbook, you can find the application running on `localhost:8080` or `trento.local:8080` if you have `trento.local` as `localhost` alias in your `/etc/hosts`.
+The `Vagrantfile` contains sane defaults for running the playbook, it assumes that you have `trento.local` as `localhost` alias in your `/etc/hosts`.
+
+You can reach the trento application using `https://trento.local:8443`.
+
+The Vagrantfile contains a self signed certificate for `trento.local` domain, make sure you accept the exception when prompted by your browser.
 
 Start the vagrant box
 
@@ -336,7 +340,7 @@ Start the vagrant box
 $ vagrant up
 ```
 
-This will spawn a vagrant box with `Opensuse Leap 15.3` as base box. The provisioning will be automatic after the box starts.
+This will spawn a vagrant box with `Opensuse Leap 15.4` as base box. The provisioning will be automatic after the box starts.
 
 Force provision the vagrant box
 
