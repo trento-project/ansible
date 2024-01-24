@@ -11,7 +11,7 @@
 - name: Create the SSL certificate and key
   no_log: true
   ansible.builtin.copy:
-    content: "{{ item.content | b64decode if item.base64 else item.content }}"
+    content: "{{ item.content | b64decode if item.base64 == 'true' else item.content }}"
     dest: "{{ item.dest }}"
     owner: root
     group: root
