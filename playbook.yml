@@ -98,7 +98,8 @@
       become: true
     - role: proxy
       when: provision_proxy == 'true'
-      become: true     
+      become: true
+
 - name: Configure trento agents
   hosts: agents
   become: true
