@@ -27,9 +27,6 @@ refresh_token_secret: "{{ lookup('community.general.random_string', base64=True,
 web_admin_username: admin
 enable_api_key: "true"
 enable_charts: "true"
-amqp_protocol: amqp
-prometheus_url: "http://host.docker.internal:9090"
-
 enable_alerting: "false"
 smtp_server: ""
 smtp_port: ""
@@ -37,3 +34,5 @@ smtp_user: ""
 smtp_password: ""
 alert_sender: "alerts@trento-project.io"
 alert_recipient: "admin@trento-project.io"
+amqp_protocol: amqp
+prometheus_url: "http://host.docker.internal:9090"
