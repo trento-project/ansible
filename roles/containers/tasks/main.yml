@@ -63,7 +63,6 @@
       ENABLE_API_KEY: "{{ enable_api_key }}"  
       CHARTS_ENABLED: "{{ enable_charts }}"
 
-
 - name: Enable alerting env variables for Web if alerting is enabeld 
   set_fact:
     web_container_env: "{{ web_container_env | combine(alerting_env) }}"
@@ -98,4 +97,3 @@
     ports:
       - "{{ web_container_port }}:4000"
     env: "{{ web_container_env }}"
-
