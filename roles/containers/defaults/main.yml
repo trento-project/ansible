@@ -30,3 +30,11 @@ enable_api_key: "true"
 enable_charts: "true"
 amqp_protocol: amqp
 prometheus_url: "http://host.docker.internal:9090"
+
+
+alert_sender: "alerts@trento-project.io"
+alert_recipient: "admin@trento-project.io"
+smtp_server: ""
+smtp_port: ""
+smtp_user: ""
+smtp_password: ""

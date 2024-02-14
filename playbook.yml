@@ -100,6 +100,18 @@
       when: provision_proxy == 'true'
       become: true
 
+#- name: Configure trento-server with optional alerting
+#  become: true
+#  vars:
+#      enable_alerting: "{{ lookup('env','enable_alerting') | default('false', true) | bool }}"
+#      alert_sender: "{{ lookup('env','alert_sender') | default('', true) }}"
+#      alert_recipient: "{{ lookup('env','alert_recipient') | default('', true) }}"
+#      smtp_server: "{{ lookup('env','smtp_server') | default('', true) }}"
+#      smtp_port: "{{ lookup('env','smtp_port') | default('', true) }}"
+#      smtp_user: "{{ lookup('env','smtp_user') | default('', true) }}"
+#      smtp_password: "{{ lookup('env','smtp_password') | default('', true) }}"
+      
+
 - name: Configure trento agents
   hosts: agents
   become: true
