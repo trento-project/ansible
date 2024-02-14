@@ -85,6 +85,25 @@ all:
 }
 ```
 
+**Example json variables  to install trento-server with the all in one node configuration and enable alerting**
+```json
+{
+    "web_postgres_password": "pass",
+    "wanda_postgres_password": "wanda",
+    "rabbitmq_password": "trento",
+    "prometheus_url": "http://localhost",
+    "web_admin_password": "adminpassword",
+    "trento_server_name": "your-server-name",
+    "enable_alerting": "true",
+    "alert_sender": "alerts@trento-project.io",
+    "alert_recipient": "admin@trento-project.io",
+    "smtp_server": "<<smtp-server-adress",
+    "smtp_port": "<<smpt-port>>",
+    "smtp_user": "<<smtp-user>>",
+    "smtp_password": "<<smtp-password>>"
+}
+```
+
 ---
 
 **Example inventory to install trento-server, provision postgres, rabbitmq and prometheus each component on dedicated node**
@@ -164,52 +183,6 @@ all:
     "nginx_ssl_key": "-----BEGIN CERTIFICATE-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDNdvcVnqJAY32h..."
 }
 ```
----
-**Example inventory to install trento-server with enabled alerting**
-
-```yaml
-all:
-  children:
-    trento-server:
-      hosts:
-        vitellone:
-          ansible_host: "your-host"
-          ansible_user: "your-user"
-    postgres-hosts:
-      hosts:
-        vitellone:
-          ansible_host: "your-host"
-          ansible_user: "your-user"
-    rabbitmq-hosts:
-      hosts:
-        vitellone:
-          ansible_host: "your-host"
-          ansible_user: "your-user"
-    prometheus-hosts:
-      hosts:
-        vitellone:
-          ansible_host: "your-host"
-          ansible_user: "your-user"
-```
-
-```json
-{
-    "trento_server_url:": "http://localhost",
-    "rabbitmq_host": "localhost",
-    "trento_api_key": "api-key-obtained-from-server",
-
-    "enable_alerting": "true",
-    "alert_sender": "alerts@trento-project.io",
-    "alert_recipient": "admin@trento-project.io",
-    "smtp_server": "<<smtp-server-adress",
-    "smtp_port": "<<smpt-port>>",
-    "smtp_user": "<<smtp-user>>",
-    "smtp_password": "<<smtp-password>>"
-}
-```
-
-
-
 ---
 **Example inventory to install the trento agents**
 
