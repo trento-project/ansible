@@ -97,10 +97,10 @@ all:
     "enable_alerting": "true",
     "alert_sender": "alerts@trento-project.io",
     "alert_recipient": "admin@trento-project.io",
-    "smtp_server": "<<smtp-server-adress",
-    "smtp_port": "<<smpt-port>>",
-    "smtp_user": "<<smtp-user>>",
-    "smtp_password": "<<smtp-password>>"
+    "smtp_server": "smtp-server-adress",
+    "smtp_port": "smpt-port",
+    "smtp_user": "smtp-user",
+    "smtp_password": "smtp-password"
 }
 ```
 
@@ -305,7 +305,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | enable_alerting | Enable the alerting mechanism on web project | false |
 | alert_sender     | Email address used as the "from" address in alerts | alerts@trento-project.io  |
 | alert_recipient  | Email address to receive alert notifications | admin@trento-project.io   |
-| smtp_server      | IP address of the email server |   |
+| smtp_server      | IP address of the SMTP server |   |
 | smtp_port        | Port number of SMTP server |   |
 | smtp_user        | Username for SMTP authentication. |   |
 | smtp_password    | Password for SMTP authentication |   |
