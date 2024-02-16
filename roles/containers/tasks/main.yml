@@ -47,6 +47,27 @@
       AMQP_URL: "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
       DATABASE_URL: "ecto://{{ wanda_postgres_user }}:{{ wanda_postgres_password }}@{{ wanda_postgres_host }}/{{ wanda_postgres_db }}"
 
+- name: Verify that alerting configuration variables are defined in json configuration if alerting is enabled
+  ansible.builtin.assert:
+    that:
+      - alerting_env is defined
+      - "{{ lookup('vars', alerting_env) | length > 0 }}"
+      - "{{ lookup('vars', alerting_env) != None }}"
+      - "{{ lookup('vars', alerting_env) != '' }}"
+
+    fail_msg: "{{ alerting_env }} needs to be set in json configuration to enable alerting"
+    success_msg: "{{ alerting_env }} is set in json configuration"
+  loop_control:
+    loop_var: alerting_env
+  with_items:
+    - smtp_server
+    - smtp_port
+    - smtp_user
+    - smtp_password
+    - alert_sender
+    - alert_recipient
+  when: enable_alerting == 'true'
+
 - name: Web container
   community.docker.docker_container:
     name: "{{ web_container_name }}"
@@ -72,12 +93,12 @@
       DATABASE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}"
       EVENTSTORE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}"
       ENABLE_ALERTING: "{{ enable_alerting }}"
-      # SMTP_SERVER: "{{ .Values.alerting.smtpServer }}"
-      # SMTP_PORT: "{{ .Values.alerting.smtpPort }}"
-      # SMTP_USER: "{{ .Values.alerting.smtpUser }}"
-      # SMTP_PASSWORD: "{{ .Values.alerting.smtpPassword }}"
-      # ALERT_SENDER: "{{ .Values.alerting.sender }}"
-      # ALERT_RECIPIENT: "{{ .Values.alerting.recipient }}"
+      SMTP_SERVER: "{{ smtp_server }}"
+      SMTP_PORT: "{{ smtp_port }}"
+      SMTP_USER: "{{ smtp_user }}"
+      SMTP_PASSWORD: "{{ smtp_password }}"
+      ALERT_SENDER: "{{ alert_sender }}"
+      ALERT_RECIPIENT: "{{ alert_recipient }}"
       PROMETHEUS_URL: "{{ prometheus_url }}"
       SECRET_KEY_BASE: "{{ secret_key_base }}"
       ACCESS_TOKEN_ENC_SECRET: "{{ access_token_secret }}"
