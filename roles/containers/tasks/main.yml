@@ -1,5 +1,15 @@
 # code: language=ansible
 ---
+- name: Create secrets
+  no_log: true
+  ansible.builtin.set_fact:
+    "{{ item }}": "{{ lookup('community.general.random_string', base64=True, length=64) }}"
+  when: lookup('vars', item) == ""
+  loop:
+    - secret_key_base
+    - access_token_secret
+    - refresh_token_secret
+
 - name: Install docker python management deps
   ansible.builtin.pip:
     name:
