@@ -21,9 +21,9 @@ wanda_postgres_db: wandadb
 rabbitmq_username: trento
 rabbitmq_host: host.docker.internal
 rabbitmq_vhost: "trento"
-secret_key_base: "{{ lookup('community.general.random_string', base64=True, length=64) }}"
-access_token_secret: "{{ lookup('community.general.random_string', base64=True, length=64) }}"
-refresh_token_secret: "{{ lookup('community.general.random_string', base64=True, length=64) }}"
+secret_key_base: ""
+access_token_secret: ""
+refresh_token_secret: ""
 web_admin_username: admin
 enable_api_key: "true"
 enable_charts: "true"
