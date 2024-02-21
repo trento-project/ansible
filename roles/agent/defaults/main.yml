@@ -2,4 +2,5 @@
 trento_server_url: http://localhost:4000
 trento_repository: "https://download.opensuse.org/repositories/devel:sap:trento:factory/SLE_15_SP3/"
 rabbitmq_username: trento
+rabbitmq_vhost: trento
 rabbitmq_host: localhost:5672
