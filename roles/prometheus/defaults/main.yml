@@ -1,2 +1,3 @@
 prometheus_port: 9090
-web_container_host: http://localhost:4000
+web_host: http://localhost
+web_container_port: "{{ 32767 | random(start=1024, seed=trento_server_name) }}"
