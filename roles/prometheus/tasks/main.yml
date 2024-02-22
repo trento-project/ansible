@@ -31,11 +31,13 @@
 
 - name: Place prometheus config
   ansible.builtin.template:
-    src: prometheus.yaml.j2
-    dest: /etc/prometheus/prometheus.yaml
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
     owner: prometheus
     group: prometheus
     mode: "0644"
+  notify:
+    - Restart prometheus
 
 - name: Enable prometheus service
   ansible.builtin.service:
