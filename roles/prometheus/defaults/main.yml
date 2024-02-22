@@ -1,2 +1,2 @@
 prometheus_port: 9090
-web_container_host: http://localhost
+web_container_host: http://localhost:4000
