@@ -5,3 +5,8 @@
     name: firewalld
     state: restarted
   when: firewalld_status.status.ActiveState == "active"
+
+- name: Restart prometheus
+  ansible.builtin.service:
+    name: prometheus
+    state: restarted
