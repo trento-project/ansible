@@ -323,6 +323,9 @@ These variables are the defaults of our roles, if you want to override the prope
 | amqp_protocol | Change the amqp protocol type | amqp |
 | prometheus_url | Prometheus server url | http://host.docker.internal:9090 |
 | web_host | Host where the web instance is listening | http://localhost |
+| web_rpm_listen_port | Port where trento-web will listen on when installed through RPM | 4000 |
+| wanda_rpm_listen_port | Port where trento-wanda will listen on when installed through RPM | 4001 |
+| install_method | Installation method for trento components, can be either `rpm` or `docker` | rpm |
 
 **trento agents**
 
