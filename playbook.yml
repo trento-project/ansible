@@ -33,20 +33,6 @@
         state: present
         update_cache: true
 
-    - name: Install docker
-      community.general.zypper:
-        name: docker
-        state: present
-        update_cache: true
-      when: install_method == 'docker'
-
-    - name: Start docker service
-      ansible.builtin.service:
-        name: docker
-        state: started
-        enabled: true
-      when: install_method == 'docker'
-
 - name: Check firewalld package on prometheus and trento-server hosts
   hosts: prometheus-hosts:trento-server
   tasks:
