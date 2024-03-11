@@ -94,25 +94,16 @@
     - role: rabbitmq
       when: provision_rabbitmq == 'true'
 
-- name: Configure trento components as docker images
+- name: Configure trento components
   vars:
     provision_proxy: "true"
+    install_method: "rpm"
   hosts: trento-server
   become: true
   roles:
     - role: containers
       become: true
       when: install_method == 'docker'
-    - role: proxy
-      when: provision_proxy == 'true'
-      become: true
-
-- name: Configure trento components through RPM installation
-  vars:
-    provision_proxy: "true"
-  hosts: trento-server
-  become: true
-  roles:
     - role: trento_rpms
       when: install_method == 'rpm'
       become: true
