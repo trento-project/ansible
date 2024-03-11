@@ -1,0 +1,8 @@
+---
+- name: Include Docker cleanup tasks
+  include_tasks: install_docker_cleanup.yml
+  when: install_method == 'docker'
+
+- name: Include RPM cleanup tasks
+  include_tasks: install_rpm_cleanup.yml
+  when: install_method == 'rpm'

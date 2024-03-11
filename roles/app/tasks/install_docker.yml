@@ -1,5 +1,8 @@
 # code: language=ansible
 ---
+- name: include Docker installation variables
+  include_vars: "../defaults/install_docker.yml"
+
 - name: Install docker
   community.general.zypper:
     name: docker
@@ -61,7 +64,7 @@
     etc_hosts:
       host.docker.internal: "host-gateway"
     ports:
-      - "{{ wanda_container_port }}:4000"
+      - "{{ wanda_listen_port }}:4000"
     env:
       CORS_ORIGIN: "http://localhost" # TODO: Remove placeholder
       SECRET_KEY_BASE: "{{ secret_key_base }}"

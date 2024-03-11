@@ -277,10 +277,10 @@ These variables are the defaults of our roles, if you want to override the prope
 | docker_network_name | Name of the docker network interface | trentonet |
 | web_container_image | Name of the Web container image to use to create the container | ghcr.io/trento-project/trento-web:rolling |
 | web_container_name | Name of the Web container | trento_web |
-| web_container_port | Port where the Web container is exposed | 4000 |
+| web_listen_port | Port where the Web container is exposed | 4000 |
 | wanda_container_image | Name of the Wanda container image to use to create the container | ghcr.io/trento-project/trento-wanda:rolling |
 | wanda_container_name | Name of the Wanda container | trento_wanda |
-| wanda_container_port | Port where the Wanda container is exposed | 4001 |
+| wanda_listen_port | Port where the Wanda service is exposed | 4001 |
 | force_pull_images | Force pull the container images for trento components | false |
 | force_recreate_web_container | Recreate the web container | false |
 | force_recreate_wanda_container | Recreate the wanda container | false |
@@ -323,8 +323,6 @@ These variables are the defaults of our roles, if you want to override the prope
 | amqp_protocol | Change the amqp protocol type | amqp |
 | prometheus_url | Prometheus server url | http://host.docker.internal:9090 |
 | web_host | Host where the web instance is listening | http://localhost |
-| web_rpm_listen_port | Port where trento-web will listen on when installed through RPM | 4000 |
-| wanda_rpm_listen_port | Port where trento-wanda will listen on when installed through RPM | 4001 |
 | install_method | Installation method for trento components, can be either `rpm` or `docker` | rpm |
 
 **trento agents**

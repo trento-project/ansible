@@ -3,8 +3,6 @@
 - name: Install thirdparties
   hosts: trento-server
   become: true
-  vars:
-    install_method: "rpm"
   pre_tasks:
     - name: Check SLES distribution and version
       ansible.builtin.fail:
@@ -55,6 +53,7 @@
   become: true
   vars:
     provision_postgres: "true"
+    install_method: "rpm"
   hosts: postgres-hosts
   roles:
     - role: postgres
@@ -87,11 +86,7 @@
   hosts: trento-server
   become: true
   roles:
-    - role: containers
-      become: true
-      when: install_method == 'docker'
-    - role: trento_rpms
-      when: install_method == 'rpm'
+    - role: app
       become: true
     - role: proxy
       when: provision_proxy == 'true'

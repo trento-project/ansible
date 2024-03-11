@@ -1,0 +1,7 @@
+---
+- name: Include Docker installation tasks
+  include_tasks: install_docker.yml
+  when: install_method == 'docker'
+
+- name: Include RPM installation tasks
+  include_tasks: install_rpm.yml
