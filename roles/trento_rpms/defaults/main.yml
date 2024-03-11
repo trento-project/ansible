@@ -3,9 +3,11 @@ web_postgres_db: webdb
 web_postgres_event_store: event_store
 web_postgres_user: web
 web_postgres_host: "localhost"
+web_rpm_listen_port: 4000
 wanda_postgres_host: "localhost"
 wanda_postgres_user: wanda
 wanda_postgres_db: wandadb
+wanda_rpm_listen_port: 4001
 rabbitmq_username: trento
 rabbitmq_host: localhost
 rabbitmq_vhost: "trento"
