@@ -3,6 +3,8 @@
 - name: Install thirdparties
   hosts: trento-server
   become: true
+  vars:
+    install_method: "rpm"
   pre_tasks:
     - name: Check SLES distribution and version
       ansible.builtin.fail:
@@ -17,7 +19,6 @@
       community.general.zypper:
         name:
           - gcc
-          - python3-devel
           - sudo
 
     - name: Install python prerequisites
@@ -26,6 +27,9 @@
           - python3-setuptools
           - python3-pip
           - python3-pexpect
+          - python3-devel
+          - python3-rpm
+
         state: present
         update_cache: true
 
@@ -34,12 +38,14 @@
         name: docker
         state: present
         update_cache: true
+      when: install_method == 'docker'
 
     - name: Start docker service
       ansible.builtin.service:
         name: docker
         state: started
         enabled: true
+      when: install_method == 'docker'
 
 - name: Check firewalld package on prometheus and trento-server hosts
   hosts: prometheus-hosts:trento-server
@@ -88,13 +94,27 @@
     - role: rabbitmq
       when: provision_rabbitmq == 'true'
 
-- name: Configure trento projects
+- name: Configure trento components as docker images
   vars:
     provision_proxy: "true"
   hosts: trento-server
   become: true
   roles:
     - role: containers
+      become: true
+      when: install_method == 'docker'
+    - role: proxy
+      when: provision_proxy == 'true'
+      become: true
+
+- name: Configure trento components through RPM installation
+  vars:
+    provision_proxy: "true"
+  hosts: trento-server
+  become: true
+  roles:
+    - role: trento_rpms
+      when: install_method == 'rpm'
       become: true
     - role: proxy
       when: provision_proxy == 'true'

@@ -22,6 +22,10 @@
       ansible.builtin.include_role:
         name: containers
         tasks_from: cleanup
+    - name: RPMs
+      ansible.builtin.include_role:
+        name: trento_rpms
+        tasks_from: cleanup
     - name: Proxy
       ansible.builtin.include_role:
         name: proxy

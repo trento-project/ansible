@@ -41,6 +41,17 @@
     address: "0.0.0.0/0"
     method: "md5"
 
+- name: Configure pg_hba to accept connection from local trento-web and trento-wanda services
+  become_user: postgres
+  notify: Restart postgres
+  community.postgresql.postgresql_pg_hba:
+    contype: host
+    dest: "/var/lib/pgsql/data/pg_hba.conf"
+    databases: all
+    users: all
+    address: "127.0.0.1/32"
+    method: "md5"
+
 - name: Create postgres web database
   become_user: postgres
   community.postgresql.postgresql_db:

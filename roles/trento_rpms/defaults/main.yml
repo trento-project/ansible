@@ -1,0 +1,26 @@
+---
+web_postgres_db: webdb
+web_postgres_event_store: event_store
+web_postgres_user: web
+web_postgres_host: "localhost"
+wanda_postgres_host: "localhost"
+wanda_postgres_user: wanda
+wanda_postgres_db: wandadb
+rabbitmq_username: trento
+rabbitmq_host: localhost
+rabbitmq_vhost: "trento"
+secret_key_base: ""
+access_token_secret: ""
+refresh_token_secret: ""
+web_admin_username: admin
+enable_api_key: "true"
+enable_charts: "true"
+enable_alerting: "false"
+smtp_server: ""
+smtp_port: ""
+smtp_user: ""
+smtp_password: ""
+alert_sender: ""
+alert_recipient: ""
+amqp_protocol: amqp
+prometheus_url: "http://localhost:9090"
