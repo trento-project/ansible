@@ -1,7 +1,45 @@
 ---
+- name: Check installation method
+  ansible.builtin.assert:
+    that:
+      - install_method is defined
+      - install_method in ['docker', 'rpm']
+    fail_msg: "install_method value must be one of: docker|rpm"
+
+- name: Create secrets
+  no_log: true
+  ansible.builtin.set_fact: # noqa: var-naming[no-jinja]
+    "{{ item }}": "{{ lookup('community.general.random_string', base64=True, length=64) }}"
+  when: lookup('vars', item) == ""
+  loop:
+    - secret_key_base
+    - access_token_secret
+    - refresh_token_secret
+
+- name: Verify that alerting configuration variables are defined if alerting is enabled
+  ansible.builtin.assert:
+    that:
+      - alerting_env is defined
+      - "{{ lookup('vars', alerting_env) | length > 0 }}"
+      - "{{ lookup('vars', alerting_env) != None }}"
+      - "{{ lookup('vars', alerting_env) != '' }}"
+    fail_msg: "{{ alerting_env }} needs to be set in playbook variables to enable alerting"
+    success_msg: "{{ alerting_env }} is set in playbook variables"
+  loop_control:
+    loop_var: alerting_env
+  with_items:
+    - smtp_server
+    - smtp_port
+    - smtp_user
+    - smtp_password
+    - alert_sender
+    - alert_recipient
+  when: enable_alerting == 'true'
+
 - name: Include Docker installation tasks
-  include_tasks: install_docker.yml
+  ansible.builtin.include_tasks: docker.yml
   when: install_method == 'docker'
 
 - name: Include RPM installation tasks
-  include_tasks: install_rpm.yml
+  ansible.builtin.include_tasks: rpm.yml
+  when: install_method == 'rpm'

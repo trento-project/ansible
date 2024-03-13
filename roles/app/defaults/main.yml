@@ -3,9 +3,7 @@ web_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) }}"
 web_postgres_db: webdb
 web_postgres_event_store: event_store
 web_postgres_user: web
-web_postgres_host: "{{ hostvars['postgres-hosts']['ansible_default_ipv4']['address'] }}"
 wanda_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) + 1 }}"
-wanda_postgres_host: "{{ hostvars['postgres-hosts']['ansible_default_ipv4']['address'] }}"
 wanda_postgres_user: wanda
 wanda_postgres_db: wandadb
 rabbitmq_username: trento
@@ -24,3 +22,4 @@ smtp_password: ""
 alert_sender: ""
 alert_recipient: ""
 amqp_protocol: amqp
+install_method: rpm

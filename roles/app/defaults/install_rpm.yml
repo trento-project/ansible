@@ -1,3 +1,0 @@
----
-rabbitmq_host: host.docker.internal
-prometheus_url: "http://host.docker.internal:9090"

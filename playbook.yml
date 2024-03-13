@@ -27,7 +27,6 @@
           - python3-pexpect
           - python3-devel
           - python3-rpm
-
         state: present
         update_cache: true
 
@@ -53,7 +52,6 @@
   become: true
   vars:
     provision_postgres: "true"
-    install_method: "rpm"
   hosts: postgres-hosts
   roles:
     - role: postgres
@@ -82,7 +80,6 @@
 - name: Configure trento components
   vars:
     provision_proxy: "true"
-    install_method: "rpm"
   hosts: trento-server
   become: true
   roles:

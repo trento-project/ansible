@@ -11,4 +11,4 @@ scrape_configs:
     http_sd_configs:
     - follow_redirects: true
       refresh_interval: 1m
-      url: {{ web_host }}:{{ web_container_port }}/api/prometheus/targets
+      url: {{ web_host }}:{{ web_listen_port }}/api/prometheus/targets

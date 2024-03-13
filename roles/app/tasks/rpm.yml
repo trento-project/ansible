@@ -1,17 +1,7 @@
 # code: language=ansible
 ---
 - name: Include RPM installation vars
-  include_vars: "../defaults/install_rpm.yml"
-
-- name: Create secrets
-  no_log: true
-  ansible.builtin.set_fact: # noqa: var-naming[no-jinja]
-    "{{ item }}": "{{ lookup('community.general.random_string', base64=True, length=64) }}"
-  when: lookup('vars', item) == ""
-  loop:
-    - secret_key_base
-    - access_token_secret
-    - refresh_token_secret
+  ansible.builtin.include_vars: "../defaults/rpm.yml"
 
 - name: Install trento-web
   community.general.zypper:
@@ -20,10 +10,6 @@
       - trento-wanda
     state: present
     update_cache: true
-
-- name: Print all available facts
-  ansible.builtin.debug:
-    var: hostvars
 
 - name: Configure trento-web config
   ansible.builtin.template:

@@ -1,7 +1,7 @@
 # code: language=ansible
 ---
-- name: include Docker installation variables
-  include_vars: "../defaults/install_docker.yml"
+- name: Include Docker installation variables
+  ansible.builtin.include_vars: "../defaults/docker.yml"
 
 - name: Install docker
   community.general.zypper:
@@ -14,16 +14,6 @@
     name: docker
     state: started
     enabled: true
-
-- name: Create secrets
-  no_log: true
-  ansible.builtin.set_fact: # noqa: var-naming[no-jinja]
-    "{{ item }}": "{{ lookup('community.general.random_string', base64=True, length=64) }}"
-  when: lookup('vars', item) == ""
-  loop:
-    - secret_key_base
-    - access_token_secret
-    - refresh_token_secret
 
 - name: Install docker python management deps
   ansible.builtin.pip:
@@ -72,27 +62,6 @@
       AMQP_URL: "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
       DATABASE_URL: "ecto://{{ wanda_postgres_user }}:{{ wanda_postgres_password }}@{{ wanda_postgres_host }}/{{ wanda_postgres_db }}"
 
-- name: Verify that alerting configuration variables are defined if alerting is enabled
-  ansible.builtin.assert:
-    that:
-      - alerting_env is defined
-      - "{{ lookup('vars', alerting_env) | length > 0 }}"
-      - "{{ lookup('vars', alerting_env) != None }}"
-      - "{{ lookup('vars', alerting_env) != '' }}"
-
-    fail_msg: "{{ alerting_env }} needs to be set in playbook variables to enable alerting"
-    success_msg: "{{ alerting_env }} is set in playbook variables"
-  loop_control:
-    loop_var: alerting_env
-  with_items:
-    - smtp_server
-    - smtp_port
-    - smtp_user
-    - smtp_password
-    - alert_sender
-    - alert_recipient
-  when: enable_alerting == 'true'
-
 - name: Web container
   community.docker.docker_container:
     name: "{{ web_container_name }}"
@@ -112,7 +81,7 @@
     etc_hosts:
       host.docker.internal: "host-gateway"
     ports:
-      - "{{ web_container_port }}:4000"
+      - "{{ web_listen_port }}:4000"
     env:
       AMQP_URL: "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
       DATABASE_URL: "ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}"

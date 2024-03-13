@@ -277,7 +277,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | docker_network_name | Name of the docker network interface | trentonet |
 | web_container_image | Name of the Web container image to use to create the container | ghcr.io/trento-project/trento-web:rolling |
 | web_container_name | Name of the Web container | trento_web |
-| web_listen_port | Port where the Web container is exposed | 4000 |
+| web_listen_port | Port where the Web service is exposed | 4000 |
 | wanda_container_image | Name of the Wanda container image to use to create the container | ghcr.io/trento-project/trento-wanda:rolling |
 | wanda_container_name | Name of the Wanda container | trento_wanda |
 | wanda_listen_port | Port where the Wanda service is exposed | 4001 |

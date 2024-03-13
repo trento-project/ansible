@@ -1,10 +1,10 @@
 # code: language=ansible
 ---
-- name: Install erlang
-  community.general.zypper:
-    name: erlang
-    state: present
-    update_cache: true
+# - name: Install erlang
+#   community.general.zypper:
+#     name: erlang
+#     state: present
+#     update_cache: true
 
 - name: Install rabbitmq
   community.general.zypper:
