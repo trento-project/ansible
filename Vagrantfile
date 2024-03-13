@@ -17,7 +17,7 @@ Vagrant.configure(2) do |config|
       wanda_postgres_password: "wanda",
       rabbitmq_password: "trento",
       nginx_vhost_filename: "trento.conf",
-      prometheus_url: "http://localhost",
+      prometheus_url: "http://localhost:9090",
       web_admin_password: "adminpassword",
       trento_server_name: "trento.local",
       nginx_ssl_cert_as_base64: "false",

@@ -79,7 +79,7 @@ all:
     "web_postgres_password": "pass",
     "wanda_postgres_password": "wanda",
     "rabbitmq_password": "trento",
-    "prometheus_url": "http://localhost",
+    "prometheus_url": "http://localhost:9090",
     "web_admin_password": "adminpassword",
     "trento_server_name": "your-server-name"
 }
@@ -91,7 +91,7 @@ all:
     "web_postgres_password": "pass",
     "wanda_postgres_password": "wanda",
     "rabbitmq_password": "trento",
-    "prometheus_url": "http://localhost",
+    "prometheus_url": "http://localhost:9090",
     "web_admin_password": "adminpassword",
     "trento_server_name": "your-server-name",
     "enable_alerting": "true",
@@ -143,7 +143,7 @@ all:
     "web_postgres_password": "pass",
     "wanda_postgres_password": "wanda",
     "rabbitmq_password": "trento",
-    "prometheus_url": "http://localhost",
+    "prometheus_url": "http://localhost:9090",
     "web_admin_password": "adminpassword",
     "trento_server_name": "yourserver.com",
 }
@@ -176,7 +176,7 @@ all:
     "web_postgres_user": "postgres",
     "wanda_postgres_user": "postgres",
     "rabbitmq_username": "trentoansible",
-    "prometheus_url": "http://localhost",
+    "prometheus_url": "http://localhost:9090",
     "web_admin_password": "adminpassword",
     "trento_server_name": "your-servername.com",
     "nginx_ssl_cert": "-----BEGIN CERTIFICATE-----\nMIIEKTCCAxGgAwIBAgIUbIzbLpJrkKk8vs1oLzFDpPL...",
@@ -321,7 +321,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | web_upstream_name | Web nginx upstream name | web |
 | wanda_upstream_name | Wanda nginx upstream name | wanda |
 | amqp_protocol | Change the amqp protocol type | amqp |
-| prometheus_url | Prometheus server url | http://host.docker.internal:9090 |
+| prometheus_url | Prometheus server url | http://localhost:9090 |
 | web_host | Host where the web instance is listening | http://localhost |
 | install_method | Installation method for trento components, can be either `rpm` or `docker` | rpm |
 
