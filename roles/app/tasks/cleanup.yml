@@ -1,0 +1,15 @@
+---
+- name: Check installation method
+  ansible.builtin.assert:
+    that:
+      - install_method is defined
+      - install_method in ['docker', 'rpm']
+    fail_msg: "install_method value must be one of: docker|rpm"
+
+- name: Include Docker cleanup tasks
+  ansible.builtin.include_tasks: docker_cleanup.yml
+  when: install_method == 'docker'
+
+- name: Include RPM cleanup tasks
+  ansible.builtin.include_tasks: rpm_cleanup.yml
+  when: install_method == 'rpm'

@@ -1,0 +1,47 @@
+# code: language=ansible
+---
+- name: Include RPM installation vars
+  ansible.builtin.include_vars: "../defaults/rpm.yml"
+
+- name: Install Trento RPM packages
+  community.general.zypper:
+    name:
+      - trento-web
+      - trento-wanda
+    state: latest
+    update_cache: true
+  notify:
+    - Restart trento-web
+    - Restart trento-wanda
+
+- name: Configure trento-web config
+  ansible.builtin.template:
+    src: trento-web.j2
+    dest: /etc/trento/trento-web
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart trento-web
+
+- name: Configure trento-wanda config
+  ansible.builtin.template:
+    src: trento-wanda.j2
+    dest: /etc/trento/trento-wanda
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart trento-wanda
+
+- name: Start trento-web service
+  ansible.builtin.service:
+    name: trento-web
+    state: started
+    enabled: true
+
+- name: Start trento-wanda service
+  ansible.builtin.service:
+    name: trento-wanda
+    state: started
+    enabled: true

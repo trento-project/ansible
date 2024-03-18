@@ -1,0 +1,25 @@
+---
+web_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) }}"
+web_postgres_db: webdb
+web_postgres_event_store: event_store
+web_postgres_user: web
+wanda_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) + 1 }}"
+wanda_postgres_user: wanda
+wanda_postgres_db: wandadb
+rabbitmq_username: trento
+rabbitmq_vhost: "trento"
+secret_key_base: ""
+access_token_secret: ""
+refresh_token_secret: ""
+web_admin_username: admin
+enable_api_key: "true"
+enable_charts: "true"
+enable_alerting: "false"
+smtp_server: ""
+smtp_port: ""
+smtp_user: ""
+smtp_password: ""
+alert_sender: ""
+alert_recipient: ""
+amqp_protocol: amqp
+install_method: rpm

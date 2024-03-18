@@ -14,13 +14,13 @@
         name: firewalld.service
       register: firewalld_status
 
-- name: Clean up trento projects
+- name: Clean up trento components
   hosts: trento-server
   become: true
   tasks:
-    - name: Containers
+    - name: Trento services
       ansible.builtin.include_role:
-        name: containers
+        name: app
         tasks_from: cleanup
     - name: Proxy
       ansible.builtin.include_role:

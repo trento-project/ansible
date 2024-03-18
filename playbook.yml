@@ -17,7 +17,6 @@
       community.general.zypper:
         name:
           - gcc
-          - python3-devel
           - sudo
 
     - name: Install python prerequisites
@@ -26,20 +25,10 @@
           - python3-setuptools
           - python3-pip
           - python3-pexpect
+          - python3-devel
+          - python3-rpm
         state: present
         update_cache: true
-
-    - name: Install docker
-      community.general.zypper:
-        name: docker
-        state: present
-        update_cache: true
-
-    - name: Start docker service
-      ansible.builtin.service:
-        name: docker
-        state: started
-        enabled: true
 
 - name: Check firewalld package on prometheus and trento-server hosts
   hosts: prometheus-hosts:trento-server
@@ -88,13 +77,13 @@
     - role: rabbitmq
       when: provision_rabbitmq == 'true'
 
-- name: Configure trento projects
+- name: Configure trento components
   vars:
     provision_proxy: "true"
   hosts: trento-server
   become: true
   roles:
-    - role: containers
+    - role: app
       become: true
     - role: proxy
       when: provision_proxy == 'true'

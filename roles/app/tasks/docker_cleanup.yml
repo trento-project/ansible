@@ -1,5 +1,8 @@
 # code: language=ansible
 ---
+- name: Include Docker installation variables
+  ansible.builtin.include_vars: "../defaults/docker.yml"
+
 - name: Stop wanda container
   community.docker.docker_container:
     name: "{{ wanda_container_name }}"

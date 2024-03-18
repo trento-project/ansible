@@ -47,8 +47,8 @@
     mode: "0644"
   vars:
     server_name: "{{ trento_server_name }}"
-    wanda_port: "{{ wanda_container_port }}"
-    web_port: "{{ web_container_port }}"
+    wanda_port: "{{ wanda_listen_port }}"
+    web_port: "{{ web_listen_port }}"
     http_listen_port: "{{ nginx_vhost_http_listen_port }}"
     https_listen_port: "{{ nginx_vhost_https_listen_port }}"
     wanda_upstream: "{{ wanda_upstream_name }}"

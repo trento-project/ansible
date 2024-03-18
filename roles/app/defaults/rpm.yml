@@ -1,0 +1,5 @@
+---
+web_postgres_host: "localhost"
+wanda_postgres_host: "localhost"
+rabbitmq_host: "localhost"
+prometheus_url: "http://localhost:9090"

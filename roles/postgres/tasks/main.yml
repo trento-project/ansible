@@ -30,16 +30,18 @@
     value: "*"
   notify: Restart postgres
 
-- name: Configure pg_hba to accept connection from trento containers
+# this task is implemented with `lineinfile` instead of `pg_hba` module
+# as the second want does not provide any option to set the order of
+# the new entry, and this case, the new entry must be pretty much on top
+# of the host entries to apply properly the precedence of rules
+- name: Configure pg_hba to accept connection from trento services
   become_user: postgres
   notify: Restart postgres
-  community.postgresql.postgresql_pg_hba:
-    contype: host
-    dest: "/var/lib/pgsql/data/pg_hba.conf"
-    databases: all
-    users: all
-    address: "0.0.0.0/0"
-    method: "md5"
+  ansible.builtin.lineinfile:
+    path: /var/lib/pgsql/data/pg_hba.conf
+    regexp: "^host.*{{ web_postgres_db }},{{ web_postgres_event_store }},{{ wanda_postgres_db }}"
+    insertafter: "^local.*all.*all.*peer"
+    line: "host\t{{ web_postgres_db }},{{ web_postgres_event_store }},{{ wanda_postgres_db }}\t{{ web_postgres_user }},{{ wanda_postgres_user }}\t0.0.0.0/0\tmd5"
 
 - name: Create postgres web database
   become_user: postgres
