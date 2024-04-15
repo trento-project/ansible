@@ -1,0 +1,8 @@
+{
+    "web_postgres_password": "pass",
+    "wanda_postgres_password": "wanda",
+    "rabbitmq_password": "trento",
+    "prometheus_url": "http://localhost:9090",
+    "web_admin_password": "adminpassword",
+    "trento_server_name": "your-server-name"
+}
