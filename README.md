@@ -120,6 +120,12 @@ Create a vars.json file, following the example below:
 
 ### 4. Run the playbook:
 
+Prior to running the playbook, tell ansible to fetch the required modules:
+```
+ansible-galaxy collection install -r requirements.yml
+```
+
+Run the playbook:
 ```
 ansible-playbook -i path/to/inventory.yml --extra-vars "@path/to/vars.json" playbook.yml
 ```
