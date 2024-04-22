@@ -4,6 +4,6 @@ This example portrays a single-node configuration, where all nodes are deployed 
 Agent nodes are *not* deployed with this configuration.
 
 Two variants are available:
- - vars-with-alerting.json: In this example, we set up alerting and set the SMTP configuration. With this, important alerts should arrive at the
+ - vars-with-alerting.json: In this example, we set up alerting and set the SMTP configuration. Alerts should arrive at the
    provided email.
  - vars.json: No alerting enabled.
