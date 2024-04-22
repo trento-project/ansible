@@ -1,4 +1,4 @@
-This example portraits the deployment of some agent nodes. In this deployment:
+This example portrays the deployment of some agent nodes. In this deployment:
  - hana01: Agent deployment
  - hana02: Agent deployment
 
