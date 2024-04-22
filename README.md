@@ -21,9 +21,8 @@ This playbook aims to install Trento components and the belonging third parties.
 - nginx
 
 The third parties are installed using `zypper` packages and configured with dedicated roles. The
-`web` and `wanda` components can be installed using either containers or RPMs. The playbook will
-check the variable `install_method` and depending on the value found (either `docker` or `rpm`) to
-decide which to use.
+`web` and `wanda` components can be installed using either docker or zypper. The playbook checks
+the `install_method` variable (either `docker` or `rpm`) to determine which to method to use.
 
 The `agent` is installed from the configured obs repository using `zypper`.
 
@@ -31,8 +30,8 @@ The nginx configuration acts as a reverse proxy for all the components.
 
 ### SUSE LINUX ENTERPRISE USERS
 
-This playbook assumes that the server where you are going to install trento-server has an activated license
-of one of the supported OSs, with the modules (Change `x` to match your current version)
+**This playbook requires that the host where you are going to install trento-server has an activated license**
+for one of the supported OSs, with the following modules (Change `x` to match your current version):
 
 - Basesystem Module 15 x86_64 - `SUSEConnect -p sle-module-basesystem/15.x/x86_64`
 - SUSE Package Hub 15 x86_64 - ` SUSEConnect -p PackageHub/15.x/x86_64`
@@ -40,18 +39,23 @@ of one of the supported OSs, with the modules (Change `x` to match your current 
 
 ## Usage
 
-### 1. Clone the repository:
+### 1. Clone the repository
 
 `git clone https://github.com/trento-project/ansible.git`
 
-### 2. Prepare your inventory file:
+### 2. Prepare your inventory file
 
 Get to the `ansible` directory:
 `cd ansible`
 
+Make sure all hosts with active roles allow access from the machine that is executing the playbook:
+
+```
+ssh-copy-id root@192.168.1.1
+```
+
 Create an `inventory.yml` file, defining the IP address of the machine where each role will be deployed to. You might use the same machine for more
-than one role. Use `;` to comment out any role that you might not want to cover. Here we assume that we have a valid SSH key in `~/.ssh/id_rsa` to
-access each of the machines.
+than one role. Use `;` to comment out any role that you might not want to cover.
 
 Example:
 
@@ -99,7 +103,7 @@ all:
           ansible_user: "your-user"
 ```
 
-### 3. Setup plabook variables:
+### 3. Setup playbook variables
 
 Create a vars.json file, following the example below:
 
@@ -118,7 +122,7 @@ Create a vars.json file, following the example below:
 }
 ```
 
-### 4. Run the playbook:
+### 4. Run the playbook
 
 Prior to running the playbook, tell ansible to fetch the required modules:
 ```
@@ -131,7 +135,8 @@ ansible-playbook -i path/to/inventory.yml --extra-vars "@path/to/vars.json" play
 ```
 
 > **Note**: <br />
-> to have a fully functional deployment make sure to use either an **external IP** or an **internal IP** for `rabbitmq_host` based on the infra network configuration. <br />
+> For a fully functional deployment be sure to use either an **external IP** or an **internal IP** for `rabbitmq_host` based on the infra network configuration.
+> 
 > Additionally, retrieving the actual api-key from the server is not supported yet, so use `"enable_api_key": "false"` in extra vars as any value in `trento_api_key` would be ineffective.
 
 Both trento-server and agent inventory and variables file can be combined to deploy both at the same ansible execution.
