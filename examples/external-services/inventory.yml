@@ -1,0 +1,7 @@
+all:
+  children:
+    trento-server:
+      hosts:
+        vitellone:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
