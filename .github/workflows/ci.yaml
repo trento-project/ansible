@@ -68,16 +68,15 @@ jobs:
     needs: [build-and-push-container-images]
     strategy:
       matrix:
-        sp_version: ['SP3', 'SP4', 'SP5']
         include:
           - sp_version: 'SP3'
-            host_ip: ${{ secrets.TEST_SP3_HOST_IP }}
+            host_ip: TEST_SP3_HOST_IP
           - sp_version: 'SP4'
-            host_ip: ${{ secrets.TEST_SP4_HOST_IP }}
+            host_ip: TEST_SP4_HOST_IP
           - sp_version: 'SP5'
-            host_ip: ${{ secrets.TEST_SP5_HOST_IP }}
+            host_ip: TEST_SP5_HOST_IP
     env:
-      TEST_HOST_IP: ${{ matrix.host_ip }}
+      TEST_HOST_IP: ${{ secrets[matrix.host_ip] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
