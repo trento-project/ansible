@@ -106,6 +106,10 @@ all:
 ### 3. Setup playbook variables
 
 Create a vars.json file, following the example below:
+> **Note**: <br />
+> For a fully functional deployment be sure to use either an **external IP** or an **internal IP** for `rabbitmq_host` based on the infra network configuration.
+> 
+> Additionally, retrieving the actual api-key from the server is not supported yet, so use `"enable_api_key": "false"` in extra vars as any value in `trento_api_key` would be ineffective.
 
 ```
 {
@@ -134,10 +138,6 @@ Run the playbook:
 ansible-playbook -i path/to/inventory.yml --extra-vars "@path/to/vars.json" playbook.yml
 ```
 
-> **Note**: <br />
-> For a fully functional deployment be sure to use either an **external IP** or an **internal IP** for `rabbitmq_host` based on the infra network configuration.
-> 
-> Additionally, retrieving the actual api-key from the server is not supported yet, so use `"enable_api_key": "false"` in extra vars as any value in `trento_api_key` would be ineffective.
 
 Both trento-server and agent inventory and variables file can be combined to deploy both at the same ansible execution.
 
