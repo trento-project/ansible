@@ -133,6 +133,10 @@ Prior to running the playbook, tell ansible to fetch the required modules:
 ansible-galaxy collection install -r requirements.yml
 ```
 
+> **Note**: <br />
+> The `@` character in front of the `vars.json` path is mandatory. This tells `ansible-playbook` that the variables will not be specified in-line but
+> as an external file instead.
+
 Run the playbook:
 ```
 ansible-playbook -i path/to/inventory.yml --extra-vars "@path/to/vars.json" playbook.yml
