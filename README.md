@@ -107,9 +107,13 @@ all:
 
 Create a vars.json file, following the example below:
 > **Note**: <br />
-> For a fully functional deployment be sure to use either an **external IP** or an **internal IP** for `rabbitmq_host` based on the infra network configuration.
+> The default values for variables ending with `_host` usually point to `host.docker.internal` when uing `docker` install method and `localhost` when
+> using `rpm` install method. These work for single-host deployments but be sure to set them explicitly when pointing to manually deployed services
+> either with an **external IP** or an **internal IP** based on the infra network configuration or when using multi-node deployments.
 > 
-> Additionally, retrieving the actual api-key from the server is not supported yet, so use `"enable_api_key": "false"` in extra vars as any value in `trento_api_key` would be ineffective.
+> Additionally, when deploying trento agents using the playbook, api-key auto retrieval from the server is not supported yet, so either 
+> use `"enable_api_key": "false"` and skip `trento_api_key` altogether or disable agent deployment for the first run, retrieve the api-key from the UI
+> and set the `trento_api_key` accordingly.
 
 ```
 {
