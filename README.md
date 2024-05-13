@@ -106,6 +106,12 @@ all:
 ### 3. Setup playbook variables
 
 Create a vars.json file, following the example below:
+> **Note**: <br />
+> The default values for variables ending with `_host` usually point to:
+>  - `host.docker.internal` when using `docker` install method
+>  - `localhost` in the case of `rpm` install method.
+> These work for single-host deployments but be sure to set them explicitly when pointing to manually deployed 
+> services either with an **external IP** or an **internal IP** based on the infra network configuration or when using multi-node deployments.
 
 ```
 {
@@ -121,6 +127,9 @@ Create a vars.json file, following the example below:
   "nginx_ssl_key": "<paste your SSL certificate key here in base64>"
 }
 ```
+> Additionally, when deploying trento agents using the playbook, api-key auto retrieval from the server is not supported yet, so either 
+> use `"enable_api_key": "false"` and skip `trento_api_key` altogether or disable agent deployment for the first run, retrieve the api-key from the UI
+> and set the `trento_api_key` accordingly.
 
 ### 4. Run the playbook
 
@@ -129,15 +138,15 @@ Prior to running the playbook, tell ansible to fetch the required modules:
 ansible-galaxy collection install -r requirements.yml
 ```
 
+> **Note**: <br />
+> The `@` character in front of the `vars.json` path is mandatory. This tells `ansible-playbook` that the variables will not be specified in-line but
+> as an external file instead.
+
 Run the playbook:
 ```
 ansible-playbook -i path/to/inventory.yml --extra-vars "@path/to/vars.json" playbook.yml
 ```
 
-> **Note**: <br />
-> For a fully functional deployment be sure to use either an **external IP** or an **internal IP** for `rabbitmq_host` based on the infra network configuration.
-> 
-> Additionally, retrieving the actual api-key from the server is not supported yet, so use `"enable_api_key": "false"` in extra vars as any value in `trento_api_key` would be ineffective.
 
 Both trento-server and agent inventory and variables file can be combined to deploy both at the same ansible execution.
 
