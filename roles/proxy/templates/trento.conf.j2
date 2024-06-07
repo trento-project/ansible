@@ -57,9 +57,6 @@ server {
     proxy_set_header Host $http_host;
     proxy_set_header X-Cluster-Client-Ip $remote_addr;
 
-    #Temporary workaround to avoid websocket issues using https
-    proxy_set_header Origin "";
-
     # The Important Websocket Bits!
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
