@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.1](https://github.com/trento-project/ansible/tree/1.0.1) (2024-06-10)
+
+[Full Changelog](https://github.com/trento-project/ansible/compare/1.0.0...1.0.1)
+
+**Closed issues:**
+
+- Remove RUNNER\_URL [\#1](https://github.com/trento-project/ansible/issues/1)
+
+**Merged pull requests:**
+
+- Rename `TRENTO_DOMAIN` to `TRENTO_WEB_ORIGIN` [\#37](https://github.com/trento-project/ansible/pull/37) ([nelsonkopliku](https://github.com/nelsonkopliku))
+- Make use of the new TRENTO\_DOMAIN env var required for WSS [\#36](https://github.com/trento-project/ansible/pull/36) ([rtorrero](https://github.com/rtorrero))
+
 ## [1.0.0](https://github.com/trento-project/ansible/tree/1.0.0) (2024-05-13)
 
 **Implemented enhancements:**
