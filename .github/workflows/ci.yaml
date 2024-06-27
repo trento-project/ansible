@@ -123,6 +123,28 @@ jobs:
             install_method='rpm'"
       - name: Test readiness
         run: curl -k "https://${{ env.TEST_HOST_IP }}/api/readyz"
+
+  cleanup:
+    name: Cleanup after playbook run
+    runs-on: ubuntu-22.04
+    needs: [deploy-test-rpm]
+    if: always()
+    strategy:
+      matrix:
+        include:
+          - sp_version: 'SP3'
+            host_ip: TEST_SP3_HOST_IP
+          - sp_version: 'SP4'
+            host_ip: TEST_SP4_HOST_IP
+          - sp_version: 'SP5'
+            host_ip: TEST_SP5_HOST_IP
+    env:
+      TEST_HOST_IP: ${{ secrets[matrix.host_ip] }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Run playbook cleanup
         uses: dawidd6/action-ansible-playbook@v2
         with:
