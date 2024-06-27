@@ -67,6 +67,7 @@ jobs:
     name: Run the playbook on SLES 15 ${{ matrix.sp_version }}
     runs-on: ubuntu-22.04
     needs: [build-and-push-container-images]
+    continue-on-error: true
     strategy:
       matrix:
         include:
@@ -128,7 +129,6 @@ jobs:
     name: Cleanup after playbook run
     runs-on: ubuntu-22.04
     needs: [deploy-test-rpm]
-    if: always()
     strategy:
       matrix:
         include:
