@@ -27,7 +27,7 @@ jobs:
     name: Build and push container images
     runs-on: ubuntu-20.04
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main')
-    needs: [ansible-lint]
+    needs: [ansible-lint, deploy-test-rpm]
     permissions:
       contents: read
       packages: write
@@ -65,6 +65,7 @@ jobs:
 
   deploy-test-rpm:
     name: Run the playbook on SLES 15 ${{ matrix.sp_version }}
+    needs: [ansible-lint]
     runs-on: ubuntu-20.04
     strategy:
       matrix:
