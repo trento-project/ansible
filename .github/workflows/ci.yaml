@@ -25,7 +25,7 @@ jobs:
 
   build-and-push-container-images:
     name: Build and push container images
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main')
     needs: [ansible-lint]
     permissions:
@@ -65,7 +65,7 @@ jobs:
 
   deploy-test-rpm:
     name: Run the playbook on SLES 15 ${{ matrix.sp_version }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         include:
@@ -94,6 +94,7 @@ jobs:
             all:
               vars:
                 ansible_user: ${{ secrets.TEST_HOST_USER }}
+                ansible_python_interpreter: /usr/bin/python3
               children:
                 trento-server:
                   hosts:
@@ -133,6 +134,7 @@ jobs:
             all:
               vars:
                 ansible_user: ${{ secrets.TEST_HOST_USER }}
+                ansible_python_interpreter: /usr/bin/python3
               children:
                 trento-server:
                   hosts:
@@ -163,7 +165,7 @@ jobs:
 
   create-artifact:
     runs-on: ubuntu-20.04
-    needs: [ansible-lint]
+    needs: [ansible-lint, deploy-test-rpm]
     steps:
       - uses: actions/checkout@v3
         with:
