@@ -25,9 +25,9 @@ jobs:
 
   build-and-push-container-images:
     name: Build and push container images
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main')
-    needs: [ansible-lint]
+    needs: [ansible-lint, deploy-test-rpm]
     permissions:
       contents: read
       packages: write
@@ -65,8 +65,8 @@ jobs:
 
   deploy-test-rpm:
     name: Run the playbook on SLES 15 ${{ matrix.sp_version }}
-    runs-on: ubuntu-22.04
-    needs: [build-and-push-container-images]
+    needs: [ansible-lint]
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         include:
@@ -86,6 +86,7 @@ jobs:
       - name: Install galaxy deps
         run: ansible-galaxy install -r requirements.yml
       - name: Run playbook
+        id: runplaybook
         uses: dawidd6/action-ansible-playbook@v2
         with:
           playbook: playbook.yml
@@ -94,6 +95,7 @@ jobs:
             all:
               vars:
                 ansible_user: ${{ secrets.TEST_HOST_USER }}
+                ansible_python_interpreter: /usr/bin/python3
               children:
                 trento-server:
                   hosts:
@@ -125,6 +127,7 @@ jobs:
         run: curl -k "https://${{ env.TEST_HOST_IP }}/api/readyz"
       - name: Run playbook cleanup
         uses: dawidd6/action-ansible-playbook@v2
+        if: success() || steps.runplaybook.conclusion == 'failure'
         with:
           playbook: playbook.cleanup.yml
           key: ${{ secrets.SSH_MACHINE_KEY }}
@@ -132,6 +135,7 @@ jobs:
             all:
               vars:
                 ansible_user: ${{ secrets.TEST_HOST_USER }}
+                ansible_python_interpreter: /usr/bin/python3
               children:
                 trento-server:
                   hosts:
@@ -162,7 +166,7 @@ jobs:
 
   create-artifact:
     runs-on: ubuntu-20.04
-    needs: [ansible-lint]
+    needs: [ansible-lint, deploy-test-rpm]
     steps:
       - uses: actions/checkout@v3
         with:
