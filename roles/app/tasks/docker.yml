@@ -102,3 +102,7 @@
       ENABLE_API_KEY: "{{ enable_api_key }}"
       CHARTS_ENABLED: "{{ enable_charts }}"
       TRENTO_WEB_ORIGIN: "{{ trento_server_name }}"
+      ENABLE_OIDC: "{{ enable_oidc }}"
+      OIDC_CLIENT_ID: "{{ oidc_client_id }}"
+      OIDC_CLIENT_SECRET: "{{ oidc_client_secret }}"
+      OIDC_BASE_URL: "{{ oidc_server_base_url }}"

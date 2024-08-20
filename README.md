@@ -110,7 +110,7 @@ Create a vars.json file, following the example below:
 > The default values for variables ending with `_host` usually point to:
 >  - `host.docker.internal` when using `docker` install method
 >  - `localhost` in the case of `rpm` install method.
-> These work for single-host deployments but be sure to set them explicitly when pointing to manually deployed 
+> These work for single-host deployments but be sure to set them explicitly when pointing to manually deployed
 > services either with an **external IP** or an **internal IP** based on the infra network configuration or when using multi-node deployments.
 
 ```
@@ -127,7 +127,7 @@ Create a vars.json file, following the example below:
   "nginx_ssl_key": "<paste your SSL certificate key here in base64>"
 }
 ```
-> Additionally, when deploying trento agents using the playbook, api-key auto retrieval from the server is not supported yet, so either 
+> Additionally, when deploying trento agents using the playbook, api-key auto retrieval from the server is not supported yet, so either
 > use `"enable_api_key": "false"` and skip `trento_api_key` altogether or disable agent deployment for the first run, retrieve the api-key from the UI
 > and set the `trento_api_key` accordingly.
 
@@ -247,6 +247,10 @@ These variables are the defaults of our roles, if you want to override the prope
 | smtp_port                      | Port number of SMTP server                                                                                       |                                             |
 | smtp_user                      | Username for SMTP authentication                                                                                 |                                             |
 | smtp_password                  | Password for SMTP authentication                                                                                 |                                             |
+| enable_oidc                    | Enable OIDC integration, this will disable the username/password authentication method                           | false                                       |
+| oidc_client_id                 | OIDC client id, required when enable_oidc is true                                                                |                                             |
+| oidc_client_secret             | OIDC client secret, required when enable_oidc is true                                                            |                                             |
+| oidc_server_base_url           | OIDC identity provider base url, required when enable_oidc is true                                               |                                             |
 | install_nginx                  | Install nginx                                                                                                    | true                                        |
 | nginx_ssl_cert_as_base64       | Nginx SSL certificate provided as base64 string                                                                  | false                                       |
 | nginx_ssl_key_as_base64        | Nginx SSL key provided as base64 string                                                                          | false                                       |
@@ -262,6 +266,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | prometheus_url                 | Prometheus server url                                                                                            | http://localhost:9090                       |
 | web_host                       | Host where the web instance is listening                                                                         | http://localhost                            |
 | install_method                 | Installation method for trento components, can be either `rpm` or `docker`                                       | rpm                                         |
+
 
 **trento agents**
 
