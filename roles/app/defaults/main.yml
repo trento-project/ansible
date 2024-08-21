@@ -23,3 +23,7 @@ alert_sender: ""
 alert_recipient: ""
 amqp_protocol: amqp
 install_method: rpm
+enable_oidc: "false"
+oidc_client_id: ""
+oidc_client_secret: ""
+oidc_server_base_url: ""
