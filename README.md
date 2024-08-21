@@ -247,7 +247,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | smtp_port                      | Port number of SMTP server                                                                                       |                                             |
 | smtp_user                      | Username for SMTP authentication                                                                                 |                                             |
 | smtp_password                  | Password for SMTP authentication                                                                                 |                                             |
-| enable_oidc                    | Enable OIDC integration, this will disable the username/password authentication method                           | false                                       |
+| enable_oidc                    | Enable OIDC integration, this disables the username/password authentication method                           | false                                       |
 | oidc_client_id                 | OIDC client id, required when enable_oidc is true                                                                |                                             |
 | oidc_client_secret             | OIDC client secret, required when enable_oidc is true                                                            |                                             |
 | oidc_server_base_url           | OIDC identity provider base url, required when enable_oidc is true                                               |                                             |
