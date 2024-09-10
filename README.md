@@ -247,10 +247,18 @@ These variables are the defaults of our roles, if you want to override the prope
 | smtp_port                      | Port number of SMTP server                                                                                       |                                             |
 | smtp_user                      | Username for SMTP authentication                                                                                 |                                             |
 | smtp_password                  | Password for SMTP authentication                                                                                 |                                             |
-| enable_oidc                    | Enable OIDC integration, this disables the username/password authentication method                           | false                                       |
+| enable_oidc                    | Enable OIDC integration, this disables the username/password authentication method (self exclusive SSO type)     | false                                       |
 | oidc_client_id                 | OIDC client id, required when enable_oidc is true                                                                |                                             |
 | oidc_client_secret             | OIDC client secret, required when enable_oidc is true                                                            |                                             |
 | oidc_server_base_url           | OIDC identity provider base url, required when enable_oidc is true                                               |                                             |
+| enable_oauth2                  | Enable OAUTH2 integration, this disables the username/password authentication method (self exclusive SSO type)   | false                                       |
+| oauth2_client_id               | OAUTH2 client id, required when enable_oauth2 is true                                                            |                                             |
+| oauth2_client_secret           | OAUTH2 client secret, required when enable_oauth2 is true                                                        |                                             |
+| oauth2_server_base_url         | OAUTH2 identity provider base url, required when enable_oauth2 is true                                           |                                             |
+| oauth2_authorize_url           | OAUTH2 authorize url, required when enable_oauth2 is true                                                        |                                             |
+| oauth2_token_url               | OAUTH2 token url, required when enable_oauth2 is true                                                            |                                             |
+| oauth2_user_url                | OAUTH2 user information url, required when enable_oauth2 is true                                                 |                                             |
+| oauth2_scopes                  | OAUTH2 scopes, required when enable_oauth2 is true                                                               | "profile email"                             |
 | install_nginx                  | Install nginx                                                                                                    | true                                        |
 | nginx_ssl_cert_as_base64       | Nginx SSL certificate provided as base64 string                                                                  | false                                       |
 | nginx_ssl_key_as_base64        | Nginx SSL key provided as base64 string                                                                          | false                                       |
