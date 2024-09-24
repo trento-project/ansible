@@ -45,12 +45,8 @@ SAML_USERNAME_ATTR_NAME: "{{ saml_username_attr_name }}"
 SAML_EMAIL_ATTR_NAME: "{{ saml_email_attr_name }}"
 SAML_FIRSTNAME_ATTR_NAME: "{{ saml_firstname_attr_name }}"
 SAML_LASTNAME_ATTR_NAME: "{{ saml_lastname_attr_name }}"
-{% if saml_metadata_url %}
 SAML_METADATA_URL: "{{ saml_metadata_url }}"
-{% endif %}
-{% if saml_metadata_content %}
 SAML_METADATA_CONTENT: "{{ saml_metadata_content }}"
-{% endif %}
 SAML_SIGN_REQUESTS: "{{ saml_sign_requests }}"
 SAML_SIGN_METADATA: "{{ saml_sign_metadata }}"
 SAML_SIGNED_ASSERTION: "{{ saml_signed_assertion }}"
