@@ -259,6 +259,27 @@ These variables are the defaults of our roles, if you want to override the prope
 | oauth2_token_url               | OAUTH2 token url, required when enable_oauth2 is true                                                            |                                             |
 | oauth2_user_url                | OAUTH2 user information url, required when enable_oauth2 is true                                                 |                                             |
 | oauth2_scopes                  | OAUTH2 scopes, required when enable_oauth2 is true                                                               | "profile email"                             |
+| enable_saml                    | Enable SAML integration, this disables the username/password authentication method (self exclusive SSO type)     | false                                       |
+| saml_idp_id                    | SAML IDP id, required when enable_saml is true                                                                   |                                             |
+| saml_idp_nameid_format         | SAML IDP name id format, used to interpret the attribute name. Whole urn string must be used                     | urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified |
+| saml_sp_dir                    | SAML SP directory, where SP specific required files (such as certificates and metadata file) are placed          | /etc/trento/trento-web/saml                 |
+| saml_sp_id                     | SAML SP id, required when enable_saml is true                                                                    |                                             |
+| saml_sp_entity_id              | SAML SP entity id                                                                                                |                                             |
+| saml_sp_contact_name           | SAML SP contact name                                                                                             | "Trento SP Admin"                           |
+| saml_sp_contact_email          | SAML SP contact email                                                                                            | "admin@trento.suse.com"                     |
+| saml_sp_org_name               | SAML SP organization name                                                                                        | "Trento SP"                                 |
+| saml_sp_org_displayname        | SAML SP organization display name                                                                                | "SAML SP build with Trento"                 |
+| saml_sp_org_url                | SAML SP organization url                                                                                         | https://www.trento-project.io/              |
+| saml_username_attr_name        | SAML user profile "username" attribute field name. This attribute must exist in the IDP user                     | username                                    |
+| saml_email_attr_name           | SAML user profile "email" attribute field name. This attribute must exist in the IDP user                        | email                                       |
+| saml_firstname_attr_name       | SAML user profile "first name" attribute field name. This attribute must exist in the IDP user                   | firstName                                   |
+| saml_lastname_attr_name        | SAML user profile "last name" attribute field name. This attribute must exist in the IDP user                    | lastName                                    |
+| saml_metadata_url              | URL to retrieve the SAML metadata xml file. One of `saml_metadata_url` or `saml_metadata_content` is required    |                                             |
+| saml_metadata_content          | One line string containing the SAML metadata xml file content (`saml_metadata_url` has precedence over this)     |                                             |
+| saml_sign_requests             | Sign SAML requests in the SP side                                                                                | true                                        |
+| saml_sign_metadata             | Sign SAML metadata documents in the SP side                                                                      | true                                        |
+| saml_signed_assertion          | Require to receive SAML assertion signed from the IDP. Set to false if the IDP doesn't sign the assertion        | true                                        |
+| saml_signed_envelopes          | Require to receive SAML envelopes signed from the IDP. Set to false if the IDP doesn't sign the envelopes        | true                                        |
 | install_nginx                  | Install nginx                                                                                                    | true                                        |
 | nginx_ssl_cert_as_base64       | Nginx SSL certificate provided as base64 string                                                                  | false                                       |
 | nginx_ssl_key_as_base64        | Nginx SSL key provided as base64 string                                                                          | false                                       |
