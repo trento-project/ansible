@@ -174,7 +174,7 @@ jobs:
       - name: Compress tarball
         run: |
           tar -zcf trento-ansible.tgz roles/ playbook.yml playbook.cleanup.yml requirements.yml README.md
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: trento-ansible
           path: |
