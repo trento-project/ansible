@@ -31,7 +31,7 @@ server {
   ssl_session_cache shared:SSL:10m;
 
   # Wanda rule
-  location ~ ^/(api/checks|api/v1/checks|api/v2/checks|api/v3/checks|api/groups|api/v1/groups)/  {
+  location ~ ^/(api/checks|api/v1/checks|api/v2/checks|api/v3/checks|api/groups|api/v1/groups|api/operations|api/v1/operations)/  {
     allow all;
 
     # Proxy Headers
