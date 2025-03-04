@@ -95,7 +95,6 @@ jobs:
             all:
               vars:
                 ansible_user: ${{ secrets.TEST_HOST_USER }}
-                ansible_python_interpreter: /usr/bin/python3
               children:
                 trento-server:
                   hosts:
@@ -135,7 +134,6 @@ jobs:
             all:
               vars:
                 ansible_user: ${{ secrets.TEST_HOST_USER }}
-                ansible_python_interpreter: /usr/bin/python3
               children:
                 trento-server:
                   hosts:
