@@ -124,7 +124,7 @@ jobs:
             nginx_ssl_key_as_base64='true' \
             nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
             nginx_ssl_key='${{ secrets.SSL_KEY }}' \
-            install_method='rpm'"
+            install_method='docker'"
       - name: Test readiness
         run: curl -k "https://${{ env.TEST_HOST_IP }}/api/readyz"
       - name: Run playbook cleanup
@@ -164,7 +164,7 @@ jobs:
             nginx_ssl_key_as_base64='true' \
             nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
             nginx_ssl_key='${{ secrets.SSL_KEY }}' \
-            install_method='rpm'"
+            install_method='docker'"
 
   create-artifact:
     runs-on: ubuntu-24.04
