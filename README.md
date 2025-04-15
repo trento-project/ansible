@@ -14,6 +14,7 @@ This playbook aims to install Trento components and the belonging third parties.
 
 - [web](https://github.com/trento-project/web)
 - [wanda](https://github.com/trento-project/wanda)
+- [checks](https://github.com/trento-project/checks)
 - [agent](https://github.com/trento-project/agent)
 - postgresql
 - rabbitmq
@@ -22,7 +23,7 @@ This playbook aims to install Trento components and the belonging third parties.
 
 The third parties are installed using `zypper` packages and configured with dedicated roles. The
 `web` and `wanda` components can be installed using either docker or zypper. The playbook checks
-the `install_method` variable (either `docker` or `rpm`) to determine which to method to use.
+the `install_method` variable (either `docker` or `rpm`) to determine which method to use.
 
 The `agent` is installed from the configured obs repository using `zypper`.
 

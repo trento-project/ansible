@@ -21,6 +21,12 @@
     state: absent
     name: "{{ wanda_container_image }}"
 
+- name: Remove checks container image
+  when: remove_checks_container_image == 'true'
+  community.docker.docker_image:
+    state: absent
+    name: "{{ checks_container_image }}"
+
 - name: Remove web container image
   when: remove_web_container_image == 'true'
   community.docker.docker_image:
