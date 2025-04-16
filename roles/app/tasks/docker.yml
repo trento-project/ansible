@@ -26,6 +26,7 @@
   loop:
     - "{{ wanda_container_image }}"
     - "{{ web_container_image }}"
+    - "{{ checks_container_image }}"
   community.docker.docker_image:
     name: "{{ item }}"
     force_source: true
@@ -34,6 +35,15 @@
 - name: Create trento docker network
   community.docker.docker_network:
     name: "{{ docker_network_name }}"
+
+- name: Checks container
+  community.docker.docker_container:
+    name: "{{ checks_container_name }}"
+    image: "{{ checks_container_image }}"
+    recreate: "{{ force_recreate_checks_container == 'true' }}"
+    pull: true
+    volumes:
+      - "/usr/share/trento/checks"
 
 - name: Wanda container
   community.docker.docker_container:
@@ -61,6 +71,8 @@
       ACCESS_TOKEN_ENC_SECRET: "{{ access_token_secret }}"
       AMQP_URL: "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
       DATABASE_URL: "ecto://{{ wanda_postgres_user }}:{{ wanda_postgres_password }}@{{ wanda_postgres_host }}/{{ wanda_postgres_db }}"
+    volumes_from:
+      - "{{ checks_container_name }}:ro"
 
 - name: Web container
   community.docker.docker_container:

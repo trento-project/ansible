@@ -11,5 +11,9 @@ wanda_container_name: trento_wanda
 force_recreate_wanda_container: "false"
 remove_wanda_container_image: "true"
 wanda_postgres_host: "host.docker.internal"
+checks_container_image: ghcr.io/trento-project/checks:rolling
+checks_container_name: trento_checks
+force_recreate_checks_container: "false"
+remove_checks_container_image: "true"
 rabbitmq_host: host.docker.internal
 prometheus_url: "http://host.docker.internal:9090"
