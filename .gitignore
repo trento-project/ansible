@@ -188,3 +188,5 @@ poetry.toml
 extra-vars.json
 /inventory*
 /vars.json
+
+data/
