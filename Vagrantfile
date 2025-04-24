@@ -7,10 +7,10 @@ Vagrant.configure(2) do |config|
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "playbook.yml"
     ansible.groups = {
-      "trento-server" => ["machine1"],
-      "postgres-hosts" => ["machine1"],
-      "prometheus-hosts" => ["machine1"],
-      "rabbitmq-hosts" => ["machine1"]
+      "trento_server" => ["machine1"],
+      "postgres_hosts" => ["machine1"],
+      "prometheus_hosts" => ["machine1"],
+      "rabbitmq_hosts" => ["machine1"]
     }
     ansible.extra_vars = {
       web_postgres_password: "pass",

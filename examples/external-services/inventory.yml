@@ -1,6 +1,6 @@
 all:
   children:
-    trento-server:
+    trento_server:
       hosts:
         vitellone:
           ansible_host: "your-host"

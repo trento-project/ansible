@@ -60,16 +60,16 @@ than one role. Use `;` to comment out any role that you might not want to cover.
 Example:
 
 ```
-[trento-server]
+[trento_server]
 192.168.1.1 ansible_user=root ansible_ssh_private_key_file=/home/user/.ssh/id_rsa
 
-[postgres-hosts]
+[postgres_hosts]
 192.168.1.1 ansible_user=root ansible_ssh_private_key_file=/home/user/.ssh/id_rsa
 
-[rabbitmq-hosts]
+[rabbitmq_hosts]
 192.168.1.1 ansible_user=root ansible_ssh_private_key_file=/home/user/.ssh/id_rsa
 
-[prometheus-hosts]
+[prometheus_hosts]
 192.168.1.1 ansible_user=root ansible_ssh_private_key_file=/home/user/.ssh/id_rsa
 
 ; [agents]
@@ -81,22 +81,22 @@ Alternatively, you can use yaml syntax for this. In the following example we use
 ```yaml
 all:
   children:
-    trento-server:
+    trento_server:
       hosts:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
-    postgres-hosts:
+    postgres_hosts:
       hosts:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
-    rabbitmq-hosts:
+    rabbitmq_hosts:
       hosts:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
-    prometheus-hosts:
+    prometheus_hosts:
       hosts:
         vitellone:
           ansible_host: "your-host"
@@ -148,7 +148,7 @@ ansible-playbook -i path/to/inventory.yml --extra-vars "@path/to/vars.json" play
 ```
 
 
-Both trento-server and agent inventory and variables file can be combined to deploy both at the same ansible execution.
+Both trento_server and agent inventory and variables file can be combined to deploy both at the same ansible execution.
 
 Having an inventory file called `inventory.yml` and a vars file called `extra-vars.json`, you could run the playbook
 
@@ -178,7 +178,7 @@ Assuming you have in the current folder a file called `inventory.yml` and `extra
 
 ## Playbook variables
 
-### Required Variables to install trento-server
+### Required Variables to install trento_server
 
 | Name                    | Description                                                               |
 | ----------------------- | ------------------------------------------------------------------------- |
@@ -195,7 +195,7 @@ Assuming you have in the current folder a file called `inventory.yml` and `extra
 
 | Name              | Description                                                      |
 | ----------------- | ---------------------------------------------------------------- |
-| trento_api_key    | API key to connect to the trento-server                          |
+| trento_api_key    | API key to connect to the trento_server                          |
 | rabbitmq_password | Password of the rabbitmq user configured for the trento projects |
 
 ### Optional variables

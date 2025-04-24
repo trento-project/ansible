@@ -1,7 +1,7 @@
 # code: language=ansible
 ---
-- name: Check firewalld package on prometheus and trento-server hosts
-  hosts: prometheus-hosts:trento-server
+- name: Check firewalld package on prometheus and trento_server hosts
+  hosts: prometheus_hosts:trento_server
   tasks:
     - name: Collect package facts
       ansible.builtin.package_facts:
@@ -15,7 +15,7 @@
       register: firewalld_status
 
 - name: Clean up trento components
-  hosts: trento-server
+  hosts: trento_server
   become: true
   tasks:
     - name: Trento services
@@ -28,7 +28,7 @@
         tasks_from: cleanup
 
 - name: Clean up postgres
-  hosts: postgres-hosts
+  hosts: postgres_hosts
   become: true
   tasks:
     - name: Postgres
@@ -37,7 +37,7 @@
         tasks_from: cleanup
 
 - name: Clean up rabbitmq
-  hosts: rabbitmq-hosts
+  hosts: rabbitmq_hosts
   become: true
   tasks:
     - name: Rabbitmq
@@ -46,7 +46,7 @@
         tasks_from: cleanup
 
 - name: Prometheus cleanup
-  hosts: prometheus-hosts
+  hosts: prometheus_hosts
   become: true
   tasks:
     - name: Prometheus

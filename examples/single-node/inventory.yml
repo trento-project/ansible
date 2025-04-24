@@ -1,21 +1,21 @@
 all:
   children:
-    trento-server:
+    trento_server:
       hosts:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
-    postgres-hosts:
+    postgres_hosts:
       hosts:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
-    rabbitmq-hosts:
+    rabbitmq_hosts:
       hosts:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
-    prometheus-hosts:
+    prometheus_hosts:
       hosts:
         vitellone:
           ansible_host: "your-host"

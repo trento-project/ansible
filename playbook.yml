@@ -1,7 +1,7 @@
 # code: language=ansible
 ---
 - name: Install thirdparties
-  hosts: trento-server
+  hosts: trento_server
   become: true
   pre_tasks:
     - name: Check SLES distribution and version
@@ -30,8 +30,8 @@
         state: present
         update_cache: true
 
-- name: Check firewalld package on prometheus and trento-server hosts
-  hosts: prometheus-hosts:trento-server
+- name: Check firewalld package on prometheus and trento_server hosts
+  hosts: prometheus_hosts:trento_server
   tasks:
     - name: Collect package facts
       ansible.builtin.package_facts:
@@ -52,7 +52,7 @@
   become: true
   vars:
     provision_postgres: "true"
-  hosts: postgres-hosts
+  hosts: postgres_hosts
   roles:
     - role: postgres
       when: provision_postgres == 'true'
@@ -62,7 +62,7 @@
   become: true
   vars:
     provision_prometheus: "true"
-  hosts: prometheus-hosts
+  hosts: prometheus_hosts
   roles:
     - role: prometheus
       when: provision_prometheus == 'true'
@@ -72,7 +72,7 @@
   become: true
   vars:
     provision_rabbitmq: "true"
-  hosts: rabbitmq-hosts
+  hosts: rabbitmq_hosts
   roles:
     - role: rabbitmq
       when: provision_rabbitmq == 'true'
@@ -80,7 +80,7 @@
 - name: Configure trento components
   vars:
     provision_proxy: "true"
-  hosts: trento-server
+  hosts: trento_server
   become: true
   roles:
     - role: app
