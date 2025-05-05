@@ -62,15 +62,13 @@
     state: started
     enabled: true
 
-- name: Open HTTP and HTTPS ports in firewalld
-  ansible.posix.firewalld:
-    port: "{{ item }}"
-    permanent: true
-    state: enabled
-    offline: true
+- name: Open HTTP and HTTPS ports using iptables
+  ansible.builtin.command: >
+    iptables -C INPUT -p tcp --dport {{ item | regex_replace('/tcp$', '') }} -j ACCEPT || \
+    iptables -A INPUT -p tcp --dport {{ item | regex_replace('/tcp$', '') }} -j ACCEPT
   loop:
     - "{{ nginx_vhost_http_listen_port }}/tcp"
     - "{{ nginx_vhost_https_listen_port }}/tcp"
-  when: firewalld_installed
+  when: firewalld_installed is not defined or not firewalld_installed
   notify:
-    - Restart firewalld if running
+    - Save iptables rules

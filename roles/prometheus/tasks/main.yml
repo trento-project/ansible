@@ -45,12 +45,7 @@
     state: started
     enabled: true
 
-- name: Open prometheus port using firewalld
-  ansible.posix.firewalld:
-    port: "{{ prometheus_port }}/tcp"
-    permanent: true
-    state: enabled
-    offline: true
-  when: firewalld_installed
-  notify:
-    - Restart firewalld if running
+- name: Open prometheus port using iptables
+  ansible.builtin.command: >
+    iptables -A INPUT -p tcp --dport {{ prometheus_port }} -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+  when: firewalld_installed is not defined or not firewalld_installed
