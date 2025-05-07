@@ -99,15 +99,15 @@ jobs:
                 ansible_user: ${{ secrets.TEST_HOST_USER }}
                 ansible_python_interpreter: /usr/bin/python3
               children:
-                trento-server:
+                trento_server:
                   hosts:
                     server:
                       ansible_host: ${{ env.TEST_HOST_IP }}
-                postgres-hosts:
+                postgres_hosts:
                   hosts:
                     server:
                       ansible_host: ${{ env.TEST_HOST_IP }}
-                rabbitmq-hosts:
+                rabbitmq_hosts:
                   hosts:
                     server:
                       ansible_host: ${{ env.TEST_HOST_IP }}
@@ -139,15 +139,15 @@ jobs:
                 ansible_user: ${{ secrets.TEST_HOST_USER }}
                 ansible_python_interpreter: /usr/bin/python3
               children:
-                trento-server:
+                trento_server:
                   hosts:
                     server:
                       ansible_host: ${{ env.TEST_HOST_IP }}
-                postgres-hosts:
+                postgres_hosts:
                   hosts:
                     server:
                       ansible_host: ${{ env.TEST_HOST_IP }}
-                rabbitmq-hosts:
+                rabbitmq_hosts:
                   hosts:
                     server:
                       ansible_host: ${{ env.TEST_HOST_IP }}
