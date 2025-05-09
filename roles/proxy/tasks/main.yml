@@ -62,15 +62,25 @@
     state: started
     enabled: true
 
+- name: Ensure firewalld is started and enabled
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: yes
+  when: firewalld_installed
+
 - name: Open HTTP and HTTPS ports in firewalld
-  ansible.posix.firewalld:
-    port: "{{ item }}"
-    permanent: true
-    state: enabled
-    offline: true
+  ansible.builtin.command: >
+    firewall-cmd --permanent --add-port={{ item }}/tcp
   loop:
-    - "{{ nginx_vhost_http_listen_port }}/tcp"
-    - "{{ nginx_vhost_https_listen_port }}/tcp"
+    - "{{ nginx_vhost_http_listen_port }}"
+    - "{{ nginx_vhost_https_listen_port }}"
+  when: firewalld_installed
+  notify:
+    - Restart firewalld if running
+
+- name: Reload firewalld to apply changes
+  ansible.builtin.command: firewall-cmd --reload
   when: firewalld_installed
   notify:
     - Restart firewalld if running

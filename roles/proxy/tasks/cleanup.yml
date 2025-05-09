@@ -8,14 +8,11 @@
     - Restart nginx
 
 - name: Close http and https ports using firewalld
-  ansible.posix.firewalld:
-    port: "{{ item }}"
-    permanent: true
-    state: disabled
-    offline: true
+  ansible.builtin.command: >
+    firewall-cmd --permanent --remove-port={{ item }}/tcp
   loop:
-    - "{{ nginx_vhost_http_listen_port }}/tcp"
-    - "{{ nginx_vhost_https_listen_port }}/tcp"
+    - "{{ nginx_vhost_http_listen_port }}"
+    - "{{ nginx_vhost_https_listen_port }}"
   when: firewalld_installed
   notify:
     - Restart firewalld if running

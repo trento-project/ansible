@@ -1,11 +1,8 @@
 # code: language=ansible
 ---
 - name: Close prometheus port using firewalld
-  ansible.posix.firewalld:
-    port: "{{ prometheus_port }}/tcp"
-    permanent: true
-    state: disabled
-    offline: true
+  ansible.builtin.command: >
+    firewall-cmd --permanent --remove-port={{ prometheus_port }}/tcp
   when: firewalld_installed
   notify:
     - Restart firewalld if running

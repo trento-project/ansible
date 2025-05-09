@@ -44,13 +44,23 @@
     name: prometheus
     state: started
     enabled: true
+  
+- name: Ensure firewalld is started and enabled
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: yes
+  when: firewalld_installed
 
 - name: Open prometheus port using firewalld
-  ansible.posix.firewalld:
-    port: "{{ prometheus_port }}/tcp"
-    permanent: true
-    state: enabled
-    offline: true
+  ansible.builtin.command: >
+    firewall-cmd --permanent --add-port={{ prometheus_port }}/tcp
+  when: firewalld_installed
+  notify:
+    - Restart firewalld if running
+
+- name: Reload firewalld to apply changes
+  ansible.builtin.command: firewall-cmd --reload
   when: firewalld_installed
   notify:
     - Restart firewalld if running
