@@ -44,12 +44,12 @@
     name: prometheus
     state: started
     enabled: true
-  
+
 - name: Ensure firewalld is started and enabled
   ansible.builtin.service:
     name: firewalld
     state: started
-    enabled: yes
+    enabled: true
   when: firewalld_installed
 
 - name: Open prometheus port using firewalld

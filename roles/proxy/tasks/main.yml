@@ -66,7 +66,7 @@
   ansible.builtin.service:
     name: firewalld
     state: started
-    enabled: yes
+    enabled: true
   when: firewalld_installed
 
 - name: Open HTTP and HTTPS ports in firewalld
