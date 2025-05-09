@@ -66,3 +66,5 @@
   when: firewalld_installed
   notify:
     - Restart firewalld if running
+  register: firewalld_reload
+  changed_when: firewalld_reload.rc == 0
