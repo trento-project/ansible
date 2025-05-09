@@ -4,5 +4,7 @@
   ansible.builtin.command: >
     firewall-cmd --permanent --remove-port={{ prometheus_port }}/tcp
   when: firewalld_installed
+  register: firewalld_close_prometheus_port
+  changed_when: firewalld_close_prometheus_port.rc == 0
   notify:
     - Restart firewalld if running

@@ -56,6 +56,8 @@
   ansible.builtin.command: >
     firewall-cmd --permanent --add-port={{ prometheus_port }}/tcp
   when: firewalld_installed
+  register: firewalld_open_prometheus_port
+  changed_when: firewalld_open_prometheus_port.rc == 0
   notify:
     - Restart firewalld if running
 

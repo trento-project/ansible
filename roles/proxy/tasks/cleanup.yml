@@ -14,5 +14,7 @@
     - "{{ nginx_vhost_http_listen_port }}"
     - "{{ nginx_vhost_https_listen_port }}"
   when: firewalld_installed
+  register: firewalld_close_nginx_ports
+  changed_when: firewalld_close_nginx_ports.rc == 0
   notify:
     - Restart firewalld if running
