@@ -77,7 +77,7 @@ jobs:
           - sp_version: 'SP5'
             host_ip: TEST_SP5_HOST_IP
     env:
-      TEST_HOST_IP: ${{ secrets[matrix.host_ip] }}
+      TEST_HOST_IP: ${{ vars[matrix.host_ip] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -92,11 +92,11 @@ jobs:
         uses: dawidd6/action-ansible-playbook@v2
         with:
           playbook: playbook.yml
-          key: ${{ secrets.SSH_MACHINE_KEY }}
+          key: ${{ secrets.AWS_SSH_MACHINE_KEY }}
           inventory: |
             all:
               vars:
-                ansible_user: ${{ secrets.TEST_HOST_USER }}
+                ansible_user: ${{ secrets.AWS_TEST_HOST_USER }}
                 ansible_python_interpreter: /usr/bin/python3
               children:
                 trento_server:
@@ -132,11 +132,11 @@ jobs:
         if: success() || steps.runplaybook.conclusion == 'failure'
         with:
           playbook: playbook.cleanup.yml
-          key: ${{ secrets.SSH_MACHINE_KEY }}
+          key: ${{ secrets.AWS_SSH_MACHINE_KEY }}
           inventory: |
             all:
               vars:
-                ansible_user: ${{ secrets.TEST_HOST_USER }}
+                ansible_user: ${{ secrets.AWS_TEST_HOST_USER }}
                 ansible_python_interpreter: /usr/bin/python3
               children:
                 trento_server:
