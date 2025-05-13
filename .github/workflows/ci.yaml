@@ -76,6 +76,8 @@ jobs:
             host_ip: TEST_SP4_HOST_IP
           - sp_version: 'SP5'
             host_ip: TEST_SP5_HOST_IP
+          - sp_version: 'SP6'
+            host_ip: TEST_SP6_HOST_IP
     env:
       TEST_HOST_IP: ${{ vars[matrix.host_ip] }}
     steps:
@@ -92,11 +94,11 @@ jobs:
         uses: dawidd6/action-ansible-playbook@v2
         with:
           playbook: playbook.yml
-          key: ${{ secrets.AWS_SSH_MACHINE_KEY }}
+          key: ${{ secrets.SSH_MACHINE_KEY }}
           inventory: |
             all:
               vars:
-                ansible_user: ${{ secrets.AWS_TEST_HOST_USER }}
+                ansible_user: ${{ secrets.TEST_HOST_USER }}
                 ansible_python_interpreter: /usr/bin/python3
               children:
                 trento_server:
@@ -132,11 +134,11 @@ jobs:
         if: success() || steps.runplaybook.conclusion == 'failure'
         with:
           playbook: playbook.cleanup.yml
-          key: ${{ secrets.AWS_SSH_MACHINE_KEY }}
+          key: ${{ secrets.SSH_MACHINE_KEY }}
           inventory: |
             all:
               vars:
-                ansible_user: ${{ secrets.AWS_TEST_HOST_USER }}
+                ansible_user: ${{ secrets.TEST_HOST_USER }}
                 ansible_python_interpreter: /usr/bin/python3
               children:
                 trento_server:
