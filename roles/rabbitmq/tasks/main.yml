@@ -5,12 +5,32 @@
     name: rabbitmq-server
     state: present
     update_cache: true
+  
+- name: Ensure /etc/rabbitmq/ssl directory exists
+  ansible.builtin.file:
+    path: /etc/rabbitmq/ssl
+    state: directory
+    mode: '0700'
+
+- name: Add certificate files
+  copy:
+    content: "{{ item.content }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { dest: '/etc/rabbitmq/ssl/cert.pem', content: '{{ rabbitmq_ssl_cert }}', mode: '0644' }
+    - { dest: '/etc/rabbitmq/ssl/key.pem', content: '{{ rabbitmq_ssl_key }}', mode: '0600' }
+    - { dest: '/etc/rabbitmq/ssl/ca.pem', content: '{{ rabbitmq_ssl_ca_cert }}', mode: '0644' }
 
 - name: Start rabbitmq service
   ansible.builtin.service:
     name: rabbitmq-server
     state: started
     enabled: true
+  vars:
+    rabbitmq_ssl_cert: /etc/rabbitmq/ssl/cert.pem
+    rabbitmq_ssl_key: /etc/rabbitmq/ssl/key.pem
+    rabbitmq_ssl_ca: /etc/rabbitmq/ssl/cacert.pem
 
 - name: Create rabbitmq trento vhost
   community.rabbitmq.rabbitmq_vhost:

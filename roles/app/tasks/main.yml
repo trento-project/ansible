@@ -36,6 +36,22 @@
     - alert_recipient
   when: enable_alerting == 'true'
 
+- name: Ensure /etc/rabbitmq/ssl directory exists
+  ansible.builtin.file:
+    path: /etc/rabbitmq/ssl
+    state: directory
+    mode: '0700'
+
+- name: Add rabbitmq certificate files if not exists
+  copy:
+    content: "{{ item.content }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { dest: '/etc/rabbitmq/ssl/cert.pem', content: '{{ rabbitmq_ssl_cert }}', mode: '0644' }
+    - { dest: '/etc/rabbitmq/ssl/key.pem', content: '{{ rabbitmq_ssl_key }}', mode: '0600' }
+    - { dest: '/etc/rabbitmq/ssl/ca.pem', content: '{{ rabbitmq_ssl_ca_cert }}', mode: '0644' }
+
 - name: Include Docker installation tasks
   ansible.builtin.include_tasks: docker.yml
   when: install_method == 'docker'
