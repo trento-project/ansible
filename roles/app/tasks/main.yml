@@ -59,7 +59,7 @@
     - content: "{{ rabbitmq_ssl_ca_cert }}"
       dest: "/etc/rabbitmq/ssl/ca.pem"
       base64: "{{ rabbitmq_ssl_ca_cert_as_base64 }}"
- 
+
 - name: Include Docker installation tasks
   ansible.builtin.include_tasks: docker.yml
   when: install_method == 'docker'

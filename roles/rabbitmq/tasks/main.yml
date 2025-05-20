@@ -29,7 +29,7 @@
     - content: "{{ rabbitmq_ssl_ca_cert }}"
       dest: "/etc/rabbitmq/ssl/ca.pem"
       base64: "{{ rabbitmq_ssl_ca_cert_as_base64 }}"
-       
+
 - name: Start rabbitmq service
   ansible.builtin.service:
     name: rabbitmq-server
