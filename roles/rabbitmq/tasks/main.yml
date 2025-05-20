@@ -5,7 +5,7 @@
     name: rabbitmq-server
     state: present
     update_cache: true
-  
+
 - name: Ensure /etc/rabbitmq/ssl directory exists
   ansible.builtin.file:
     path: /etc/rabbitmq/ssl
