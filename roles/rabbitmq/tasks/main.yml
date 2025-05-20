@@ -13,7 +13,7 @@
     mode: '0700'
 
 - name: Add certificate files
-  copy:
+  ansible.builtin.copy:
     content: "{{ item.content }}"
     dest: "{{ item.dest }}"
     mode: "{{ item.mode }}"

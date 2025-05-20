@@ -43,7 +43,7 @@
     mode: '0700'
 
 - name: Add rabbitmq certificate files if not exists
-  copy:
+  ansible.builtin.copy:
     content: "{{ item.content }}"
     dest: "{{ item.dest }}"
     mode: "{{ item.mode }}"
