@@ -5,3 +5,6 @@ amqp_protocol: amqp
 rabbitmq_username: trento
 rabbitmq_vhost: trento
 rabbitmq_host: localhost:5672
+rabbitmq_ssl_cert_as_base64: "false"
+rabbitmq_ssl_key_as_base64: "false"
+rabbitmq_ssl_ca_cert_as_base64: "false"
