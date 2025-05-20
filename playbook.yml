@@ -1,5 +1,11 @@
 # code: language=ansible
 ---
+- name: Prepare TLS certificates
+  hosts: localhost
+  become: true
+  roles:
+    - role: tls
+
 - name: Install thirdparties
   hosts: trento_server
   become: true
@@ -76,6 +82,11 @@
   roles:
     - role: rabbitmq
       when: provision_rabbitmq == 'true'
+  handlers:
+    - name: Restart rabbitmq
+      ansible.builtin.service:
+        name: rabbitmq-server
+        state: restarted
 
 - name: Configure trento components
   vars:

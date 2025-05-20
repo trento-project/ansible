@@ -1,10 +1,42 @@
 # code: language=ansible
 ---
+
+- name: Ensure directory exists
+  ansible.builtin.file:
+    path: "{{ rabbitmq_certs_dir }}"
+    state: directory
+    owner: rabbitmq
+    group: rabbitmq
+    mode: '0775'
+    recurse: true
+
+- name: Copy rabbitmq SSL certificates from control node
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0644"
+  loop:
+    - src: "{{ generated_certs_dir }}/ca.crt"
+      dest: "{{ rabbitmq_certs_dir }}/cacert.pem"
+    - src: "{{ generated_certs_dir }}/rabbitmq.key"
+      dest: "{{ rabbitmq_certs_dir }}/key.pem"
+    - src: "{{ generated_certs_dir }}/rabbitmq.crt"
+      dest: "{{ rabbitmq_certs_dir }}/cert.pem"
+  become: true
+
 - name: Install rabbitmq
   community.general.zypper:
     name: rabbitmq-server
     state: present
     update_cache: true
+
+- name: Configure RabbitMQ for mTLS
+  ansible.builtin.template:
+    src: rabbitmq.conf.j2
+    dest: /etc/rabbitmq/rabbitmq.conf
+    mode: '0644'
+  become: true
+  notify: Restart rabbitmq
 
 - name: Start rabbitmq service
   ansible.builtin.service:

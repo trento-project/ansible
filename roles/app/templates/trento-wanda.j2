@@ -1,6 +1,6 @@
 CORS_ORIGIN=http://localhost
 SECRET_KEY_BASE={{ secret_key_base }}
 ACCESS_TOKEN_ENC_SECRET={{ access_token_secret }}
-AMQP_URL={{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}
+AMQP_URL={{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}:{{ rabbitmq_port }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}?certfile={{ rabbitmq_certs_dir }}/trento_server_{{ inventory_hostname }}_cert.pem&keyfile={{ rabbitmq_certs_dir }}/trento_server_{{ inventory_hostname }}_key.pem&verify=verify_peer&cacertfile={{ rabbitmq_certs_dir }}/cacert.pem
 DATABASE_URL=ecto://{{ wanda_postgres_user }}:{{ wanda_postgres_password }}@{{ wanda_postgres_host }}/{{ wanda_postgres_db }}
 PORT={{ wanda_listen_port }}

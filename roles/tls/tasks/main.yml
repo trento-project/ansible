@@ -1,0 +1,88 @@
+# code: language=ansible
+---
+- name: Ensure directories exist
+  ansible.builtin.file:
+    path: "{{ generated_certs_dir }}"
+    state: directory
+    mode: '0755'
+    recurse: true
+
+- name: Generate CA private key
+  openssl_privatekey:
+    path: "{{ ca_key_path }}"
+    size: 4096
+    mode: "0644"
+  register: ca_key
+  when: generate_certs == "true"
+
+- name: Create CA certificate signing request
+  community.crypto.openssl_csr:
+    path: "/tmp/ca.csr"
+    privatekey_path: "{{ ca_key_path }}"
+    common_name: "Trento CA"
+    use_common_name_for_san: false
+    basic_constraints:
+      - 'CA:TRUE'
+    basic_constraints_critical: true
+    key_usage:
+      - keyCertSign
+    key_usage_critical: true
+  register: ca_csr
+
+- name: Generate CA certificate
+  openssl_certificate:
+    path: "{{ ca_cert_path }}"
+    csr_path: "/tmp/ca.csr"
+    privatekey_path: "{{ ca_key_path }}"
+    provider: selfsigned
+    selfsigned_not_after: +3650d
+    mode: "0644"
+  register: ca_cert
+
+- name: Generate RabbitMQ server private key
+  openssl_privatekey:
+    path: "{{ server_key_path }}"
+    size: 2048
+    type: RSA
+    mode: '0644'
+  delegate_to: localhost
+  run_once: true
+
+- name: Generate RabbitMQ server CSR
+  openssl_csr:
+    path: "/tmp/rabbitmq.csr"
+    privatekey_path: "{{ server_key_path }}"
+    subject:
+      CN: "{{ rabbitmq_host }}"
+    subject_alt_name:
+      - "DNS:localhost"
+      - "IP:127.0.0.1"
+    mode: "0644"
+  register: csr
+
+- name: Sign RabbitMQ server certificate
+  openssl_certificate:
+    path: "{{ server_cert_path }}"
+    csr_path: "/tmp/rabbitmq.csr"
+    ownca_path: "{{ ca_cert_path }}"
+    ownca_privatekey_path: "{{ ca_key_path }}"
+    provider: ownca
+    mode: "0644"
+
+- name: Generate and sign client certificates for trento instances
+  ansible.builtin.include_tasks: roles/tls/tasks/generate_client_certs.yml
+  when: groups['trento_server'] is defined
+  loop: "{{ groups['trento_server'] }}"
+  loop_control:
+    loop_var: host
+  vars:
+    group_name: "trento_server"
+
+- name: Generate and sign client certificates for agent instances
+  ansible.builtin.include_tasks: roles/tls/tasks/generate_client_certs.yml
+  when: groups['agent'] is defined
+  loop: "{{ groups['agent'] }}"
+  loop_control:
+    loop_var: host
+  vars:
+    group_name: "agent"

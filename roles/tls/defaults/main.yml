@@ -1,9 +1,7 @@
----
-rabbitmq_username: trento
-rabbitmq_node_name: "rabbit@localhost"
-rabbitmq_vhost: "trento"
+generate_certs: "true"
 generated_certs_dir: "/tmp/trento-ansible/certs"
-rabbitmq_certs_dir: "/var/rabbitmq/ssl"
+ca_key_path: "{{ generated_certs_dir }}/ca.key"
 ca_cert_path: "{{ generated_certs_dir }}/ca.crt"
 server_key_path: "{{ generated_certs_dir }}/rabbitmq.key"
 server_cert_path: "{{ generated_certs_dir }}/rabbitmq.crt"
+rabbitmq_host: localhost

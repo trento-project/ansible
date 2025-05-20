@@ -36,6 +36,31 @@
     - alert_recipient
   when: enable_alerting == 'true'
 
+# - name: Copy TLS client certificates to the server
+#   include_tasks: roles/tls/tasks/copy_client_certs.yml
+#   vars:
+#     group_name: "trento_server"
+
+- name: Ensure directory exists
+  ansible.builtin.file:
+    path: "{{ rabbitmq_certs_dir }}"
+    state: directory
+    mode: '0775'
+
+- name: Copy rabbitmq SSL certificates from control node
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0644"
+  loop:
+    - src: "{{ generated_certs_dir }}/ca.crt"
+      dest: "{{ rabbitmq_certs_dir }}/cacert.pem"
+    - src: "{{ generated_certs_dir }}/trento_server_{{ inventory_hostname }}.key"
+      dest: "{{ rabbitmq_certs_dir }}/trento_server_{{ inventory_hostname }}_key.pem"
+    - src: "{{ generated_certs_dir }}/trento_server_{{ inventory_hostname }}.crt"
+      dest: "{{ rabbitmq_certs_dir }}/trento_server_{{ inventory_hostname }}_cert.pem"
+  become: true
+
 - name: Include Docker installation tasks
   ansible.builtin.include_tasks: docker.yml
   when: install_method == 'docker'
