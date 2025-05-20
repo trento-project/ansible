@@ -121,6 +121,9 @@ Create a vars.json file, following the example below:
   "web_postgres_password": "postgres",
   "wanda_postgres_password": "postgres",
   "rabbitmq_password": "guest",
+  "rabbitmq_ssl_cert": "<paste your SSL certificate here in base64>",
+  "rabbitmq_ssl_key": "<paste your SSL certificate key here in base64>",
+  "rabbitmq_ssl_ca_cert": "<paste your SSL CA certificate here in base64>",
   "web_admin_password": "adminpassword",
   "trento_server_name": "trento-deployment.example.com",
   "nginx_vhost_filename": "trento-deployment.example.com",
@@ -186,6 +189,9 @@ Assuming you have in the current folder a file called `inventory.yml` and `extra
 | web_postgres_password   | Password of the postgres user used in web project                         |
 | wanda_postgres_password | Password of the postgres user used in wanda project                       |
 | rabbitmq_password       | Password of the rabbitmq user configured for the trento projects          |
+| rabbitmq_ssl_cert       | String with the content of the .crt file to be used by rabbitmq for authn |
+| rabbitmq_ssl_key        | String with the content of the .key file to be used by rabbitmq for authn |
+| rabbitmq_ssl_CA         | String with the content of the .crt file to be used by rabbitmq as CA     |
 | prometheus_url          | Base url of prometheus database                                           |
 | web_admin_password      | Password of the admin user of the web application                         |
 | trento_server_name      | Server name of the trento web application, used by nginx                  |

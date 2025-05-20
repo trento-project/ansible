@@ -1,4 +1,4 @@
-AMQP_URL={{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}
+AMQP_URL={{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}?certfile=/etc/rabbitmq/ssl/cert.pem&keyfile=c/etc/rabbitmq/ssl/key.pem&verify=verify_peer&cacertfile=/etc/rabbitmq/ssl/ca.pem
 DATABASE_URL=ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}
 EVENTSTORE_URL=ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}
 ENABLE_ALERTING={{ enable_alerting }}
