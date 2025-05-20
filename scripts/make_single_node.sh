@@ -112,16 +112,16 @@ nginx_ssl_key="$key"
 prometheus_url="http://localhost:9090"
 
 [trento_server]
-vitellone ansible_user=ec2-user ansible_host=63.177.236.121
+vitellone ansible_user=ec2-user ansible_host=$machine_ip
 
 [postgres_hosts]
-vitellone ansible_user=ec2-user ansible_host=63.177.236.121
+vitellone ansible_user=ec2-user ansible_host=$machine_ip
 
 [rabbitmq_hosts]
-vitellone ansible_user=ec2-user ansible_host=63.177.236.121
+vitellone ansible_user=ec2-user ansible_host=$machine_ip
 
 [prometheus_hosts]
-vitellone ansible_user=ec2-user ansible_host=63.177.236.121
+vitellone ansible_user=ec2-user ansible_host=$machine_ip
 EOF
 
 
