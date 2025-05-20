@@ -115,6 +115,9 @@ jobs:
             --extra-vars "web_postgres_password='trento' \
             wanda_postgres_password='wanda' \
             rabbitmq_password='trento' \
+            rabbitmq_ssl_cert='${{ secrets.RABBITMQ_SSL_CERT }}' \
+            rabbitmq_ssl_key='${{ secrets.RABBITMQ_SSL_CERT }}' \
+            rabbitmq_ssl_ca_cert='${{ secrets.RABBITMQ_SSL_CA_CERT }}' \
             prometheus_url='http://localhost' \
             trento_server_name='trento-deployment.example.com' \
             web_admin_password='adminpassword' \
