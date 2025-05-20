@@ -7,6 +7,7 @@ This playbook aims to install Trento components and the belonging third parties.
 - 15 SP3[^1]
 - 15 SP4
 - 15 SP5
+- 15 SP6
 
 [^1]: For SP3, Prometheus installation needs to be provided manually.
 
@@ -37,6 +38,7 @@ for one of the supported OSs, with the following modules (Change `x` to match yo
 - Basesystem Module 15 x86_64 - `SUSEConnect -p sle-module-basesystem/15.x/x86_64`
 - SUSE Package Hub 15 x86_64 - ` SUSEConnect -p PackageHub/15.x/x86_64`
 - (Optional: for `docker` installation method) Containers Module 15 x86_64 - `SUSEConnect -p sle-module-containers/15.x/x86_64`
+- (15.6 only) Legacy Module 15 x86_64 - `SUSEConnect -p sle-module-legacy/15.6/x86_64`
 
 ## Usage
 

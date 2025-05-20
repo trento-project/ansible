@@ -76,8 +76,10 @@ jobs:
             host_ip: TEST_SP4_HOST_IP
           - sp_version: 'SP5'
             host_ip: TEST_SP5_HOST_IP
+          - sp_version: 'SP6'
+            host_ip: TEST_SP6_HOST_IP
     env:
-      TEST_HOST_IP: ${{ secrets[matrix.host_ip] }}
+      TEST_HOST_IP: ${{ vars[matrix.host_ip] }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
