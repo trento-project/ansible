@@ -29,21 +29,6 @@ create_x509() {
       -addext "subjectAltName=IP:$machine_ip" > /dev/null 2>&1
 }
 
-create_x509_with_ca() {
-  machine_ip=${1?:required argument}
-  crt_file=${2?:required argument}
-  key_file=${3?:required argument}
-  ca_file=${4?:required argument}
-
-  openssl genrsa -out $ca_file  4096 # > /dev/null 2>&1
-
-  openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 \
-      -key $ca_file \
-      -nodes -keyout "$key_file" -out "$crt_file" -subj "/CN=$machine_ip" \
-      -addext "subjectAltName=IP:$machine_ip" 
-}
-
-
 join_lines(){
   file=${1?:required argument}
   cat "$file" | awk '{printf "%s\\n", $0}'
@@ -64,10 +49,6 @@ inventory_yml_file="inventory.$machine_ip.yml"
 inventory_ini_file="inventory.$machine_ip.ini"
 crt_file="$machine_ip.crt"
 key_file="$machine_ip.key"
-rabbitmq_crt_file="rabbitmq_$machine_ip.crt"
-rabbitmq_key_file="rabbitmq_$machine_ip.key"
-rabbitmq_ca_file="rabbitmq_$machine_ip.ca.crt"
-
 
 # set the destination directory as the current directory
 pushd "$data_dir" > /dev/null
@@ -77,11 +58,6 @@ create_x509 "$machine_ip" "$crt_file" "$key_file"
 crt=$(join_lines "$crt_file")
 key=$(join_lines "$key_file")
 
-create_x509_with_ca "$machine_ip" "$rabbitmq_crt_file" "$rabbitmq_key_file" "$rabbitmq_ca_file"
-rabbitmq_crt=$(join_lines "$rabbitmq_crt_file")
-rabbitmq_key=$(join_lines "$rabbitmq_key_file")
-rabbitmq_ca=$(join_lines "$rabbitmq_ca_file")
-
 cat <<EOF > "$vars_json_file"
 {
     "provision_prometheus": "true",
@@ -89,9 +65,6 @@ cat <<EOF > "$vars_json_file"
     "web_postgres_password": "postgres",
     "wanda_postgres_password": "postgres",
     "rabbitmq_password": "guest",
-    "rabbitmq_ssl_cert": "$rabbitmq_crt",
-    "rabbitmq_ssl_key": "$rabbitmq_key",
-    "rabbitmq_ssl_ca_cert": "$rabbitmq_ca",
     "web_admin_password": "adminpassword",
     "trento_server_name": "$machine_fqdn",
     "nginx_ssl_cert": "$crt",
@@ -134,10 +107,6 @@ wanda_postgres_password=postgres
 rabbitmq_password=guest
 web_admin_password=adminpassword
 trento_server_name="$machine_fqdn"
-rabbitmq_server_name="$machine_fqdn"
-rabbitmq_ssl_cert="$rabbitmq_crt"
-rabbitmq_ssl_key="$rabbitmq_key"
-rabbitmq_ssl_ca_cert="$rabbitmq_ca"
 nginx_ssl_cert="$crt"
 nginx_ssl_key="$key"
 prometheus_url="http://localhost:9090"
@@ -166,9 +135,6 @@ printf " - $inventory_yml_file\n"
 printf " - $inventory_ini_file\n"
 printf " - $crt_file\n"
 printf " - $key_file\n"
-printf " - $rabbitmq_crt_file\n"
-printf " - $rabbitmq_key_file\n"
-printf " - $rabbitmq_ca_file\n"
 printf "\n\n"
 printf "To run the playbook, use the following command:\n\n"
 printf "ansible-playbook -i $data_dir/inventory.$machine_ip.yml -e @$data_dir/vars.$machine_ip.json playbook.yml \n"
