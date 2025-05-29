@@ -31,6 +31,7 @@
       dest: "{{ rabbitmq_certs_dir }}/agent_{{ inventory_hostname }}_key.pem"
     - src: "{{ generated_certs_dir }}/agent_{{ inventory_hostname }}.crt"
       dest: "{{ rabbitmq_certs_dir }}/agent_{{ inventory_hostname }}_cert.pem"
+  become: true
 
 - name: Configure Trento agent
   ansible.builtin.template:
