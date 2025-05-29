@@ -36,7 +36,7 @@
     - alert_recipient
   when: enable_alerting == 'true'
 
-- name: Ensure directory exists
+- name: Ensure rabbitmq certificates directory exists
   ansible.builtin.file:
     path: "{{ rabbitmq_certs_dir }}"
     state: directory
