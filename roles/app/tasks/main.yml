@@ -36,11 +36,6 @@
     - alert_recipient
   when: enable_alerting == 'true'
 
-# - name: Copy TLS client certificates to the server
-#   include_tasks: roles/tls/tasks/copy_client_certs.yml
-#   vars:
-#     group_name: "trento_server"
-
 - name: Ensure directory exists
   ansible.builtin.file:
     path: "{{ rabbitmq_certs_dir }}"
