@@ -13,7 +13,6 @@
     size: 4096
     mode: "0644"
   register: ca_key
-  when: generate_certs == "true"
 
 - name: Create CA certificate signing request
   community.crypto.openssl_csr:

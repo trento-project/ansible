@@ -5,6 +5,7 @@
   become: true
   roles:
     - role: tls
+      when: generate_certs == "true"
 
 - name: Install thirdparties
   hosts: trento_server
