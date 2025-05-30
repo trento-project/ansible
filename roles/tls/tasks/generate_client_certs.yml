@@ -1,8 +1,8 @@
 - name: Generate private key for client {{ group_name ~ ' (' ~ host ~ ')' }}
   community.crypto.openssl_privatekey:
     path: "{{ generated_certs_dir }}/{{ group_name }}_{{ host }}.key"
-    size: 2048
-    type: RSA
+    type: ECC
+    curve: secp384r1
     mode: '0644'
   delegate_to: localhost
   run_once: true

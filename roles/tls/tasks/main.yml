@@ -41,8 +41,8 @@
 - name: Generate RabbitMQ server private key
   openssl_privatekey:
     path: "{{ server_key_path }}"
-    size: 2048
-    type: RSA
+    type: ECC
+    curve: secp384r1
     mode: '0644'
   delegate_to: localhost
   run_once: true
