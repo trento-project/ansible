@@ -1,4 +1,6 @@
 ---
+generated_certs_dir: "/tmp/trento-ansible/certs"
+rabbitmq_certs_dir: "/var/rabbitmq/ssl"
 web_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) }}"
 web_postgres_db: webdb
 web_postgres_event_store: event_store
@@ -8,6 +10,7 @@ wanda_postgres_user: wanda
 wanda_postgres_db: wandadb
 rabbitmq_username: trento
 rabbitmq_vhost: "trento"
+rabbitmq_port: 5671
 secret_key_base: ""
 access_token_secret: ""
 refresh_token_secret: ""
@@ -21,7 +24,7 @@ smtp_user: ""
 smtp_password: ""
 alert_sender: ""
 alert_recipient: ""
-amqp_protocol: amqp
+amqp_protocol: amqps
 install_method: rpm
 enable_oidc: "false"
 oidc_client_id: ""

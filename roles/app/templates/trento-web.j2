@@ -1,4 +1,4 @@
-AMQP_URL={{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}
+AMQP_URL={{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}:{{ rabbitmq_port }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}?certfile={{ rabbitmq_certs_dir }}/trento_server_{{ inventory_hostname }}_cert.pem&keyfile={{ rabbitmq_certs_dir }}/trento_server_{{ inventory_hostname }}_key.pem&verify=verify_peer&cacertfile={{ rabbitmq_certs_dir }}/cacert.pem
 DATABASE_URL=ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}
 EVENTSTORE_URL=ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}
 ENABLE_ALERTING={{ enable_alerting }}
