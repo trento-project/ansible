@@ -2,3 +2,5 @@
 rabbitmq_username: trento
 rabbitmq_node_name: "rabbit@localhost"
 rabbitmq_vhost: "trento"
+generated_certs_dir: "/tmp/trento-ansible/certs"
+rabbitmq_certs_dir: "/var/rabbitmq/ssl"
