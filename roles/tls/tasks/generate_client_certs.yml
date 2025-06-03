@@ -5,7 +5,6 @@
     curve: secp384r1
     mode: '0644'
   delegate_to: localhost
-  run_once: true
   # Each client needs its own private key for secure authentication.
 
 - name: Generate CSR for client {{ group_name ~ ' (' ~ host ~ ')' }}
