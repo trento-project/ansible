@@ -363,7 +363,7 @@ Use this command when you want to reprovision (re-run the ansible playbook) the 
 
 ## About certificates
 
-The playbook take also care of cryptographic certificates and their configuration as required by the different scenarios. 
+The playbook takes also care of cryptographic certificates and their configuration as required by the different scenarios. 
 This chapter provides further details on the cryptographic features already mentioned before in this document.
 
 ### HTTPS access from the internet
