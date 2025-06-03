@@ -16,7 +16,7 @@
 
 - name: Create CA certificate signing request
   community.crypto.openssl_csr:
-    path: "/tmp/ca.csr"
+    path: "{{ generated_certs_dir }}/ca.csr"
     privatekey_path: "{{ ca_key_path }}"
     common_name: "Trento CA"
     use_common_name_for_san: false
@@ -31,7 +31,7 @@
 - name: Generate CA certificate
   openssl_certificate:
     path: "{{ ca_cert_path }}"
-    csr_path: "/tmp/ca.csr"
+    csr_path: "{{ generated_certs_dir }}/ca.csr"
     privatekey_path: "{{ ca_key_path }}"
     provider: selfsigned
     selfsigned_not_after: +3650d
@@ -49,7 +49,7 @@
 
 - name: Generate RabbitMQ server CSR
   openssl_csr:
-    path: "/tmp/rabbitmq.csr"
+    path: "{{ generated_certs_dir }}/rabbitmq.csr"
     privatekey_path: "{{ server_key_path }}"
     subject:
       CN: "{{ rabbitmq_host }}"
