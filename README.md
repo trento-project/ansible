@@ -373,8 +373,8 @@ Such variables are:
 
 | Name                            | Description                                                                                                      | Default                                               |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| nginx_ssl_cert                  | Required. String with the content of the .crt file to be used by nginx for https                                 ||
-| nginx_ssl_key                   | Required. String with the content of the .key file used to generate the certificate                              ||
+| nginx_ssl_cert                  | Required. String with the content of the .crt file to be used by nginx for https                                 |                                                       |
+| nginx_ssl_key                   | Required. String with the content of the .key file used to generate the certificate                              |                                                       |
 | nginx_ssl_cert_as_base64        | Nginx SSL certificate provided as base64 string                                                                  | false                                                 |
 | nginx_ssl_key_as_base64         | Nginx SSL key provided as base64 string                                                                          | false                                                 |
 
@@ -388,14 +388,14 @@ In short, both the server and client applications present, on connection, a CA c
 The playbook takes care of distributing the certificates to the correct host and configure the connection strings accordingly.
 It reads the files from a given directory on the control node on which the playbook is executed, and expects them to have a meaningful name, in order to be associated with the correct host.
 
-|file|description|
-|-|-|
-|`ca.key`| Private key of the CA, used to sign client and server certificates |
-|`ca.crt`| CA certificate, to be provided for authentication |
-|`rabbitmq.key`| Private key for the identity of the RabbitMQ server |
-|`rabbitmq.cert`| Signed certificate of the RabbitMQ server |
-|`<group name>_<host name>.key`| Private key for given client |
-|`<group name>_<host name>.crt`| Signed certifcate for given client |
+| file                           | description                                                        |
+| ------------------------------ | ------------------------------------------------------------------ |
+| `ca.key`                       | Private key of the CA, used to sign client and server certificates |
+| `ca.crt`                       | CA certificate, to be provided for authentication                  |
+| `rabbitmq.key`                 | Private key for the identity of the RabbitMQ server                |
+| `rabbitmq.cert`                | Signed certificate of the RabbitMQ server                          |
+| `<group name>_<host name>.key` | Private key for given client                                       |
+| `<group name>_<host name>.crt` | Signed certifcate for given client                                 |
 
 As an example, supposing to have the following inventory:
 
@@ -452,7 +452,7 @@ Furthermore, as the certificates are not meant to be used by other applications 
 
 The following are the variables to customize the process:
 
-| Name                            | Description                                                                                                      | Default                                               |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| generate_certs | If true, the playbook will generate all the needed certificates | true |
+| Name                | Description                                                                                                                                       | Default                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| generate_certs      | If true, the playbook will generate all the needed certificates                                                                                   | true                      |
 | generated_certs_dir | The directory for the certificates in the control node. It will be created if does not exist. It's unlikely that the user needs to set this value | /tmp/trento-ansible/certs |
