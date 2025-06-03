@@ -20,8 +20,8 @@ Vagrant.configure(2) do |config|
       prometheus_url: "http://localhost:9090",
       web_admin_password: "adminpassword",
       trento_server_name: "trento.local",
-      nginx_ssl_cert_as_base64: "false",
-      nginx_ssl_key_as_base64: "false",
+      nginx_ssl_cert_as_base64: false,
+      nginx_ssl_key_as_base64: false,
       nginx_ssl_cert: "
 -----BEGIN CERTIFICATE-----
 MIIEZDCCA0ygAwIBAgIUAue46Y/9kwT+zvPPW2xfuNv1+Z4wDQYJKoZIhvcNAQEL

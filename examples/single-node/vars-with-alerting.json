@@ -5,7 +5,7 @@
     "prometheus_url": "http://localhost:9090",
     "web_admin_password": "adminpassword",
     "trento_server_name": "your-server-name",
-    "enable_alerting": "true",
+    "enable_alerting": true,
     "alert_sender": "alert-sender-mail",
     "alert_recipient": "alert-receiver-mail",
     "smtp_server": "smtp-server-adress",
