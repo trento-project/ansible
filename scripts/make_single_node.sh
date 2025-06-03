@@ -60,8 +60,8 @@ key=$(join_lines "$key_file")
 
 cat <<EOF > "$vars_json_file"
 {
-    "provision_prometheus": "true",
-    "provision_proxy": "true",
+    "provision_prometheus": true,
+    "provision_proxy": true,
     "web_postgres_password": "postgres",
     "wanda_postgres_password": "postgres",
     "rabbitmq_password": "guest",

@@ -15,9 +15,9 @@ secret_key_base: ""
 access_token_secret: ""
 refresh_token_secret: ""
 web_admin_username: admin
-enable_api_key: "true"
-enable_charts: "true"
-enable_alerting: "false"
+enable_api_key: true
+enable_charts: true
+enable_alerting: false
 smtp_server: ""
 smtp_port: ""
 smtp_user: ""
@@ -26,11 +26,11 @@ alert_sender: ""
 alert_recipient: ""
 amqp_protocol: amqps
 install_method: rpm
-enable_oidc: "false"
+enable_oidc: false
 oidc_client_id: ""
 oidc_client_secret: ""
 oidc_server_base_url: ""
-enable_oauth2: "false"
+enable_oauth2: false
 oauth2_client_id: ""
 oauth2_client_secret: ""
 oauth2_server_base_url: ""
@@ -38,7 +38,7 @@ oauth2_authorize_url: ""
 oauth2_token_url: ""
 oauth2_user_url: ""
 oauth2_scopes: "profile email"
-enable_saml: "false"
+enable_saml: false
 saml_idp_id: ""
 saml_idp_nameid_format: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
 saml_sp_dir: "/etc/trento/trento-web/saml"
@@ -55,7 +55,7 @@ saml_firstname_attr_name: "firstName"
 saml_lastname_attr_name: "lastName"
 saml_metadata_url: ""
 saml_metadata_content: ""
-saml_sign_requests: "true"
-saml_sign_metadata: "true"
-saml_signed_assertion: "true"
-saml_signed_envelopes: "true"
+saml_sign_requests: true
+saml_sign_metadata: true
+saml_signed_assertion: true
+saml_signed_envelopes: true

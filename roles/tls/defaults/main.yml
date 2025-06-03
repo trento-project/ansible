@@ -1,4 +1,4 @@
-generate_certs: "true"
+generate_certs: true
 generated_certs_dir: "/tmp/trento-ansible/certs"
 ca_key_path: "{{ generated_certs_dir }}/ca.key"
 ca_cert_path: "{{ generated_certs_dir }}/ca.crt"

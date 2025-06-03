@@ -3,5 +3,5 @@ web_postgres_event_store: event_store
 web_postgres_user: web
 wanda_postgres_user: wanda
 wanda_postgres_db: wandadb
-install_postgres: "true"
+install_postgres: true
 install_method: rpm

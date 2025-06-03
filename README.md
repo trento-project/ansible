@@ -118,8 +118,8 @@ Create a vars.json file, following the example below:
 
 ```
 {
-  "provision_prometheus": "true",
-  "provision_proxy": "false",
+  "provision_prometheus": true,
+  "provision_proxy": false,
   "web_postgres_password": "postgres",
   "wanda_postgres_password": "postgres",
   "rabbitmq_password": "guest",
@@ -131,7 +131,7 @@ Create a vars.json file, following the example below:
 }
 ```
 > Additionally, when deploying trento agents using the playbook, api-key auto retrieval from the server is not supported yet, so either
-> use `"enable_api_key": "false"` and skip `trento_api_key` altogether or disable agent deployment for the first run, retrieve the api-key from the UI
+> use `"enable_api_key": false` and skip `trento_api_key` altogether or disable agent deployment for the first run, retrieve the api-key from the UI
 > and set the `trento_api_key` accordingly.
 
 ### 4. Run the playbook
@@ -211,10 +211,10 @@ These variables are the defaults of our roles, if you want to override the prope
 
 | Name                            | Description                                                                                                      | Default                                               |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| provision_postgres              | Provision postgres role, set to false if you provide an external postgres to the services                        | "true"                                                |
-| provision_rabbitmq              | Provision rabbitmq role, set to false if you provide an external rabbitmq to the services                        | "true"                                                |
-| provision_proxy                 | Provision nginx to expose the services, set to false to use an existing reverse proxy deployment                 | "true"                                                |
-| provision_prometheus            | Provision prometheus used by trento to store metrics send by agents                                              | "true"                                                |
+| provision_postgres              | Provision postgres role, set to false if you provide an external postgres to the services                        | true                                                |
+| provision_rabbitmq              | Provision rabbitmq role, set to false if you provide an external rabbitmq to the services                        | true                                                |
+| provision_proxy                 | Provision nginx to expose the services, set to false to use an existing reverse proxy deployment                 | true                                                |
+| provision_prometheus            | Provision prometheus used by trento to store metrics send by agents                                              | true                                                |
 | docker_network_name             | Name of the docker network to be used by the deployment when using "docker" install_method                       | trentonet                                             |
 | web_container_image             | Name of the Web container image to use to create the container                                                   | ghcr.io/trento-project/trento-web:rolling             |
 | web_container_name              | Name of the Web container                                                                                        | trento_web                                            |
@@ -234,7 +234,7 @@ These variables are the defaults of our roles, if you want to override the prope
 | web_postgres_db                 | Name of the postgres database of the web application                                                             | webdb                                                 |
 | web_postgres_event_store        | Name of the postgres event store database of web application                                                     | event_store                                           |
 | web_postgres_user               | Name of the postgres user used by web application                                                                | web                                                   |
-| install_postgres                | Install postgresql in the postgres provisioning phase                                                            | "true"                                                |
+| install_postgres                | Install postgresql in the postgres provisioning phase                                                            | true                                                |
 | wanda_postgres_user             | Name of the postgres user used by wanda project                                                                  | wanda                                                 |
 | wanda_postgres_db               | Name of the postgres database of wanda application                                                               | wanda                                                 |
 | web_postgres_host               | Postgres host of web project container                                                                           | host.docker.internal                                  |

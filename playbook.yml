@@ -5,7 +5,7 @@
   become: true
   roles:
     - role: tls
-      when: generate_certs == "true"
+      when: generate_certs == true
 
 - name: Install thirdparties
   hosts: trento_server
@@ -58,7 +58,7 @@
 - name: Provision postgres
   become: true
   vars:
-    provision_postgres: "true"
+    provision_postgres: true
   hosts: postgres_hosts
   roles:
     - role: postgres
@@ -68,7 +68,7 @@
 - name: Provision prometheus
   become: true
   vars:
-    provision_prometheus: "true"
+    provision_prometheus: true
   hosts: prometheus_hosts
   roles:
     - role: prometheus
@@ -78,7 +78,7 @@
 - name: Provision rabbitmq
   become: true
   vars:
-    provision_rabbitmq: "true"
+    provision_rabbitmq: true
   hosts: rabbitmq_hosts
   roles:
     - role: rabbitmq
@@ -91,7 +91,7 @@
 
 - name: Configure trento components
   vars:
-    provision_proxy: "true"
+    provision_proxy: true
   hosts: trento_server
   become: true
   roles:
