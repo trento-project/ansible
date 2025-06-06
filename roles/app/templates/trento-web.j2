@@ -2,13 +2,13 @@ AMQP_URL={{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{
 DATABASE_URL=ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}
 EVENTSTORE_URL=ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}
 {% if enable_alerting is not none %}
-ENABLE_ALERTING={{ enable_alerting }}
+ENABLE_ALERTING={{ enable_alerting | string | lower }}
 {% endif %}
 {% if smtp_server is not none %}
 SMTP_SERVER={{ smtp_server }}
 {% endif %}
 {% if smtp_port is not none %}
-SMTP_PORT={{ smtp_port }}
+SMTP_PORT={{ smtp_port | string }}
 {% endif %}
 {% if smtp_user is not none %}
 SMTP_USER={{ smtp_user }}
