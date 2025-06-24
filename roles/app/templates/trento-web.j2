@@ -1,13 +1,27 @@
 AMQP_URL={{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}
 DATABASE_URL=ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}
 EVENTSTORE_URL=ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}
-ENABLE_ALERTING={{ enable_alerting }}
+{% if enable_alerting is not none %}
+ENABLE_ALERTING={{ enable_alerting | string | lower }}
+{% endif %}
+{% if smtp_server is not none %}
 SMTP_SERVER={{ smtp_server }}
-SMTP_PORT={{ smtp_port }}
+{% endif %}
+{% if smtp_port is not none %}
+SMTP_PORT={{ smtp_port | string }}
+{% endif %}
+{% if smtp_user is not none %}
 SMTP_USER={{ smtp_user }}
+{% endif %}
+{% if smtp_password is not none %}
 SMTP_PASSWORD={{ smtp_password }}
+{% endif %}
+{% if alert_sender is not none %}
 ALERT_SENDER={{ alert_sender }}
+{% endif %}
+{% if alert_recipient is not none %}
 ALERT_RECIPIENT={{ alert_recipient }}
+{% endif %}
 PROMETHEUS_URL={{ prometheus_url }}
 SECRET_KEY_BASE={{ secret_key_base }}
 ACCESS_TOKEN_ENC_SECRET={{ access_token_secret }}
