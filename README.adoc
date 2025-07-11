@@ -1,4 +1,4 @@
-== Trento Ansible
+= Trento Ansible
 
 This playbook aims to install Trento components and the belonging third
 parties.
@@ -14,7 +14,7 @@ manually.]
 * 15 SP5
 * 15 SP6
 
-=== Components
+== Components
 
 * https://github.com/trento-project/web[web]
 * https://github.com/trento-project/wanda[wanda]
@@ -36,7 +36,7 @@ The `+agent+` is installed from the configured obs repository using
 
 The nginx configuration acts as a reverse proxy for all the components.
 
-==== SUSE LINUX ENTERPRISE USERS
+=== SUSE LINUX ENTERPRISE USERS
 
 *This playbook requires that the host where you are going to install
 trento-server has an activated license* for one of the supported OSs,
@@ -50,13 +50,13 @@ x86_64 - `+SUSEConnect -p sle-module-containers/15.x/x86_64+`
 * (15.6 only) Legacy Module 15 x86_64 -
 `+SUSEConnect -p sle-module-legacy/15.6/x86_64+`
 
-=== Usage
+== Usage
 
-==== 1. Clone the repository
+=== 1. Clone the repository
 
 `+git clone https://github.com/trento-project/ansible.git+`
 
-==== 2. Prepare your inventory file
+=== 2. Prepare your inventory file
 
 Get to the `+ansible+` directory: `+cd ansible+`
 
@@ -120,7 +120,7 @@ all:
           ansible_user: "your-user"
 ----
 
-==== 3. Setup playbook variables
+=== 3. Setup playbook variables
 
 Create a vars.json file, following the example below: > *Note*: > The
 default values for variables ending with `+_host+` usually point to: > -
@@ -154,7 +154,7 @@ disable agent deployment for the first run, retrieve the api-key from
 the UI and set the `+trento_api_key+` accordingly.
 ____
 
-==== 4. Run the playbook
+=== 4. Run the playbook
 
 Prior to running the playbook, tell ansible to fetch the required
 modules:
@@ -190,7 +190,7 @@ $ ansible-playbook -i inventory.yml --extra-vars @extra-vars.json playbook.yml
 `+ansible-playbook+` with your inventory and other methods of variables
 injection.*
 
-==== With docker container
+=== With docker container
 
 You can use the docker image `+a+`, to run this playbook, the image
 contains the playbook files ready to be provisioned. The docker image
@@ -212,9 +212,9 @@ docker run \
   ghcr.io/trento-project/ansible:rolling /playbook/inventory.yml /playbook/extra-vars.json
 ----
 
-=== Playbook variables
+== Playbook variables
 
-==== Required Variables to install trento_server
+=== Required Variables to install trento_server
 
 [width="100%",cols="24%,76%",options="header",]
 |===
@@ -242,7 +242,7 @@ nginx for https
 generate the certificate
 |===
 
-==== Required Variables to install trento agents
+=== Required Variables to install trento agents
 
 [width="100%",cols="21%,79%",options="header",]
 |===
@@ -253,7 +253,7 @@ generate the certificate
 trento projects
 |===
 
-==== Optional variables
+=== Optional variables
 
 These variables are the defaults of our roles, if you want to override
 the proper roles variables, feel free to inspect them in the playbook
@@ -530,7 +530,7 @@ the rabbitmq role |trento
 could include the service port |
 |===
 
-=== Clean up
+== Clean up
 
 In order to clean up most of the applied changes and created resources,
 the `+playbook.cleanup+` playbook could be used. It uses the same
@@ -555,7 +555,7 @@ $ ansible-playbook -i inventory.yml --extra-vars @extra-vars.json playbook.clean
 they are of general usage, and this could have impact in many other
 services.*
 
-=== Usage with vagrant
+== Usage with vagrant
 
 You can test the playbook using vagrant, the default configuration in
 this repository assumes that you have VirtualBox, change it to what
