@@ -177,7 +177,7 @@ jobs:
           fetch-depth: 0
       - name: Compress tarball
         run: |
-          tar -zcf trento-ansible.tgz roles/ playbook.yml playbook.cleanup.yml requirements.yml README.md
+          tar -zcf trento-ansible.tgz roles/ playbook.yml playbook.cleanup.yml requirements.yml README.adoc
       - uses: actions/upload-artifact@v4
         with:
           name: trento-ansible
