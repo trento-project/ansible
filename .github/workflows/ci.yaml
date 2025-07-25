@@ -22,8 +22,6 @@ jobs:
 
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25
-        with:
-          args: "-x no-role-prefix"
 
   build-and-push-container-images:
     name: Build and push container images
