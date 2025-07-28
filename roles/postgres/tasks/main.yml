@@ -10,7 +10,6 @@
     state: present
     update_cache: true
 
-
 - name: Install postgresql-server-devel manually using expect module
   ansible.builtin.expect:
     command: zypper install postgresql15-server-devel
@@ -31,88 +30,82 @@
     state: started
     enabled: true
 
-- name: "Configure postgres to listen on *"
+- name: Configure Postgres
+  become: true
   become_user: postgres
-  community.postgresql.postgresql_set:
-    name: listen_addresses
-    value: "*"
-  notify: Restart postgres
+  block:
+    - name: "Configure postgres to listen on *"
+      community.postgresql.postgresql_set:
+        name: listen_addresses
+        value: "*"
+      notify: Restart postgres
 
-# this task is implemented with `lineinfile` instead of `pg_hba` module
-# as the second want does not provide any option to set the order of
-# the new entry, and this case, the new entry must be pretty much on top
-# of the host entries to apply properly the precedence of rules
-- name: Configure pg_hba to accept connection from trento services
-  become_user: postgres
-  notify: Restart postgres
-  ansible.builtin.lineinfile:
-    path: /var/lib/pgsql/data/pg_hba.conf
-    regexp: "^host.*{{ web_postgres_db }},{{ web_postgres_event_store }},{{ wanda_postgres_db }}"
-    insertafter: "^local.*all.*all.*peer"
-    line: "host\t{{ web_postgres_db }},{{ web_postgres_event_store }},{{ wanda_postgres_db }}\t{{ web_postgres_user }},{{ wanda_postgres_user }}\t0.0.0.0/0\tmd5"
+    # this task is implemented with `lineinfile` instead of `pg_hba` module
+    # as the second want does not provide any option to set the order of
+    # the new entry, and this case, the new entry must be pretty much on top
+    # of the host entries to apply properly the precedence of rules
+    - name: Configure pg_hba to accept connection from trento services
+      notify: Restart postgres
+      ansible.builtin.lineinfile:
+        path: /var/lib/pgsql/data/pg_hba.conf
+        regexp: "^host.*{{ web_postgres_db }},{{ web_postgres_event_store }},{{ wanda_postgres_db }}"
+        insertafter: "^local.*all.*all.*peer"
+        line: "host\t{{ web_postgres_db }},{{ web_postgres_event_store }},{{ wanda_postgres_db }}\t{{ web_postgres_user }},{{ wanda_postgres_user }}\t0.0.0.0/0\tmd5"
 
-- name: Create postgres web database
-  become_user: postgres
-  community.postgresql.postgresql_db:
-    name: "{{ web_postgres_db }}"
-    state: present
+    - name: Create postgres web database
+      community.postgresql.postgresql_db:
+        name: "{{ web_postgres_db }}"
+        state: present
 
-- name: Create postgres web event store
-  become_user: postgres
-  community.postgresql.postgresql_db:
-    name: "{{ web_postgres_event_store }}"
-    state: present
+    - name: Create postgres web event store
+      community.postgresql.postgresql_db:
+        name: "{{ web_postgres_event_store }}"
+        state: present
 
-- name: Create postgres wanda database
-  become_user: postgres
-  community.postgresql.postgresql_db:
-    name: "{{ wanda_postgres_db }}"
-    state: present
+    - name: Create postgres wanda database
+      community.postgresql.postgresql_db:
+        name: "{{ wanda_postgres_db }}"
+        state: present
 
-- name: Create web database user
-  become_user: postgres
-  community.postgresql.postgresql_user:
-    db: "{{ web_postgres_db }}"
-    name: "{{ web_postgres_user }}"
-    password: "{{ web_postgres_password }}"
-    comment: "Web user provisioned by playbook"
-    state: present
+    - name: Create web database user
+      community.postgresql.postgresql_user:
+        db: "{{ web_postgres_db }}"
+        name: "{{ web_postgres_user }}"
+        password: "{{ web_postgres_password }}"
+        comment: "Web user provisioned by playbook"
+        state: present
 
-- name: Create wanda database user
-  become_user: postgres
-  community.postgresql.postgresql_user:
-    db: "{{ wanda_postgres_db }}"
-    name: "{{ wanda_postgres_user }}"
-    password: "{{ wanda_postgres_password }}"
-    comment: "Wanda user provisioned by playbook"
-    state: present
+    - name: Create wanda database user
+      community.postgresql.postgresql_user:
+        db: "{{ wanda_postgres_db }}"
+        name: "{{ wanda_postgres_user }}"
+        password: "{{ wanda_postgres_password }}"
+        comment: "Wanda user provisioned by playbook"
+        state: present
 
-- name: Grant privilegies to the web user for the web database
-  become_user: postgres
-  community.postgresql.postgresql_privs:
-    db: "{{ web_postgres_db }}"
-    objs: public
-    roles: "{{ web_postgres_user }}"
-    privs: ALL
-    type: schema
-    state: present
+    - name: Grant privilegies to the web user for the web database
+      community.postgresql.postgresql_privs:
+        db: "{{ web_postgres_db }}"
+        objs: public
+        roles: "{{ web_postgres_user }}"
+        privs: ALL
+        type: schema
+        state: present
 
-- name: Grant privilegies to the web user for the web event store
-  become_user: postgres
-  community.postgresql.postgresql_privs:
-    db: "{{ web_postgres_event_store }}"
-    objs: public
-    roles: "{{ web_postgres_user }}"
-    privs: ALL
-    type: schema
-    state: present
+    - name: Grant privilegies to the web user for the web event store
+      community.postgresql.postgresql_privs:
+        db: "{{ web_postgres_event_store }}"
+        objs: public
+        roles: "{{ web_postgres_user }}"
+        privs: ALL
+        type: schema
+        state: present
 
-- name: Grant privilegies to the wanda user for the wanda database
-  become_user: postgres
-  community.postgresql.postgresql_privs:
-    db: "{{ wanda_postgres_db }}"
-    objs: public
-    roles: "{{ wanda_postgres_user }}"
-    privs: ALL
-    type: schema
-    state: present
+    - name: Grant privilegies to the wanda user for the wanda database
+      community.postgresql.postgresql_privs:
+        db: "{{ wanda_postgres_db }}"
+        objs: public
+        roles: "{{ wanda_postgres_user }}"
+        privs: ALL
+        type: schema
+        state: present

@@ -1,3 +1,4 @@
+---
 prometheus_port: 9090
 web_host: http://localhost
 web_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) }}"
