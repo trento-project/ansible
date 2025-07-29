@@ -31,11 +31,18 @@
         name: b1-systems.suseconnect
 
     - name: Get current Python's package manger prefix
-      ansible.builtin.shell: "rpm -qf {{ ansible_python.executable }} | grep -E -o 'python3[[:digit:]]{0,2}'"
+      # Linter tries to be smart, but it's not -- there is no Ansible
+      # module to do RPM queries. Thus, silence this lint error.
+      # noqa: command-instead-of-module
+      ansible.builtin.shell: |
+        set -o pipefail
+        rpm -qf {{ ansible_python.executable }} | grep -E -o 'python3[[:digit:]]{0,2}'
       register: python_prefix_result
+      changed_when: false
 
     - name: Save current Python's package manger prefix
-      ansible.builtin.set_fact: current_python_package_prefix="{{ python_prefix_result.stdout }}"
+      ansible.builtin.set_fact:
+        current_python_package_prefix: "{{ python_prefix_result.stdout }}"
 
     - name: Install python prerequisites
       community.general.zypper:
