@@ -42,16 +42,15 @@ The nginx configuration acts as a reverse proxy for all the components.
 === SUSE LINUX ENTERPRISE USERS
 
 *This playbook requires that the host where you are going to install
-trento-server has an activated license* for one of the supported OSs,
-with the following modules (Change `+x+` to match your current version):
+trento-server has an activated license* for one of the supported OSs.
 
-* Basesystem Module 15 x86_64 -
-`+SUSEConnect -p sle-module-basesystem/15.x/x86_64+`
-* SUSE Package Hub 15 x86_64 - `+SUSEConnect -p PackageHub/15.x/x86_64+`
-* (Optional: for `+docker+` installation method) Containers Module 15
-x86_64 - `+SUSEConnect -p sle-module-containers/15.x/x86_64+`
-* (15.6 only) Legacy Module 15 x86_64 -
-`+SUSEConnect -p sle-module-legacy/15.6/x86_64+`
+By running the playbook, the following optional extension modules
+would be activated on the target:
+
+* Python 3 -- `sle-module-python3`
+* Package Hub -- `PackageHub`
+* (Optional: for `docker` installation method) Containers Module 15
+x86_64 -- `sle-module-containers/15.x/x86_64`
 
 == Usage
 
