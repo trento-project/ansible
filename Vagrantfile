@@ -29,7 +29,6 @@ Vagrant.configure(2) do |config|
     }
 
     ansible.extra_vars = {
-      web_container_image: "registry.suse.com/trento/trento-web:2.4.0",
       web_postgres_password: "pass",
       wanda_postgres_password: "wanda",
       rabbitmq_password: "trento",
