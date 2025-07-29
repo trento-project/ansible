@@ -5,9 +5,11 @@
   become: true
 
   vars:
-    suseconnect_products:
-      - product: 'sle-module-python3'
-        version: '{{ ansible_distribution_version }}'
+    _sle_python:
+      product: 'sle-module-python3'
+      version: "{{ ansible_distribution_version }}"
+    _suse_products:
+      - "{{ (ansible_distribution_version in ('15.3',)) | ternary(omit, _sle_python) }}"
       - product: 'PackageHub'
         version: '{{ ansible_distribution_version }}'
 
