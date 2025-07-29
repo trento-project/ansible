@@ -1,0 +1,158 @@
+= Local development environment
+
+You can easily test the playbook in a local Virtual Machine that we
+can start and stop quickly (called a "devbox"").
+
+Our playbook has some prerequisites that are not trivial to provide
+such as:
+
+- The target of the playbook should be SLES4SAP system;
+- The system needs to be already activated/registered;
+
+So, to help us out with these requirements, we have prepared some
+scripts and auxiliary helper files in `devbox` directory. Currently,
+our development box is based on Vagrant by using its `libvirt`
+provider.
+
+
+== Prepare a SLES4SAP base image
+
+Vagrant needs a base image to start off its VM. This base image is in
+its own format, called `box`. It's a tar-ball of a virtual disk and
+some vagrant-specific metadata. The virtual disk could be in one of
+several supported formats, depending on the virtualization provider to
+be used. We'll use `qemu`, which is supported through Vagrant's
+`libvirt` provider.
+
+Vagrant usually hosts ready-to-use base-images of most
+community-supported Operating Systems. However, SLES4SAP is an
+enterprise-grade OS and there are no ready-made images
+available. Unfortunately, SUSE stopped providing Vagrant images
+either.  But still provides ones for KVM/Xen (mainly for use in
+OpenStack). So, we have to effectively do two things:
+
+- Convert SLES KVM/Xen image to `box` format;
+- Convert SLES to SLES4SAP.
+
+=== SLES Vagrant base box
+
+To create a SLES base `box`, conduct the following steps:
+
+[NOTE]
+====
+These steps need to be executed only once for a SLES image of specific
+version. Eg. once for SLES15-SP6 and again when trying with SLES15-SP7.
+====
+
+. Download a desired SLES KVM/Xen image from `download.suse.com` or
+from https://scc.suse.com[SUSE Customer Center] (you'd need to have a
+customer account for the later). Again, there is no SLES4SAP VM images
+already prepared from SUSE. The good thing, though, is that both
+systems share the same base installation. Example name for the image
+could be `SLES15-SP7-Minimal-VM.x86_64-kvm-and-xen-GM.qcow2`.
+
+. Once you have the desired SLES image give its path to the provided
+`make_box.sh` shell script in `devbox` directory:
++
+[source,bash]
+----
+$ ./devbox/make_sles_box.sh <path-to-sles-image.qcow2>
+----
+
+. When the script finishes (ignore permission warnings, they are
+harmless, caused by `fuser` syscall not running as root), a new `box`
+file would be created in `devbox` directory with a name extracted from
+the name of the original image. You have to add that `box` file to
+Vagrant. For instance, if the name of the produced file is
+`SLES15-SP7.box`, then:
++
+[source,bash]
+----
+$ vagrant box add --name SLES15-SP7 ./devbox/SLES15-SP7.box
+----
+
+Now, Vagrant recognizes `SLES15-SP7` as valid base box.
+
+=== SLES4SAP virtual appliance
+
+At this point we'd be able to run Vagrant using "base" SLES but the VM
+would require _interactive_ initial setup and also won't be registered
+with SCC. Most importantly, it won't be SLES4SAP but rather base
+SLES. To handle all of that, we'd need to create a Combustion script
+that would "specialize" our base image into a virtual appliance ready
+to be used as a test target for our Ansible playbook.
+
+Since the real Combustion file should contain some secrets, the
+`devbox` directory contains a script called
+`make_combustion_script.sh` that would generate the real startup
+script with the secrets baked in:
+
+[NOTE]
+====
+The following procedure should be executed only once if secrets remain
+the same, _regardless_ of the used SLES version image:
+====
+
+. Copy `devbox/secrets.tpl` as `devbox/secrets`;
+. Fill in  all the fields in `devbox/secrets`;
+. Generate the Combustion file by running the provided script:
++
+[source,bash]
+----
+$ ./devbox/make_combustion_script.sh
+----
+
+And that's it! We're ready to start our Vagrant VM.
+
+== Usage with Vagrant
+
+Start the vagrant box with:
+
+[source,bash]
+----
+$ vagrant up
+----
+
+This will spawn a vagrant box with `SLES15-SP7` as base box by
+default. The base box can be changed by exporting
+`TRENTO_VAGRANT_BASE_BOX` env-var, for example:
+
+[source,bash]
+----
+$ export TRENTO_VAGRANT_BASE_BOX="SLES15-SP6"
+$ vagrant up
+----
+
+The provisioning will be automatic after the box starts. To force
+provision the vagrant box
+
+[source,bash]
+----
+$ vagrant provision
+----
+
+Use this command when you want to reprovision (re-run the ansible
+playbook) the Vagrant box, you could use this to re-run the playbook
+if you are in the development process or you want to change some
+variables.
+
+File syncing between the host OS and the guest in Vagrant is disabled
+by default because of IP assignment problem that prevent successful
+NFS configuration on first `vagrant up`. Subsequent starting of the
+devbox would successfully configure NFS, though. If you want to enable
+file sync, then export `TRENTO_VAGRANT_FILE_SYNC=true`. The way we use
+Vagrant, however, does not make use of file sync, so it's disabled by
+default.
+
+== Trento running in Vagrant
+
+The `Vagrantfile` contains sane defaults for running the playbook,
+it assumes that you have `trento.local` as `localhost` alias in your
+`/etc/hosts`.
+
+You can reach the trento application using
+`https://trento.local:8443`.
+
+The Vagrantfile contains a self signed certificate for `trento.local`
+domain, make sure you accept the exception when prompted by your
+browser.

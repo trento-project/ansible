@@ -1,8 +1,23 @@
 Vagrant.require_version ">= 1.8.0"
 
+BASE_BOX = ENV["TRENTO_VAGRANT_BASE_BOX"] || "SLES15-SP7"
+FILE_SYNC_ENABLED = ["true", "t", "1", "TRUE"].include?(ENV["TRENTO_VAGRANT_FILE_SYNC"])
+
 Vagrant.configure(2) do |config|
-  config.vm.box = "opensuse/Leap-15.4.x86_64"
   config.vm.define "machine1"
+  config.vm.box = BASE_BOX
+
+  config.vm.synced_folder ".", "/vagrant",
+                          type: "nfs",
+                          nfs_version: 4,
+                          nfs_udp: false,
+                          disabled: !FILE_SYNC_ENABLED
+  config.vm.provider :libvirt do |domain|
+    domain.memory = 4096
+    domain.cpus = 2
+    domain.qemuargs :value => '-fw_cfg'
+    domain.qemuargs :value => "name=opt/org.opensuse.combustion/script,file=#{Pathname('devbox/combustion.sh').realpath}"
+  end
 
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "playbook.yml"
@@ -12,7 +27,9 @@ Vagrant.configure(2) do |config|
       "prometheus_hosts" => ["machine1"],
       "rabbitmq_hosts" => ["machine1"]
     }
+
     ansible.extra_vars = {
+      web_container_image: "registry.suse.com/trento/trento-web:2.4.0",
       web_postgres_password: "pass",
       wanda_postgres_password: "wanda",
       rabbitmq_password: "trento",
@@ -82,10 +99,7 @@ mpNiKDOPALNTs+Ukdkt5KlE=
       "
     }
   end
-  config.vm.provider "virtualbox" do |v|
-    v.memory = 4096
-    v.cpus = 4
-  end
+
   config.vm.network "forwarded_port", guest: 80, host: 8080
   config.vm.network "forwarded_port", guest: 443, host: 8443
 end
