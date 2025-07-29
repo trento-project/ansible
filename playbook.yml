@@ -3,6 +3,14 @@
 - name: Install third-parties
   hosts: trento_server
   become: true
+
+  vars:
+    suseconnect_products:
+      - product: 'sle-module-python3'
+        version: '{{ ansible_distribution_version }}'
+      - product: 'PackageHub'
+        version: '{{ ansible_distribution_version }}'
+
   pre_tasks:
     - name: Check SLES distribution and version
       ansible.builtin.fail:
@@ -17,6 +25,10 @@
         name:
           - gcc
           - sudo
+
+    - name: Enable needed extension modules for SLES
+      ansible.builtin.include_role:
+        name: b1-systems.suseconnect
 
     - name: Get current Python's package manger prefix
       ansible.builtin.shell: "rpm -qf {{ ansible_python.executable }} | grep -E -o 'python3[[:digit:]]{0,2}'"

@@ -1,4 +1,7 @@
 ---
+roles:
+  - name: b1-systems.suseconnect
+
 collections:
   - name: community.docker
     version: 4.6.0
