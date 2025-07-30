@@ -1,7 +1,7 @@
 #!/bin/bash
 # combustion: network
 
-# --- Vagrant [Users and SSH]
+# --- Vagrant base-box setup
 # Customize as Vagrant Base Box according to:
 # https://developer.hashicorp.com/vagrant/docs/boxes/base
 
@@ -25,6 +25,11 @@ kbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jl\
 qm8tehUc9c9WhQ== vagrant insecure public key" > "${vagrant_ssh_dir}/authorized_keys"
 chown vagrant:users "${vagrant_ssh_dir}"/authorized_keys
 chmod 0600 "${vagrant_ssh_dir}"/authorized_keys
+
+# Add 'vagrant' user as sudoer without asking for password. It's
+# Vagrant requirement according to: #
+# https://developer.hashicorp.com/vagrant/docs/boxes/base
+echo 'vagrant ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/vagrant
 
 # --- SLES-specific
 
@@ -78,15 +83,3 @@ fi
 for  product in $SLES_OPTIONAL_MODULES; do
     register "$product"
 done
-
-# --- Vagrant [Sudo configuration]
-# `sudo` is essential for Vagrant to work. It's the only package
-# requirement that might differ from the standard package list for
-# SLES4SAP systems. Anyway, starting SLES15-SP7, sudo comes already
-# pre-installed.
-zypper -n install sudo
-
-# Add 'vagrant' user as sudoer without asking for password. It's
-# Vagrant requirement according to: #
-# https://developer.hashicorp.com/vagrant/docs/boxes/base
-echo 'vagrant ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/vagrant
