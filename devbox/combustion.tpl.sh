@@ -1,7 +1,7 @@
 #!/bin/bash
 # combustion: network
 
-# --- Section Vagrant 1 [Users and SSH]
+# --- Vagrant [Users and SSH]
 # Customize as Vagrant Base Box according to:
 # https://developer.hashicorp.com/vagrant/docs/boxes/base
 
@@ -67,7 +67,19 @@ done
 # Install SLES_SAP default packages
 zypper -n install --auto-agree-with-licenses -f patterns-server-enterprise-sap_server
 
-# --- Section Vagrant 2 [Sudo configuration]
+# --- Enable optinal SUSE modules
+# Note: This section should ideally be handled in our ansible
+# playbook. However, for now, we'll configure it here.
+SLES_OPTIONAL_MODULES="PackageHub sle-module-containers"
+if [ "$SLE_VERSION" != "15.3" ]; then
+   SLES_OPTIONAL_MODULES="sle-module-python3 ${SLES_OPTIONAL_MODULES}"
+fi
+
+for  product in $SLES_OPTIONAL_MODULES; do
+    register "$product"
+done
+
+# --- Vagrant [Sudo configuration]
 # `sudo` is essential for Vagrant to work. It's the only package
 # requirement that might differ from the standard package list for
 # SLES4SAP systems. Anyway, starting SLES15-SP7, sudo comes already

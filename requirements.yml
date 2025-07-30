@@ -1,6 +1,4 @@
 ---
-roles:
-  - name: b1-systems.suseconnect
 
 collections:
   - name: community.docker

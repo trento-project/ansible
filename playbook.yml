@@ -4,17 +4,6 @@
   hosts: trento_server
   become: true
 
-  vars:
-    _sle_python:
-      product: 'sle-module-python3'
-      version: "{{ ansible_distribution_version }}"
-    _suse_products:
-      - "{{ (ansible_distribution_version in ('15.3',)) | ternary(omit, _sle_python) }}"
-      - product: 'PackageHub'
-        version: '{{ ansible_distribution_version }}'
-
-    suseconnect_products: "{{ _suse_products | reject('equalto', omit) | list }}"
-
   pre_tasks:
     - name: Check SLES distribution and version
       ansible.builtin.fail:
@@ -29,11 +18,6 @@
         name:
           - gcc
           - sudo
-
-    - name: Enable needed extension modules for SLES
-      ansible.builtin.include_role:
-        name: b1-systems.suseconnect
-      no_log: true
 
     - name: Get current Python's package manger prefix
       # Linter tries to be smart, but it's not -- there is no Ansible
