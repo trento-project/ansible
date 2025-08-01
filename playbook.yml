@@ -38,6 +38,8 @@
         name:
           - "{{ current_python_package_prefix }}-devel"
           - "{{ current_python_package_prefix }}-rpm"
+          # Used in ansible.posix.firewalld roles
+          - "{{ current_python_package_prefix }}-firewall"
         state: present
         update_cache: true
 
