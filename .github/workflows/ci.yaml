@@ -74,7 +74,7 @@ jobs:
         control_node:
           # - ansible_version: 11
           #   target_python: python3.11
-          - ansible_core_version: 16
+          - ansible_core_version: "2.16"
             target_python: python3
         install_method: ["rpm", "docker"]
         sp_version: ['SP6', 'SP5', 'SP4', 'SP3']
@@ -89,7 +89,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install ansible-core
-        run: sudo pipx install --force "ansible-core~=2.${{ matrix.control_node.ansible_core_version }}"
+        run: sudo pipx install --force "ansible-core~=${{ matrix.control_node.ansible_core_version }}.0"
 
       - name: Install galaxy deps
         run: ansible-galaxy install -r requirements.yml
