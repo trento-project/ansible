@@ -64,15 +64,15 @@ jobs:
           cache-to: type=gha,mode=max
 
   deploy-test-rpm:
-    name: Run on SLES15-${{ matrix.sp_version }} ansible-core${{ matrix.control_node.ansible_core_version }}/${{ matrix.install_method }}
+    name: Run ansible-core${{ matrix.control_node.ansible_core_version }} on ${{ matrix.install_method }}/SLES15-${{ matrix.sp_version }}
     needs: [ansible-lint]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
-      max-parallel: 3
+      max-parallel: 2
       matrix:
         control_node:
-          # - ansible_version: 11
+          # - ansible_core_version: "2.18"
           #   target_python: python3.11
           - ansible_core_version: "2.16"
             target_python: python3
