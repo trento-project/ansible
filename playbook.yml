@@ -36,8 +36,6 @@
     - name: Install python prerequisites
       community.general.zypper:
         name:
-          - "{{ current_python_package_prefix }}-setuptools"
-          - "{{ current_python_package_prefix }}-pip"
           - "{{ current_python_package_prefix }}-devel"
           - "{{ current_python_package_prefix }}-rpm"
         state: present

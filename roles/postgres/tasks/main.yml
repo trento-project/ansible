@@ -12,9 +12,9 @@
     update_cache: true
 
 - name: Install postgres python management deps
-  ansible.builtin.pip:
+  community.general.zypper:
     name:
-      - psycopg2-binary
+      - "{{ current_python_package_prefix }}-psycopg2"
     state: present
 
 - name: Start postgresql service
