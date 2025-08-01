@@ -64,7 +64,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   deploy-test-rpm:
-    name: Run on SLES15-${{ matrix.sp_version }} ansible${{ matrix.control_node.ansible_version }}/${{ matrix.install_method }}
+    name: Run on SLES15-${{ matrix.sp_version }} ansible-core${{ matrix.control_node.ansible_core_version }}/${{ matrix.install_method }}
     needs: [ansible-lint]
     runs-on: ubuntu-24.04
     strategy:
@@ -74,7 +74,7 @@ jobs:
         control_node:
           # - ansible_version: 11
           #   target_python: python3.11
-          - ansible_version: 9
+          - ansible_core_version: 16
             target_python: python3
         install_method: ["rpm", "docker"]
         sp_version: ['SP6', 'SP5', 'SP4', 'SP3']
@@ -89,7 +89,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install ansible-core
-        run: sudo pipx install --force "ansible~=${{ matrix.control_node.ansible_version }}.0"
+        run: sudo pipx install --force "ansible-core~=2.${{ matrix.control_node.ansible_core_version }}"
 
       - name: Install galaxy deps
         run: ansible-galaxy install -r requirements.yml
@@ -132,6 +132,7 @@ jobs:
             nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
             nginx_ssl_key='${{ secrets.SSL_KEY }}' \
             install_method='${{ matrix.install_method }}'"
+            --verbose
 
       - name: Test readiness
         run: curl -k "https://${{ env.TEST_HOST_IP }}/api/readyz"
