@@ -64,20 +64,20 @@ jobs:
           cache-to: type=gha,mode=max
 
   deploy-test-rpm:
-    name: Run the playbook on SLES15-${{ matrix.sp_version }} ${{ matrix.install_method }}/ansible${{ matrix.control_node.ansible_version }}
+    name: Run on SLES15-${{ matrix.sp_version }} ansible${{ matrix.control_node.ansible_version }}/${{ matrix.install_method }}
     needs: [ansible-lint]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       max-parallel: 3
       matrix:
-        sp_version: ['SP3', 'SP4', 'SP5', 'SP6', 'SP7']
-        install_method: ["rpm", "docker"]
         control_node:
           - ansible_version: 11
             target_python: python3.11
           - ansible_version: 9
             target_python: python3
+        install_method: ["rpm", "docker"]
+        sp_version: ['SP7', 'SP6', 'SP5', 'SP4', 'SP3']
 
     env:
       TEST_HOST_IP: ${{ vars[format('TEST_{0}_HOST_IP', matrix.sp_version)] }}
