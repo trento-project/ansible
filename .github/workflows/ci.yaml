@@ -72,12 +72,25 @@ jobs:
       max-parallel: 2
       matrix:
         control_node:
-          # - ansible_core_version: "2.18"
-          #   target_python: python3.11
+          - ansible_core_version: "2.18"
+            target_python: python3.11
           - ansible_core_version: "2.16"
             target_python: python3
         install_method: ["rpm", "docker"]
-        sp_version: ['SP6', 'SP5', 'SP4', 'SP3']
+        sp_version: ['SP7', 'SP6', 'SP5', 'SP4', 'SP3']
+
+        exclude:
+          - sp_version: "SP3"
+            control_node:
+              python_target: python3.11
+
+          - sp_version: "SP4"
+            control_node:
+              python_target: python3.11
+
+          - sp_version: "SP5"
+            control_node:
+              python_target: python3.11
 
     env:
       TEST_HOST_IP: ${{ vars[format('TEST_{0}_HOST_IP', matrix.sp_version)] }}
