@@ -83,3 +83,7 @@ fi
 for  product in $SLES_OPTIONAL_MODULES; do
     register "$product"
 done
+
+# Flush to storage. Sometimes, Combustion is too fast and can't
+# unmount its volumes that have still pending operations.
+sync
