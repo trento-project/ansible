@@ -190,3 +190,11 @@ extra-vars.json
 /vars.json
 
 data/
+
+# Devbox files containing secrets
+devbox/combustion.sh
+devbox/secrets
+
+# Asciidoctor artifacts
+README.html
+docs/*.html

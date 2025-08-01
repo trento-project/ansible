@@ -15,19 +15,10 @@
     comment: "User for Prometheus service"
   when: ansible_distribution_version >= "15.4"
 
-- name: Install package manually using expect module
-  ansible.builtin.expect:
-    command: zypper install golang-github-prometheus-prometheus
-    responses:
-      (?i)Choose from above solutions by number or cancel: "2"
-      (?i)Continue?: "y"
-  when: ansible_distribution_version >= "15.4"
-
 - name: Install package using zypper module
   ansible.builtin.package:
     name: golang-github-prometheus-prometheus
     state: present
-  when: ansible_distribution_version is version('15.4', '<')
 
 - name: Place prometheus config
   ansible.builtin.template:
