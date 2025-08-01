@@ -64,31 +64,52 @@ jobs:
           cache-to: type=gha,mode=max
 
   deploy-test-rpm:
-    name: Run the playbook on SLES 15 ${{ matrix.sp_version }}
+    name: Run ansible{{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/SLES15-${{ matrix.sp_version }}
     needs: [ansible-lint]
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
+      max-parallel: 2
       matrix:
-        include:
-          - sp_version: 'SP3'
-            host_ip: TEST_SP3_HOST_IP
-          - sp_version: 'SP4'
-            host_ip: TEST_SP4_HOST_IP
-          - sp_version: 'SP5'
-            host_ip: TEST_SP5_HOST_IP
-          - sp_version: 'SP6'
-            host_ip: TEST_SP6_HOST_IP
+        control_node:
+          - ansible_version: "11"
+            target_python: python3.11
+          - ansible_version: "9"
+            target_python: python3
+        install_method: ["rpm", "docker"]
+        sp_version: ['SP7', 'SP6', 'SP5', 'SP4', 'SP3']
+
+        exclude:
+          - sp_version: "SP3"
+            control_node:
+              ansible_version: "11"
+              target_python: python3.11
+
+          - sp_version: "SP4"
+            control_node:
+              ansible_version: "11"
+              target_python: python3.11
+
+          - sp_version: "SP5"
+            control_node:
+              ansible_version: "11"
+              target_python: python3.11
+
     env:
-      TEST_HOST_IP: ${{ vars[matrix.host_ip] }}
+      TEST_HOST_IP: ${{ vars[format('TEST_{0}_HOST_IP', matrix.sp_version)] }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Install ansible-core
-        run: sudo pipx install --force ansible-core==2.16.3
+
+      - name: Install Ansible
+        run: sudo pipx install --force --include-deps "ansible~=${{ matrix.control_node.ansible_version }}.0"
+
       - name: Install galaxy deps
         run: ansible-galaxy install -r requirements.yml
+
       - name: Run playbook
         id: runplaybook
         uses: dawidd6/action-ansible-playbook@v2
@@ -99,7 +120,7 @@ jobs:
             all:
               vars:
                 ansible_user: ${{ secrets.TEST_HOST_USER }}
-                ansible_python_interpreter: /usr/bin/python3
+                ansible_python_interpreter: /usr/bin/${{ matrix.control_node.target_python }}
               children:
                 trento_server:
                   hosts:
@@ -126,9 +147,12 @@ jobs:
             nginx_ssl_key_as_base64='true' \
             nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
             nginx_ssl_key='${{ secrets.SSL_KEY }}' \
-            install_method='rpm'"
+            install_method='${{ matrix.install_method }}'"
+            --verbose
+
       - name: Test readiness
         run: curl -k "https://${{ env.TEST_HOST_IP }}/api/readyz"
+
       - name: Run playbook cleanup
         uses: dawidd6/action-ansible-playbook@v2
         if: success() || steps.runplaybook.conclusion == 'failure'
@@ -139,7 +163,7 @@ jobs:
             all:
               vars:
                 ansible_user: ${{ secrets.TEST_HOST_USER }}
-                ansible_python_interpreter: /usr/bin/python3
+                ansible_python_interpreter: /usr/bin/${{ matrix.control_node.target_python }}
               children:
                 trento_server:
                   hosts:
@@ -166,7 +190,8 @@ jobs:
             nginx_ssl_key_as_base64='true' \
             nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
             nginx_ssl_key='${{ secrets.SSL_KEY }}' \
-            install_method='rpm'"
+            install_method='${{ matrix.install_method }}'"
+            --verbose
 
   create-artifact:
     runs-on: ubuntu-24.04
