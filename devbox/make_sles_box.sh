@@ -14,7 +14,7 @@ error() {
     exit 2
 }
 
-# Gets the absolute path of the directory containging the file specified.
+# Gets the absolute path of the directory containing the file specified.
 # `$1`: Filename
 absdir() {
     cd -- "$(dirname "$1")" && pwd

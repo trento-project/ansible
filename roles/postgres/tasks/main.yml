@@ -4,12 +4,19 @@
   when: install_postgres == 'true'
   community.general.zypper:
     name:
-      - postgresql
-      - postgresql-server
-      - postgresql-server-devel
-      - postgresql-contrib
+      - postgresql15
+      - postgresql15-server
+      - postgresql15-contrib
     state: present
     update_cache: true
+
+- name: Install postgresql-server-devel manually using expect module
+  ansible.builtin.expect:
+    command: zypper install postgresql15-server-devel
+    responses:
+      (?i)Choose from above solutions by number or cancel: "3"
+      (?i)Continue?: "y"
+      (?i)Continue? [y/n/v/...? shows all options] (y): "y"
 
 - name: Install postgres python management deps
   ansible.builtin.pip:

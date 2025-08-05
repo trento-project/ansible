@@ -49,7 +49,7 @@ from https://scc.suse.com[SUSE Customer Center] (you'd need to have a
 customer account for the later). Again, there is no SLES4SAP VM images
 already prepared from SUSE. The good thing, though, is that both
 systems share the same base installation. Example name for the image
-could be `SLES15-SP7-Minimal-VM.x86_64-kvm-and-xen-GM.qcow2`.
+could be `SLES15-SP6-Minimal-VM.x86_64-kvm-and-xen-GM.qcow2`.
 
 . Once you have the desired SLES image give its path to the provided
 `make_box.sh` shell script in `devbox` directory:
@@ -64,14 +64,14 @@ harmless, caused by `fuser` syscall not running as root), a new `box`
 file would be created in `devbox` directory with a name extracted from
 the name of the original image. You have to add that `box` file to
 Vagrant. For instance, if the name of the produced file is
-`SLES15-SP7.box`, then:
+`SLES15-SP6.box`, then:
 +
 [source,bash]
 ----
-$ vagrant box add --name SLES15-SP7 ./devbox/SLES15-SP7.box
+$ vagrant box add --name SLES15-SP6 ./devbox/SLES15-SP6.box
 ----
 
-Now, Vagrant recognizes `SLES15-SP7` as valid base box.
+Now, Vagrant recognizes `SLES15-SP6` as valid base box.
 
 === SLES4SAP virtual appliance
 
@@ -113,13 +113,13 @@ Start the vagrant box with:
 $ vagrant up
 ----
 
-This will spawn a vagrant box with `SLES15-SP7` as base box by
+This will spawn a vagrant box with `SLES15-SP6` as base box by
 default. The base box can be changed by exporting
 `TRENTO_VAGRANT_BASE_BOX` env-var, for example:
 
 [source,bash]
 ----
-$ export TRENTO_VAGRANT_BASE_BOX="SLES15-SP6"
+$ export TRENTO_VAGRANT_BASE_BOX="SLES15-SP7"
 $ vagrant up
 ----
 

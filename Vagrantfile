@@ -1,6 +1,6 @@
 Vagrant.require_version ">= 1.8.0"
 
-BASE_BOX = ENV["TRENTO_VAGRANT_BASE_BOX"] || "SLES15-SP7"
+BASE_BOX = ENV["TRENTO_VAGRANT_BASE_BOX"] || "SLES15-SP6"
 FILE_SYNC_ENABLED = ["true", "t", "1", "TRUE"].include?(ENV["TRENTO_VAGRANT_FILE_SYNC"])
 
 Vagrant.configure(2) do |config|
