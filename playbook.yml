@@ -32,8 +32,11 @@
         name:
           # Used in package facts ansible.posix.package_facts
           - "{{ current_python_package_prefix }}-rpm"
-          # Used in ansible.posix.firewalld roles
+          # Used in ansible.posix.firewalld role
           - "{{ current_python_package_prefix }}-firewall"
+          # Used in ansible.posix.firewalld role when firewalld is not
+          # started
+          - "{{ current_python_package_prefix }}-nftables"
         state: present
         update_cache: true
 

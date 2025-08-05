@@ -64,7 +64,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   deploy-test-rpm:
-    name: Run ansible{{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/SLES15-${{ matrix.sp_version }}
+    name: Run ansible${{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/SLES15-${{ matrix.sp_version }}
     needs: [ansible-lint]
     runs-on: ubuntu-24.04
     strategy:
