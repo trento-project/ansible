@@ -1,15 +1,15 @@
 # code: language=ansible
 ---
-- name: Install thirdparties
+- name: Install third-parties
   hosts: trento_server
   become: true
+
   pre_tasks:
     - name: Check SLES distribution and version
       ansible.builtin.fail:
         msg: "This playbook only runs on SLES for SAP 15 SP3 or above. Detected: {{ ansible_distribution }} {{ ansible_distribution_version }}"
       when: >
-        ((ansible_distribution != "SLES_SAP") and
-        (ansible_distribution != "openSUSE Leap")) or
+        (ansible_distribution != "SLES_SAP") or
         (ansible_distribution_version is version('15.3', '<'))
 
   tasks:
