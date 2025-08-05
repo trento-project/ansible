@@ -1,13 +1,7 @@
 ---
-
 collections:
-  - name: community.docker
-    version: 4.6.0
-  - name: community.general
-    version: 10.7.0
-  - name: community.rabbitmq
-    version: 1.4.0
-  - name: community.postgresql
-    version: 3.14.2
-  - name: ansible.posix
-    version: 1.6.2
+  - community.docker
+  - community.general
+  - community.rabbitmq
+  - community.postgresql
+  - ansible.posix
