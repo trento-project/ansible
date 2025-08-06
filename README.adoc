@@ -4,18 +4,27 @@ ifndef::site-gen-antora[:relfileprefix: docs/]
 This playbook aims to install Trento components and the belonging third
 parties.
 
-[NOTE]
-====
-The playbook currently only supports the following SLES4SAP
-releases:
+== Support matrix
 
-* 15 SP3footnote:[For SP3, Prometheus installation needs to be provided
-manually.]
-* 15 SP4
-* 15 SP5
-* 15 SP6
-* 15 SP7
-====
+The playbook could only be run on target nodes running SLES4SAP.
+
+Refer to the following table for supported control and target node
+combinations. The specified value in the target cell is the _Python_
+interpreter version that supports the execution of the playbook:
+
+[cols=6*^]
+|===
+| Control node | SLES15-SP3 | SLES15-SP4 | SLES15-SP5 | SLES15-SP6 | SLES15-SP7
+
+| ansible9 | python3-only | python3-only | python3-only | python3/3.11 | python3/3.11
+
+| ansible11 | X | X | X | python3.11-only | python3.11-only
+|===
+
+NOTE: SLES15-SP6 and below need to install `python311-base` package
+to be able to use `python3.11`.
+
+NOTE: For SLES15-SP3, Prometheus installation needs to be provided manually.
 
 == Components
 
