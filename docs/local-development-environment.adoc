@@ -1,13 +1,13 @@
 = Local Development Environment
 
-You can easily test the playbook in a local Virtual Machine that we
-can start and stop quickly, called a _devbox_. This document lays out
-the details on how to setup such devbox.
+You can test the playbook on a local virtual machine--called a
+devbox--that you can quickly start and stop. This document explains how
+to set up a devbox.
 
 == Prerequisites
 
-To be able to run the playbook on a devbox several groups of
-requirements needs to be covered.
+To run the playbook on a devbox several groups of requirements need to
+be covered.
 
 === Image preparation requirements
 
@@ -69,9 +69,9 @@ version. Eg. once for SLES15-SP6 and again when trying with SLES15-SP7.
 . Download a desired SLES KVM/Xen image from `download.suse.com` or
 from https://scc.suse.com[SUSE Customer Center] (you'd need to have a
 customer account for the later). Again, there is no SLES4SAP VM images
-already prepared from SUSE. The good thing, though, is that both
-systems share the same base installation. Example name for the image
-could be `SLES15-SP6-Minimal-VM.x86_64-kvm-and-xen-GM.qcow2`.
+already prepared from SUSE. Fortunately, both systems share the same
+base installation. Example name for the image could be
+`SLES15-SP6-Minimal-VM.x86_64-kvm-and-xen-GM.qcow2`.
 
 . Once you have the desired SLES image give its path to the provided
 `make_box.sh` shell script in `devbox` directory:
@@ -117,12 +117,19 @@ script with the secrets baked in:
 
 [NOTE]
 ====
-The following procedure should be executed only once if secrets remain
-the same, _regardless_ of the used SLES version image:
+Perform the following procedure only once if secrets remain the same,
+_regardless_ of the SLES version image in use:
 ====
 
 . Copy `devbox/secrets.tpl` as `devbox/secrets`.
++
+[source,bash]
+----
+$ cp ./devbox/secrets.tpl ./devbox/secrets
+----
+
 . Fill in  all the fields in `devbox/secrets`.
+
 . Generate the Combustion file by running the provided script:
 +
 [source,bash]
@@ -160,9 +167,9 @@ provision the vagrant box:
 $ vagrant provision
 ----
 
-Use this command when you want to re-provision the Vagrant box (re-run
-the Ansible playbook). You might need it when during the development
-process you want to change some variables.
+Use this command to re-provision the Vagrant box (this will re-run the
+Ansible playbook). You might need it, for example, when changing
+variables during the development process.
 
 File syncing between the host OS and the guest in Vagrant is disabled
 by default because of IP assignment problem that prevent successful
@@ -170,7 +177,7 @@ NFS configuration on first `vagrant up`. Subsequent starting of the
 devbox would successfully configure NFS. If you want to enable file
 sync, then export `TRENTO_VAGRANT_FILE_SYNC=true`. For the purposes of
 testing Ansible provisioning on a devbox, however, file sync is not
-necessary and disabling it is a good default.
+necessary.
 
 == Trento running in Vagrant
 
