@@ -63,7 +63,7 @@ To create a SLES base-box, do the following steps:
 [NOTE]
 ====
 These steps need to be executed only once for a SLES image of specific
-version. Eg. once for SLES15-SP6 and again when trying with SLES15-SP7.
+version. E.g. once for SLES15-SP6 and again when trying with SLES15-SP7.
 ====
 
 . Download a desired SLES KVM/Xen image from `download.suse.com` or
