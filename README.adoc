@@ -1,18 +1,20 @@
 = Trento Ansible
+ifndef::site-gen-antora[:relfileprefix: docs/]
 
 This playbook aims to install Trento components and the belonging third
 parties.
 
-____
-*NOTE:* The playbook currently only supports the following SLES4SAP
+[NOTE]
+====
+The playbook currently only supports the following SLES4SAP
 releases:
-____
 
 * 15 SP3footnote:[For SP3, Prometheus installation needs to be provided
 manually.]
 * 15 SP4
 * 15 SP5
 * 15 SP6
+====
 
 == Components
 
@@ -555,40 +557,7 @@ $ ansible-playbook -i inventory.yml --extra-vars @extra-vars.json playbook.clean
 they are of general usage, and this could have impact in many other
 services.*
 
-== Usage with vagrant
+== Usage with Vagrant
 
-You can test the playbook using vagrant, the default configuration in
-this repository assumes that you have VirtualBox, change it to what
-matches your setup.
-
-The `+Vagrantfile+` contains sane defaults for running the playbook, it
-assumes that you have `+trento.local+` as `+localhost+` alias in your
-`+/etc/hosts+`.
-
-You can reach the trento application using
-`+https://trento.local:8443+`.
-
-The Vagrantfile contains a self signed certificate for `+trento.local+`
-domain, make sure you accept the exception when prompted by your
-browser.
-
-Start the vagrant box
-
-[source,bash]
-----
-$ vagrant up
-----
-
-This will spawn a vagrant box with `+Opensuse Leap 15.4+` as base box.
-The provisioning will be automatic after the box starts.
-
-Force provision the vagrant box
-
-[source,bash]
-----
-$ vagrant provision
-----
-
-Use this command when you want to reprovision (re-run the ansible
-playbook) the vagrant box, you could use this to rerun the playbook if
-you are in the development process or you want to change some variables.
+Refer to xref:local-development-environment.adoc[Local Development
+Environment documentation].
