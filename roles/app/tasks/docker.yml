@@ -16,9 +16,9 @@
     enabled: true
 
 - name: Install docker python management deps
-  ansible.builtin.pip:
+  community.general.zypper:
     name:
-      - docker
+      - "{{ current_python_package_prefix }}-docker"
     state: present
 
 - name: Force pull trento images

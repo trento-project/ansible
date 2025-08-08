@@ -1,32 +1,42 @@
 # code: language=ansible
 ---
-- name: Install thirdparties
+- name: Install common dependencies
   hosts: trento_server
   become: true
+
   pre_tasks:
     - name: Check SLES distribution and version
       ansible.builtin.fail:
         msg: "This playbook only runs on SLES for SAP 15 SP3 or above. Detected: {{ ansible_distribution }} {{ ansible_distribution_version }}"
       when: >
-        ((ansible_distribution != "SLES_SAP") and
-        (ansible_distribution != "openSUSE Leap")) or
+        (ansible_distribution != "SLES_SAP") or
         (ansible_distribution_version is version('15.3', '<'))
 
   tasks:
-    - name: Install installation prerequisites
-      community.general.zypper:
-        name:
-          - gcc
-          - sudo
+    - name: Get current Python's package manger prefix
+      # Linter tries to be smart, but it's not -- there is no Ansible
+      # module to do RPM queries. Thus, silence this lint error.
+      # noqa: command-instead-of-module
+      ansible.builtin.shell: |
+        set -o pipefail
+        rpm -qf {{ ansible_python.executable }} | grep -E -o 'python3[[:digit:]]{0,2}'
+      register: python_prefix_result
+      changed_when: false
+
+    - name: Save current Python's package manger prefix
+      ansible.builtin.set_fact:
+        current_python_package_prefix: "{{ python_prefix_result.stdout }}"
 
     - name: Install python prerequisites
       community.general.zypper:
         name:
-          - python3-setuptools
-          - python3-pip
-          - python3-pexpect
-          - python3-devel
-          - python3-rpm
+          # Used in package facts ansible.posix.package_facts
+          - "{{ current_python_package_prefix }}-rpm"
+          # Used in ansible.posix.firewalld role
+          - "{{ current_python_package_prefix }}-firewall"
+          # Used in ansible.posix.firewalld role when firewalld is not
+          # started
+          - "{{ current_python_package_prefix }}-nftables"
         state: present
         update_cache: true
 
