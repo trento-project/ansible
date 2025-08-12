@@ -559,8 +559,7 @@ services.*
 
 == Usage with Vagrant
 
-Refer to xref:local-development-environment.adoc[Local Development
-Environment documentation].
+xref:{relfileprefix}local-development-environment.adoc[Local Development Environment documentation]
 
-Refer to xref:README.adoc[Local Development
-Environment documentation].
+
+Refer to xref:{relfileprefix}README.adoc[README.adoc reference].
