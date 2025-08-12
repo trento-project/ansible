@@ -561,3 +561,6 @@ services.*
 
 Refer to xref:local-development-environment.adoc[Local Development
 Environment documentation].
+
+Refer to xref:README.adoc[Local Development
+Environment documentation].
