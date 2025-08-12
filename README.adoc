@@ -1,7 +1,5 @@
 = Trento Ansible
-ifndef::site-gen-antora[]
-ifdef::env-github[:relfileprefix: docs/]
-endif::[]
+ifndef::site-gen-antora[:relfileprefix: docs/]
 
 This playbook aims to install Trento components and the belonging third
 parties.
@@ -561,7 +559,7 @@ services.*
 
 == Usage with Vagrant
 
-xref:{relfileprefix}local-development-environment.adoc[Local Development Environment documentation]
+xref:local-development-environment.adoc[Local Development Environment documentation]
 
 
-Refer to xref:{relfileprefix}README.adoc[README.adoc reference].
+Refer to xref:test/README.adoc[README.adoc reference].
