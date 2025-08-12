@@ -1,5 +1,7 @@
 = Trento Ansible
-ifndef::site-gen-antora[:relfileprefix: docs/]
+ifndef::site-gen-antora[]
+ifdef::env-github[:relfileprefix: docs/]
+endif::[]
 
 This playbook aims to install Trento components and the belonging third
 parties.
