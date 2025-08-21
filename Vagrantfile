@@ -19,7 +19,7 @@ Vagrant.configure(2) do |config|
     domain.qemuargs :value => "name=opt/org.opensuse.combustion/script,file=#{Pathname('devbox/combustion.sh').realpath}"
   end
 
-  config.vm.provision "ansible" do |ansible|
+  config.vm.provision "setup_trento", type: "ansible" do |ansible|
     ansible.playbook = "playbook.yml"
     ansible.groups = {
       "trento_server" => ["machine1"],
@@ -96,6 +96,16 @@ l0GpzDqUXDQI3wdzi8gVUBgPpjfVa9msafc7m6faT8myjHr/p6TJKj9Z36j58WHv
 mpNiKDOPALNTs+Ukdkt5KlE=
 -----END PRIVATE KEY-----
       "
+    }
+  end
+
+  config.vm.provision "cleanup", type: "ansible", run: "never" do |ansible|
+    ansible.playbook = "playbook.cleanup.yml"
+    ansible.groups = {
+      "trento_server" => ["machine1"],
+      "postgres_hosts" => ["machine1"],
+      "prometheus_hosts" => ["machine1"],
+      "rabbitmq_hosts" => ["machine1"]
     }
   end
 
