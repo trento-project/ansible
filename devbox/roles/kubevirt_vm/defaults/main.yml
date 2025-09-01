@@ -1,0 +1,3 @@
+---
+kubevirt_vm_name: devbox
+kubevirt_vm_namespace: default
