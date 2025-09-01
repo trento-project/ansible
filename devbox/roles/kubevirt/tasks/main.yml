@@ -1,0 +1,96 @@
+---
+- name: Install needed dependencies
+  become: true
+  ansible.builtin.package:
+    state: present
+    name:
+    - python3-kubernetes
+    # - python3-jsonpatch
+  register: deps_install_result
+  failed_when:
+  - deps_install_result.rc != 0
+  # On openSUSE if some repos failed to refresh, such as when you're
+  # not in the VPN.
+  - deps_install_result.rc != 106
+
+- name: Patch AppArmor policy with QEMU path in the container
+  block:
+  - name: Check AppArmor is used
+    become: true
+    ansible.builtin.command: aa-status
+    register: apparmor_result
+    changed_when: false
+
+  - name: Patch AppArmor policy with QEMU path in the container
+    become: true
+    ansible.builtin.lineinfile:
+      path: /etc/apparmor.d/usr.sbin.virtqemud
+      regex: '^\s+/usr/libexec/qemu-kvm'
+      line: '  /usr/libexec/qemu-kvm PUx,'
+      state: present
+      insertafter: '^\s+/usr/sbin/\* PUx,'
+      firstmatch: true
+    when: apparmor_result.rc == 0
+    register: patch_result
+
+  - name: Restart AppArmor
+    become: true
+    ansible.builtin.service:
+      name: apparmor
+      state: restarted
+    when: patch_result.changed
+
+- name: Install KubeVirt
+  run_once: true
+  block:
+  - name: Install KubeVirt Operator manifest
+    kubernetes.core.k8s:
+      state: present
+      src: "https://github.com/kubevirt/kubevirt/releases/download/{{ kubevirt_version }}/kubevirt-operator.yaml"
+
+  - name: Install KubeVirt CR configuration
+    kubernetes.core.k8s:
+      state: present
+      src: "https://github.com/kubevirt/kubevirt/releases/download/{{ kubevirt_version }}/kubevirt-cr.yaml"
+
+  # TODO: Maybe patch for feature gate HostDisk? Equivalent of the following:
+  # kubectl -n kubevirt patch kubevirt kubevirt --type=merge --patch '{"spec":{"configuration":{"developerConfiguration":{"useEmulation":true}}}}'
+
+  - name: Wait to complete KubeVirt install
+    kubernetes.core.k8s:
+      namespace: kubevirt
+      kind: KubeVirt
+      name: kubevirt
+      wait: true
+      wait_condition:
+        type: Available
+      wait_timeout: 180
+
+- name: Install `virtctl` on the nodes
+  become: true
+  ansible.builtin.get_url:
+    url: "https://github.com/kubevirt/kubevirt/releases/download/{{ kubevirt_version }}/virtctl-{{ kubevirt_version }}-linux-{{ ansible_architecture | replace('x86_64', 'amd64') }}"
+    dest: /usr/local/bin/virtctl
+    mode: "+x"
+
+- name: Install CDI
+  run_once: true
+  block:
+  - name: Install CDI Operator manifest
+    kubernetes.core.k8s:
+      state: present
+      src: https://github.com/kubevirt/containerized-data-importer/releases/download/{{ kubevirt_cdi_version }}/cdi-operator.yaml
+
+  - name: Install CDI CR configuration
+    kubernetes.core.k8s:
+      state: present
+      src: https://github.com/kubevirt/containerized-data-importer/releases/download/{{ kubevirt_cdi_version }}/cdi-cr.yaml
+
+  - name: Wait to complete CDI install
+    kubernetes.core.k8s:
+      api_version: "cdi.kubevirt.io/v1beta1"
+      kind: CDI
+      name: cdi
+      wait: true
+      wait_condition:
+        type: Available
