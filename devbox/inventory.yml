@@ -1,0 +1,30 @@
+---
+all:
+  vars:
+    deploy_k3s: false
+    deploy_kubevirt: true
+
+k3s_servers:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_python_interpreter: "{{ansible_playbook_python}}"
+
+k3s_agents:
+  # No need to add anything here if you don't need additional worker
+  # nodes. Single-node cluster can host pods with a single
+  # control-plane node only.
+  hosts:
+
+k3s_cluster:
+  children:
+    k3s_servers:
+    k3s_agents:
+
+    # For compatibility with k3s-ansible
+    server:
+      children:
+        k3s_servers:
+    agent:
+      children:
+        k3s_agents:

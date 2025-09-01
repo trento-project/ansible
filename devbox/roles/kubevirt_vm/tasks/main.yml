@@ -1,0 +1,59 @@
+---
+- name: Deploy VM on KubeVirt
+  kubevirt.core.kubevirt_vm:
+    state: present
+    name: "{{ kubevirt_vm_name }}"
+    namespace: "{{ kubevirt_vm_namespace }}"
+    labels:
+      # TODO: Remove this after seeing where it applies!
+      test-sch: test-sch
+
+    preference:
+      name: opensuse_leap
+
+    instancetype:
+      name: u1.medium
+
+    run_strategy: Once
+    spec:
+      domain:
+        devices:
+          disks:
+          - name: datavolumedisk1
+            disk:
+              bus: virtio
+
+          interfaces:
+          - name: default
+            masquerade: {}
+            # TODO: Might be needed?
+            # ports:
+            # - port: 22
+
+      networks:
+      - name: default
+        pod: {}
+
+      volumes:
+      - name: datavolumedisk1
+        dataVolume:
+          name: sles-dv
+
+      # - name: cloudinitdisk
+      #   cloudInitDisk:
+      #     todo: todo
+
+    data_volume_templates:
+    - metadata:
+        name: sles-dv
+      spec:
+        storage:
+          accessModes:
+          - ReadWriteOnce
+          volumeMode: Filesystem
+          resources:
+            requests:
+              storage: 5G
+        source:
+          http:
+            url: "https://download.opensuse.org/repositories/home:/kkanchev:/branches:/SUSE:/Templates:/Images:/SLE-15-SP7/images/SLES15-SP7-Minimal-VM.x86_64-Cloud-Build4.4.qcow2"

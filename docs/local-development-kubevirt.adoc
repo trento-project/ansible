@@ -1,0 +1,58 @@
+= Local development environment with KubeVirt
+
+== Requirements
+
+- k3s
+- kubevirt
+
+- ansible
+- kubernetes and jsonpatch python packages
+
+== Install
+
+Install k3s:
+
+[source, bash]
+----
+$ curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_ENABLE=true K3S_KUBECONFIG_MODE="644" sh -s -
+----
+
+Extend you KUBECONFIG env-var or make your default kubeconfig link to
+the k3s cluster one:
+
+[source, bash]
+----
+$ ln -s /etc/rancher/k3s/k3s.yaml ~/.kube/config
+----
+
+Configure firewall to allow pods and services to communicate with the
+host.
+
+[source, bash]
+----
+firewall-cmd --permanent --zone=trusted --add-source=10.42.0.0/16 # pods
+firewall-cmd --permanent --zone=trusted --add-source=10.43.0.0/16 # services
+firewall-cmd --reload
+----
+
+== Starting
+
+[source, bash]
+----
+$ ansible-playbook -i inventory.yml playbooks/deploy_devbox.yml --ask-become-pass
+----
+
+== Known issues
+
+Kubernetes cluster nodes are expected to have persistent IP addresses,
+so if you change IP of you laptop (by working from different location
+than the ususal) k3s cluster won't start. To workaround this, manually
+run k3s by disabling network policy controller:
+
+[source, bash]
+----
+$ sudo /usr/local/bin/k3s server --disable-network-policy
+----
+
+After that, you can revert to normal starting and stopping with
+systemd.

@@ -1,0 +1,15 @@
+---
+# - name: Setup k3s cluster
+#   hosts: k3s_servers
+#   when: deploy_k3s
+
+- name: Setup KubeVirt into the cluster
+  hosts: k3s_servers
+  roles:
+  - name: kubevirt
+    when: deploy_kubevirt
+
+- name: Deploy devbox VM on KubeVirt
+  hosts: k3s_servers
+  roles:
+  - name: kubevirt_vm
