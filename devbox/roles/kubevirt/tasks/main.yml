@@ -5,7 +5,6 @@
     state: present
     name:
     - python3-kubernetes
-    # - python3-jsonpatch
   register: deps_install_result
   failed_when:
   - deps_install_result.rc != 0

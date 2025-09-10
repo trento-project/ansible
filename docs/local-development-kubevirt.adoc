@@ -2,11 +2,8 @@
 
 == Requirements
 
-- k3s
-- kubevirt
-
 - ansible
-- kubernetes and jsonpatch python packages
+- k3s (Optional)
 
 == Install
 
