@@ -39,7 +39,7 @@ firewall-cmd --reload
 
 [source, bash]
 ----
-$ ansible-playbook -i inventory.yml playbooks/deploy_devbox.yml --ask-become-pass
+$ ansible-playbook -i inventory playbooks/deploy_devbox.yml --ask-become-pass
 ----
 
 == Known issues
