@@ -1,19 +1,56 @@
 ---
+- name: Generate SSH Key for devbox
+  community.crypto.openssh_keypair:
+    state: present
+    type: rsa
+    path: "{{ lookup('ansible.builtin.env', 'HOME') ~ '/.ssh/id_devbox_rsa' }}"
+    comment: "sles@devbox"
+  register: devbox_keypair_res
+  run_once: true
+  delegate_to: localhost
+
+# KubeVirt only supports distributing publickeys in secret. Public key
+# is not a real secret, don't use `no_log` in this specific case.
+- name: Setup public key secret for devbox
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: Opaque
+      metadata:
+        name: "devbox-publickey"
+        namespace: "{{ kubevirt_vm_namespace }}"
+      data:
+        key1: "{{ devbox_keypair_res.public_key | b64encode }}"
+  run_once: true
+  no_log: false
+
+- name: Setup cloud-init script as a secret
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: Opaque
+      metadata:
+        name: "cloud-init-userdata"
+        namespace: "{{ kubevirt_vm_namespace }}"
+      data:
+        userdata: "{{ lookup('ansible.builtin.template', 'cloudconfig.yml.j2') | b64encode }}"
+  run_once: true
+  no_log: true
+
 - name: Deploy VM on KubeVirt
+  run_once: true
   kubevirt.core.kubevirt_vm:
     state: present
     name: "{{ kubevirt_vm_name }}"
     namespace: "{{ kubevirt_vm_namespace }}"
-    labels:
-      # TODO: Remove this after seeing where it applies!
-      test-sch: test-sch
-
     preference:
       name: opensuse_leap
-
     instancetype:
       name: u1.medium
-
     run_strategy: Once
     spec:
       domain:
@@ -22,27 +59,42 @@
           - name: datavolumedisk1
             disk:
               bus: virtio
-
+          - name: cloudinitdisk
+            disk:
+              bus: virtio
           interfaces:
           - name: default
             masquerade: {}
-            # TODO: Might be needed?
+            # Might be needed?
             # ports:
             # - port: 22
-
+      # KubeVirt doesn't support startupProbe.
+      readinessProbe:
+        exec:
+          command:
+          - /bin/sh
+          - -c
+          # `virt-probe` is doing some funky string processing of
+          # args, hence the escapes.
+          - test $(cloud-init status | cut -d\" \" -f 2) = done
+      accessCredentials:
+      - sshPublicKey:
+          source:
+            secret:
+              secretName: devbox-publickey
+          propagationMethod:
+            noCloud: {}
       networks:
       - name: default
         pod: {}
-
       volumes:
       - name: datavolumedisk1
         dataVolume:
           name: sles-dv
-
-      # - name: cloudinitdisk
-      #   cloudInitDisk:
-      #     todo: todo
-
+      - name: cloudinitdisk
+        cloudInitNoCloud:
+          secretRef:
+            name: cloud-init-userdata
     data_volume_templates:
     - metadata:
         name: sles-dv
@@ -56,4 +108,6 @@
               storage: 5G
         source:
           http:
-            url: "https://download.opensuse.org/repositories/home:/kkanchev:/branches:/SUSE:/Templates:/Images:/SLE-15-SP7/images/SLES15-SP7-Minimal-VM.x86_64-Cloud-Build4.4.qcow2"
+            url: "https://download.opensuse.org/repositories/home:/kkanchev:/branches:/SUSE:/Templates:/Images:/SLE-15-SP7/images/SLES15-SP7-Minimal-VM.x86_64-Cloud-Trento.qcow2"
+    wait: true
+    wait_timeout: 210
