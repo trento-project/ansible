@@ -194,6 +194,7 @@ data/
 # Devbox files containing secrets
 devbox/combustion.sh
 devbox/secrets
+devbox/inventory/inventory.yml
 
 # Asciidoctor artifacts
 README.html
