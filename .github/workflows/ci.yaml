@@ -20,8 +20,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run ansible-lint
+      - name: Run ansible-lint on main playbook
         uses: ansible/ansible-lint@v25
+
+      - name: Run ansible-lint on devbox playbook
+        uses: ansible/ansible-lint@v25
+        with:
+          working_directory: "./devbox/ansible"
 
   build-and-push-container-images:
     name: Build and push container images
