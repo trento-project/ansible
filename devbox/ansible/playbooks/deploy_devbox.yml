@@ -14,9 +14,9 @@
 - name: Setup KubeVirt into the k3s cluster
   hosts: k3s_servers
   roles:
-    - name: kubevirt
+    - role: kubevirt
 
 - name: Deploy devbox VM on KubeVirt
   hosts: k3s_servers
   roles:
-    - name: kubevirt_vm
+    - role: kubevirt_vm
