@@ -56,58 +56,58 @@
       domain:
         devices:
           disks:
-          - name: datavolumedisk1
-            disk:
-              bus: virtio
-          - name: cloudinitdisk
-            disk:
-              bus: virtio
+            - name: datavolumedisk1
+              disk:
+                bus: virtio
+            - name: cloudinitdisk
+              disk:
+                bus: virtio
           interfaces:
-          - name: default
-            masquerade: {}
-            # Might be needed?
-            # ports:
-            # - port: 22
+            - name: default
+              masquerade: {}
+              # Might be needed in the future?
+              # ports:
+              # - port: 22
       # KubeVirt doesn't support startupProbe.
       readinessProbe:
         exec:
           command:
-          - /bin/sh
-          - -c
-          # `virt-probe` is doing some funky string processing of
-          # args, hence the escapes.
-          - test $(cloud-init status | cut -d\" \" -f 2) = done
+            - /bin/sh
+            - -c
+            # `virt-probe` is doing some funky string processing of
+            # args, hence the escapes.
+            - test $(cloud-init status | cut -d\" \" -f 2) = done
       accessCredentials:
-      - sshPublicKey:
-          source:
-            secret:
-              secretName: devbox-publickey
-          propagationMethod:
-            noCloud: {}
+        - sshPublicKey:
+            source:
+              secret:
+                secretName: devbox-publickey
+            propagationMethod:
+              noCloud: {}
       networks:
-      - name: default
-        pod: {}
+        - name: default
+          pod: {}
       volumes:
-      - name: datavolumedisk1
-        dataVolume:
-          name: sles-dv
-      - name: cloudinitdisk
-        cloudInitNoCloud:
-          secretRef:
-            name: cloud-init-userdata
+        - name: datavolumedisk1
+          dataVolume:
+            name: sles-dv
+        - name: cloudinitdisk
+          cloudInitNoCloud:
+            secretRef:
+              name: cloud-init-userdata
     data_volume_templates:
-    - metadata:
-        name: sles-dv
-      spec:
-        storage:
-          accessModes:
-          - ReadWriteOnce
-          volumeMode: Filesystem
-          resources:
-            requests:
-              storage: 5G
-        source:
-          http:
-            url: "https://download.opensuse.org/repositories/home:/kkanchev:/branches:/SUSE:/Templates:/Images:/SLE-15-SP7/images/SLES15-SP7-Minimal-VM.x86_64-Cloud-Trento.qcow2"
+      - metadata:
+          name: sles-dv
+        spec:
+          storage:
+            accessModes:
+              - ReadWriteOnce
+            volumeMode: Filesystem
+            resources:
+              requests:
+                storage: 5G
+          source:
+            http:
+              url: "https://download.opensuse.org/repositories/home:/kkanchev:/branches:/SUSE:/Templates:/Images:/SLE-15-SP7/images/SLES15-SP7-Minimal-VM.x86_64-Cloud-Trento.qcow2"
     wait: true
     wait_timeout: 210
