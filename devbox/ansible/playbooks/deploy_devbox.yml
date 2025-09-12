@@ -2,21 +2,21 @@
 - name: Setup k3s cluster
   hosts: k3s_servers
   tasks:
-  - name: Pre-requisites for k3s setup
-    ansible.builtin.include_role:
-      name: k3s.orchestration.prereq
-    when: setup_k3s is defined and setup_k3s
-  - name: Setup k3s cluster
-    ansible.builtin.include_role:
-      name: k3s.orchestration.k3s_server
-    when: setup_k3s is defined and setup_k3s
+    - name: Pre-requisites for k3s setup
+      ansible.builtin.include_role:
+        name: k3s.orchestration.prereq
+      when: setup_k3s is defined and setup_k3s
+    - name: Setup k3s cluster
+      ansible.builtin.include_role:
+        name: k3s.orchestration.k3s_server
+      when: setup_k3s is defined and setup_k3s
 
 - name: Setup KubeVirt into the k3s cluster
   hosts: k3s_servers
   roles:
-  - name: kubevirt
+    - name: kubevirt
 
 - name: Deploy devbox VM on KubeVirt
   hosts: k3s_servers
   roles:
-  - name: kubevirt_vm
+    - name: kubevirt_vm
