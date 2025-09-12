@@ -2,4 +2,4 @@
 plugin: kubevirt.core.kubevirt
 name: devboxes
 namespaces:
-- default
+  - default
