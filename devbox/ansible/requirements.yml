@@ -1,7 +1,13 @@
 ---
 collections:
+  - name: community.crypto
+    version: ">=2.26.3"
+
   - name: kubernetes.core
     version: ">=5.0.0"
+
+  - name: kubevirt.core
+    version: ">=2.2.3"
 
   - name: https://github.com/k3s-io/k3s-ansible.git
     type: git
