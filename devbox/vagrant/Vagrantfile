@@ -16,7 +16,7 @@ Vagrant.configure(2) do |config|
     domain.memory = 4096
     domain.cpus = 2
     domain.qemuargs :value => '-fw_cfg'
-    domain.qemuargs :value => "name=opt/org.opensuse.combustion/script,file=#{Pathname('devbox/combustion.sh').realpath}"
+    domain.qemuargs :value => "name=opt/org.opensuse.combustion/script,file=#{Pathname('./combustion.sh').realpath}"
   end
 
   config.vm.provision "setup_trento", type: "ansible" do |ansible|

@@ -27,6 +27,8 @@
   no_log: false
 
 - name: Setup cloud-init script as a secret
+  run_once: true
+  no_log: true
   kubernetes.core.k8s:
     state: present
     definition:
@@ -38,8 +40,6 @@
         namespace: "{{ kubevirt_vm_namespace }}"
       data:
         userdata: "{{ lookup('ansible.builtin.template', 'cloudconfig.yml.j2') | b64encode }}"
-  run_once: true
-  no_log: true
 
 - name: Deploy VM on KubeVirt
   run_once: true
@@ -110,4 +110,4 @@
             http:
               url: "https://download.opensuse.org/repositories/home:/kkanchev:/branches:/SUSE:/Templates:/Images:/SLE-15-SP7/images/SLES15-SP7-Minimal-VM.x86_64-Cloud-Trento.qcow2"
     wait: true
-    wait_timeout: 210
+    wait_timeout: 240
