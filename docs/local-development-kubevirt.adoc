@@ -1,18 +1,273 @@
-= Local development environment with KubeVirt
+= Local Development Environment with KubeVirt
+
+This document explains how to setup and use an infrastructure to
+provision devbox virtual machines using KubeVirt as hypervisor. The
+setup process is provided as an automated playbook using Ansible.
 
 == Requirements
 
 - ansible
 - k3s (Optional)
 
-== Install
+== What it is
 
-Install k3s:
+At the heart of this devbox provisioning method sits
+https://kubevirt.io/[KubeVirt]. It runs on Kubernetes and allows to
+run VMs inside Pods. It brings the same declarative way of managing
+containerized workloads to virtual machines.
+
+Since KubeVirt needs Kubernetes cluster to function, one needs to be
+provided. The playbook has the option to create a Kubernetes cluster
+based on https://k3s.io/[K3s]. Or you can use a cluster of you own or
+a cluster you have admin access to.
+
+In that Kubernetes cluster, KubeVirt and its sibling project CDI
+(Containerezed Data Importer) are deployed as Operators. KubeVirt
+allows management of virtual machines in Kubernetes by extending its
+API with custom resource definitions (CRDs) -- VirtualMachine (VM) and
+VirtualMachineInstance (VMI). VMI represent a _running_ virtual
+machine, while VM resource tracks the state of VMI (similar to
+Deployment and Pod resources in Kuberentes itself).
+
+For every VMI there is a backing pod running QEMU. The name of the pod
+is prefixed as `virt-launcher-`. These pods could be thought of as
+thin adaptation layer between Kubernetes and the VMs themselves. For
+example, networking and storage resources are attached to the launcher
+pods in a standard manner, and then the software running in the pod
+arranges mapping these resources to the VM using `libvirt`. You can
+find more information on KubeVirt architecture and components involved
+on their https://kubevirt.io/user-guide/architecture/[documentation
+site].
+
+[NOTE]
+====
+Although running VMs inside of Kubernetes naturally triggers
+associations to nested virtualization, this is not necessary the
+case. If the Kubernetes nodes are not virtual machines themselves,
+then there is no nested virtualization happening and thus no
+performance penalty for the VM created in KubeVirt. One such case is
+when running K3s cluster on you local machine.
+
+If, for some reason, you need to setup Kubernetes cluster nodes on
+VMs, this is also supported in this devbox provisioning workflow,
+although with the corresponding performance hit.
+====
+
+CDI is a project that simplifies the workings with VM images. It can
+import VM images from various sources (eg. HTTP/S, container
+repositories, cloning) and seamlessly represent them as Kuberentes
+PVCs. This project is used to download the prepared images for use in
+this workflow in a declarative fashion.
+
+// TODO
+// The images themselves are prepared by our team in OBS. They are
+// following the instructions in the article
+// https://docs.harvesterhci.io/v1.6/advanced/customsuseimages[Harvester
+// Custom VM Images]. We need "custom" images because Trento is
+// officially supported only on SLES4SAP operating systems, but no such
+// VM images are provided by SUSE. Because of this, we
+
+Although virtual machines could be handled in a generic way with
+`kubectl`, KubeVirt project also provides `virtctl` command-line tool
+as a more convenient way to manage them. It's mainly used to
+start/stop the VMs and attach to their console (either via serial
+console or VNC).
+
+== How it works
+
+The automation provided by the Ansible playbook allows for great
+flexibility in execution scenarios. It is split into two playbooks,
+covering the most common cases:
+
+1. Deploy a devbox inside a KubeVirt cluster
+2. Test the production Ansible playbook in a devbox
+
+The first one is expected to be executed to setup a devbox for when
+testing and developing locally.
+
+The second playbook includes the first one in itself and is a
+convenience playbook to test changes to the production playbook (the
+one in the root of the repository, that is being packaged for
+end-users). It's expected to be used in local development testing and
+in the CI.
+
+Furthermore, both playbooks obey a configuration option named
+`setup_k3s`. This option controls whether K3s cluster will be
+installed by the playbook on the `k3s_servers` group of nodes. It's
+value is `false` by default. The rationale behind this option is that
+when the developer uses its own development machine in a single-node
+Kubernetes cluster configuration for local development testing, the
+playbook would modify the local file-system and potentially install
+new packages dictated by an upstream-provided K3s Ansible role. We
+expect that most developers would want to have more control over what
+is installed and configured on their machines, so `setup_k3s` allows
+them to opt-out of that part of the process. `setup_k3s` is
+appropriate for transient environments such as CI runners or proper
+automation of shared long-running K3s clusters. Please, refer to
+<<manual_k3s_setup>> on how to install k3s manually.
+
+=== Deploy a devbox playbook
+
+The main playbook that deploys a devbox goes through steps described
+in the following sections:
+
+==== Setup a K3s cluster
+
+Setup a K3s cluster on `k3s_servers` group of nodes. This step is
+optionally executed depending on `setup_k3s` variable.
+
+If more than one `k3s_servers` are specified, they'll switch to
+highly-available mode of operation.
+
+You can add data-plane only nodes (worker nodes) by adding hosts to
+`k3s_agents` group. They might be empty as well.
+
+To use your development machine as a single-node K3s cluster, specify
+your localhost as sole host in the group like so:
+
+----
+k3s_servers:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_python_interpreter: "{{ansible_playbook_python}}"
+---
+
+The K3s setup uses the upstream
+https://github.com/k3s-io/k3s-ansible[K3s ansible role]. So, refer to
+it for more details.
+
+==== Deploy KubeVirt and CDI
+
+Deploy KubeVirt and CDI operators inside the K3s cluster. Executed
+only once on a single member from the `k3s_servers` group.
+
+Additionally, some tooling and fixes would be applied on all
+`k3s_servers`:
+
+- `python3-kubernetes` package would be installed from the system's
+  package manager on the specified nodes. This is a Kubernetes API
+  client lib for Python.
+- If AppArmor is used on the system its policies would be patched to
+  allow QEMU usage from inside a container.
+- `virtctl` would be installed from upstream repository -- it's a
+  convenience CLI tool to manage life-cycle of the VMs and to connect
+  them to the host.
+
+[NOTE]
+====
+When your development machine is used as a single-node K3s cluster then
+`python3-kubernetes` and `virtctl` would be installed on it.
+// TODO: unless additional_k3s_server_installs` Ansible tag is skipped.
+====
+
+==== Deploy a devbox virtual machine
+
+This part would actually deploy the devbox VM from a single member in
+the `k3s_servers` group.
+
+Before that, SSH key-pair would be generated on the Ansible control
+node (the host starting the playbook) and the public key will be
+distributed to the VM as part of Cloud-init vendor data. Currently,
+the same `id_devbox_rsa` key is used to connect to all current and
+future devboxes.
+
+After starting the VM, a cloud-init user-data script would run on
+first boot to customize the system. One important part of that process
+is converting the VM into a SLES4SAP system. You can inspect the
+supplied cloud-init script in
+`devbox/ansible/roles/kubevirt_vm/templates/cloudconfig.yml.j2` file.
+
+The VM would be marked as Ready when cloud-init execution has
+completed or a timeout value is exceeded.
+
+If you want to connect to the devbox using SSH, you have to remember
+to specify the `id_devbox_rsa` key that is located on in `~/.ssh/` on
+the Ansible control node, which would most probably be you development
+machine.
+
+[source, bash]
+----
+$ virtctl ssh sles@vm/devbox -i ~/.ssh/id_devbox_rsa
+----
+
+[NOTE]
+====
+You could also use your native SSH client to access the VM but then
+you'll have to properly expose the VM as Kubernetes Service.
+
+If you're running a single-node Kubernetes cluster on localhost, then
+you could use your native SSH client by directly specifying the IP
+address of the VM. You can acquire this information by:
+
+[source, bash]
+----
+$ kubectl get vmi
+----
+====
+
+// TODO note about additional_k3s_server_installs
+// NOTE:
+
+=== Test Trento playbook
+
+This is a convenience playbook that statically includes the plays from
+previous section and additionally adds the following:
+
+==== Automatic discovery
+
+Automatically discovers the newly created VM inside the Kubernetes
+cluster. This is handled by a dynamic inventory plugin with
+configuration file in
+`devbox/ansible/inventory/inventory.kubevirt.yml`.
+
+Currently, all the discovered VMs are added as part of `devboxes`
+group. The hosts discovered in that group can be pre-assigned as
+children of the various Trento component groups. This is, for example,
+how the sample inventory is structured -- all Trento components would
+be installed on that single devbox by default.
+
+This automatic discovery is unexplored territory, currently, but has
+great potential to enable various more complex multi-node deployment
+scenarios.
+
+==== Test drive the official playbook
+
+Run the official Trento deployment playbook on the newly provisioned
+devbox(es). You can modify the official playbook's parameters under
+`trento_components/vars` in
+`devbox/ansible/inventory/inventory.yml`. By default, reasonable
+values are provided, the main one being a self-signed certificate to
+be used when accessing `trento.local` domain. Please see
+xref:local-development-environment.adoc[prerequisites section] in the
+parent document.
+
+== Manual k3s install and configuration [[manual_k3s_setup]]
+
+By default, `setup_k3s` Ansible variable is set to `false`, meaning
+that a developer would want to setup a k3s cluster by himself.
+
+Following are short instructions of how to install k3s locally on a
+development machine. It's not a thorough guide, but just highlighting
+the important parts. Please, consult the install script source code
+for more details.
+
+To install k3s from the upstream-provided installation script, execute
+this:
 
 [source, bash]
 ----
 $ curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_ENABLE=true K3S_KUBECONFIG_MODE="644" sh -s -
 ----
+
+INSTALL_K3S_SKIP_ENABLE:: determines whether a Systemd unit would be
+enabled to run on system startup. It's optional but reasonable to set
+taking into account that k3s would be used on-demand as a developer
+tool.
+
+K3S_KUBECONFIG_MODE:: Makes the generated kubeconfig file for the k3s
+cluster be readable by everybody on the system. This allows your
+unprivileged user API access to the cluster.
 
 Extend you KUBECONFIG env-var or make your default kubeconfig link to
 the k3s cluster one:
@@ -32,24 +287,99 @@ firewall-cmd --permanent --zone=trusted --add-source=10.43.0.0/16 # services
 firewall-cmd --reload
 ----
 
-== Starting
+To run the k3s cluster:
+
+[source, bash]
+----
+$ sudo systemctl start k3s
+----
+
+Refer to <<Cleanup>> for details on how to uninstall a manual
+installation of k3s.
+
+== Running the playbooks
+
+First, you have to prepare Ansible inventory, specifying where your
+infrastructure nodes are located. As a starting point, you could use
+the sample inventory located at
+`devbox/ansible/inventory/inventory.sample.yml`. It covers the common
+case of running the Kubernetes control and data plane on a single
+node, your localhost. Make a copy of the sample file and edit it
+according to your needs:
+
+[source, bash]
+----
+$ cd devbox/ansible
+$ cp inventory/inventory.sample.yml inventory/inventory.yml
+----
+
+Most importantly, you have to replace all the `CHANGE_ME` values with
+you secrets.
+
+Then, you can start the desired playbook giving the path to the
+inventory directory:
+
+[source, bash]
+----
+$ ansible-playbook -i inventory playbooks/deploy_devbox.yml
+----
+
+If you are running a single-node Kubernetes cluster on you localhost,
+then you would probably want to provide your sudo password. Execute
+the previous command modified as following:
 
 [source, bash]
 ----
 $ ansible-playbook -i inventory playbooks/deploy_devbox.yml --ask-become-pass
 ----
 
+== Cleanup
+
+You can start/stop the devbox VMs by name using `virtctl`:
+
+[source, bash]
+----
+$ virtctl stop <name-of-devbox>
+----
+
+You can permanently delete a VM by issuing:
+
+[source, bash]
+----
+$ kubectl delete vm <name-of-devbox>
+----
+
+If you you have installed k3s cluster manually on you developer
+machine, you can uninstall it by executing the follwoing:
+
+[source, bash]
+----
+$ k3s-killall.sh
+$ k3s-uninstall.sh
+----
+
+`k3s-killall.sh` and `k3s-uninstall.sh` are created automatically when
+installing k3s.
+
 == Known issues
 
-Kubernetes cluster nodes are expected to have persistent IP addresses,
-so if you change IP of you laptop (by working from different location
-than the ususal) k3s cluster won't start. To workaround this, manually
+Kubernetes cluster nodes are expected to have persistent IP
+addresses. If you're running a single-node Kubernetes cluster on your
+localhost and you change the IP address of your main network interface
+(by working from different locations, for example) k3s cluster won't
+function properly or won't start at all. To workaround this, manually
 run k3s by disabling network policy controller:
 
 [source, bash]
 ----
+$ sudo systemctl stop k3s
 $ sudo /usr/local/bin/k3s server --disable-network-policy
 ----
 
-After that, you can revert to normal starting and stopping with
-systemd.
+After k3s initialize in the manual run, stop it by `CTRL-C` and then you
+can revert to normal starting and stopping with systemd:
+
+[source, bash]
+----
+$ sudo systemctl start k3s
+----
