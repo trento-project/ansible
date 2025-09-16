@@ -299,7 +299,22 @@ installation of k3s.
 
 == Running the playbooks
 
-First, you have to prepare Ansible inventory, specifying where your
+All commands should be executed when current working directory is
+`devbox/ansible`.
+
+[source, bash]
+----
+$ cd devbox/ansible
+----
+
+You have to ensure required Ansible collections are installed:
+
+[source, bash]
+----
+$ ansible-galaxy install -r requirements.yml
+----
+
+Next, you have to prepare Ansible inventory, specifying where your
 infrastructure nodes are located. As a starting point, you could use
 the sample inventory located at
 `devbox/ansible/inventory/inventory.sample.yml`. It covers the common
@@ -309,7 +324,6 @@ according to your needs:
 
 [source, bash]
 ----
-$ cd devbox/ansible
 $ cp inventory/inventory.sample.yml inventory/inventory.yml
 ----
 
