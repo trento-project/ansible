@@ -156,9 +156,9 @@ Additionally, some tooling and fixes would be applied on all
 
 [NOTE]
 ====
-When your development machine is used as a single-node K3s cluster then
-`python3-kubernetes` and `virtctl` would be installed on it.
-// TODO: unless additional_k3s_server_installs` Ansible tag is skipped.
+When your development machine is used as a single-node K3s cluster
+then `python3-kubernetes` and `virtctl` would be installed on it
+unless `k3s_servers_mod` tag is set to be skipped.
 ====
 
 ==== Deploy a devbox virtual machine
@@ -206,8 +206,9 @@ $ kubectl get vmi
 ----
 ====
 
-// TODO note about additional_k3s_server_installs
-// NOTE:
+NOTE: When your development machine is used as a single-node K3s
+cluster and you don't want the Ansible playbook to modify your machine,
+set tag `control_node_mod` to be skipped.
 
 === Test Trento playbook
 
@@ -345,6 +346,17 @@ the previous command modified as following:
 [source, bash]
 ----
 $ ansible-playbook -i inventory playbooks/deploy_devbox.yml --ask-become-pass
+----
+
+Additionally, you can disable all modifications on you development
+machine by settings tags `k3s_servers_mod` and `control_node_mod` to
+be skipped. Please note, the results of these steps are mandatory, so
+you have to implement them manually for the playbook to succeed:
+
+[source, bash]
+----
+$ ansible-playbook -i inventory playbooks/deploy_devbox.yml --ask-become-pass \
+                   --skip-tags k3s_servers_mod,control_node_mod
 ----
 
 == Cleanup
