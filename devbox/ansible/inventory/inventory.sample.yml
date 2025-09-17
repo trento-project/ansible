@@ -7,6 +7,7 @@ k3s_servers:
 
   vars:
     setup_k3s: false
+    kubevirt_vm_image_url: "https://download.opensuse.org/repositories/home:/kkanchev:/branches:/SUSE:/Templates:/Images:/SLE-15-SP7/images/SLES15-SP7-Minimal-VM.x86_64-Cloud-Trento.qcow2"
     kubevirt_vm_sles4sap_regcode: "CHANGE_ME"
 
 k3s_agents:

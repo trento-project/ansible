@@ -108,6 +108,6 @@
                 storage: 5G
           source:
             http:
-              url: "https://download.opensuse.org/repositories/home:/kkanchev:/branches:/SUSE:/Templates:/Images:/SLE-15-SP7/images/SLES15-SP7-Minimal-VM.x86_64-Cloud-Trento.qcow2"
+              url: "{{ kubevirt_vm_image_url }}"
     wait: true
     wait_timeout: 240
