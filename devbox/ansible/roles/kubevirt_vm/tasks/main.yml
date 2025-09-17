@@ -8,6 +8,8 @@
   register: devbox_keypair_res
   run_once: true
   delegate_to: localhost
+  tags:
+    - control_node_mod
 
 # KubeVirt only supports distributing publickeys in secret. Public key
 # is not a real secret, don't use `no_log` in this specific case.
