@@ -59,19 +59,30 @@ repositories, cloning) and seamlessly represent them as Kuberentes
 PVCs. This project is used to download the prepared images for use in
 this workflow in a declarative fashion.
 
-// TODO
-// The images themselves are prepared by our team in OBS. They are
-// following the instructions in the article
-// https://docs.harvesterhci.io/v1.6/advanced/customsuseimages[Harvester
-// Custom VM Images]. We need "custom" images because Trento is
-// officially supported only on SLES4SAP operating systems, but no such
-// VM images are provided by SUSE. Because of this, we
-
 Although virtual machines could be handled in a generic way with
 `kubectl`, KubeVirt project also provides `virtctl` command-line tool
 as a more convenient way to manage them. It's mainly used to
 start/stop the VMs and attach to their console (either via serial
 console or VNC).
+
+Trento is officially supported only on SLES4SAP operating
+systems. However, there are no SLES4SAP VM images provided by
+SUSE. Only SLES images are provided, but they can't be easily accessed
+in a programmatic way. Thus, we devised our own method of deploying
+SLES4SAP that consists of two parts:
+
+- Expose Trento-specific images for easy download
+- Convert SLES into SLES4SAP on initial boot
+
+We prepare SLES images in OBS by following the instructions described
+in the article
+https://docs.harvesterhci.io/v1.6/advanced/customsuseimages[Harvester
+Custom VM Images]. We don't actually introduce any modifications to
+the KIWI templates, our main goal is to track the official images and
+expose them on our download mirror in OBS.
+
+Following initial boot of the VM, we use cloud-init user-data script
+to convert the SLES operating system into SLES4SAP one.
 
 == How it works
 
