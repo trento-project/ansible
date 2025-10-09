@@ -1,0 +1,11 @@
+test_workflow:
+  steps:
+    - trigger_services:
+        project: home:kkanchev:ansible-trento
+        package: ansible-trento
+
+  filters:
+    event: push
+    branches:
+      only:
+        - add-obs-integration
