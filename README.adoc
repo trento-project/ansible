@@ -21,8 +21,7 @@ interpreter version that supports the execution of the playbook:
 | ansible11 | X | X | X | python3.11-only | python3.11-only
 |===
 
-NOTE: SLES15-SP6 and below need to install `python311-base` package
-to be able to use `python3.11`.
+NOTE: On SLES 15 SP5 and below, Ansible may default to the newest Python interpreter, causing incompatibility issues between the playbook and the target node. To prevent this, you must explicitly set the interpreter in `vars.json`: to `"ansible_python_interpreter": "/usr/bin/python3"`
 
 NOTE: For SLES15-SP3, Prometheus installation needs to be provided manually.
 
