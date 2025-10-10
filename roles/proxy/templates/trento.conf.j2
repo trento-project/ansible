@@ -31,8 +31,8 @@ server {
   ssl_prefer_server_ciphers on;
   ssl_session_cache shared:SSL:10m;
 
-  # Wanda rule
-  location ~ ^/(api/checks|api/v1/checks|api/v2/checks|api/v3/checks|api/groups|api/v1/groups|api/operations|api/v1/operations)/  {
+  # Wanda rule for checks, groups, etc.
+  location ~ ^/(api(/(v[0-9]+/)?checks|api(/(v[0-9]+/)?groups))/  {
     allow all;
 
     # Proxy Headers
@@ -48,6 +48,32 @@ server {
     proxy_pass http://{{ wanda_upstream }};
   }
 
+  # Wanda openapi endpoints for all versions
+  location ~ ^/wanda/api/(v[0-9]+|latest)/openapi {
+    allow all;
+
+    # Proxy Headers
+    proxy_http_version 1.1;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Cluster-Client-Ip $remote_addr;
+
+    proxy_pass http://{{ wanda_upstream }}/api/$1/openapi;
+  }
+
+  # Wanda doc endpoint
+  location /wanda/api/doc {
+    allow all;
+
+    # Proxy Headers
+    proxy_http_version 1.1;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Cluster-Client-Ip $remote_addr;
+
+    proxy_pass http://{{ wanda_upstream }}/api/doc;
+  }
+
   # Web rule
   location / {
     proxy_http_version 1.1;
@@ -60,6 +86,6 @@ server {
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
 
-    proxy_pass http://{{ web_upstream }};
+  proxy_pass http://{{ web_upstream }};
   }
 }
