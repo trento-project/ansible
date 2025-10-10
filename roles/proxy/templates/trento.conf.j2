@@ -19,10 +19,11 @@ server {
 }
 
 server {
-  server_name {{ server_name }};
+  # SSL configuration
   listen {{ https_listen_port }} ssl;
+  server_name {{ server_name }};
 
-  ssl_certificate /etc/ssl/certs/trento.crt;
+  ssl_certificate /etc/nginx/ssl/certs/trento.crt;
   ssl_certificate_key /etc/ssl/private/trento.key;
 
   ssl_protocols TLSv1.2 TLSv1.3;
@@ -40,7 +41,7 @@ server {
     proxy_set_header Host $http_host;
     proxy_set_header X-Cluster-Client-Ip $remote_addr;
 
-    # The Important Websocket Bits!
+    # Important Websocket Bits!
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
 
@@ -49,13 +50,11 @@ server {
 
   # Web rule
   location / {
-    allow all;
-
-    # Proxy Headers
     proxy_http_version 1.1;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $http_host;
-    proxy_set_header X-Cluster-Client-Ip $remote_addr;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
 
     # The Important Websocket Bits!
     proxy_set_header Upgrade $http_upgrade;
