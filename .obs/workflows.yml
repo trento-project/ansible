@@ -1,11 +1,8 @@
-test_workflow:
+release_workflow:
   steps:
     - trigger_services:
-        project: home:kkanchev:ansible-trento
+        project: devel:sap:trento
         package: ansible-trento
 
   filters:
-    event: push
-    branches:
-      only:
-        - add-obs-integration
+    event: tag_push
