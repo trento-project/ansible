@@ -1,7 +1,7 @@
 release_workflow:
   steps:
     - trigger_services:
-        project: devel:sap:trento
+        project: home:kkanchev:ansible-trento
         package: ansible-trento
 
   filters:
