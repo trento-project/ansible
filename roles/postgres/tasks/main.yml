@@ -4,10 +4,7 @@
   when: install_postgres == 'true'
   community.general.zypper:
     name:
-      - postgresql
       - postgresql-server
-      - postgresql-server-devel
-      - postgresql-contrib
     state: present
     update_cache: true
 
