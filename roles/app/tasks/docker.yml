@@ -114,6 +114,7 @@
       ENABLE_API_KEY: "{{ enable_api_key }}"
       CHARTS_ENABLED: "{{ enable_charts }}"
       TRENTO_WEB_ORIGIN: "{{ trento_server_name }}"
+      CHECKS_SERVICE_BASE_URL: "{{ (provision_proxy == 'true') | ternary(wanda_proxy_location, 'http://127.0.0.1:'~wanda_port) }}"
       ENABLE_OIDC: "{{ enable_oidc }}"
       OIDC_CLIENT_ID: "{{ oidc_client_id }}"
       OIDC_CLIENT_SECRET: "{{ oidc_client_secret }}"
