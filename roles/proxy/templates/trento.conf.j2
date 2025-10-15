@@ -44,7 +44,9 @@ server {
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
 
-    proxy_pass http://{{ wanda_upstream }};
+    # Add final slash to replace the wanda_proxy_location value by the value in proxy_pass
+    # https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
+    proxy_pass http://{{ wanda_upstream }}/;
   }
 
   # Web rule
