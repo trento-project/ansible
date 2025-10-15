@@ -36,7 +36,7 @@ TRENTO_WEB_ORIGIN={{ trento_server_name }}
 OAS_SERVER_URL={{ web_oas_server_url | default('https://'~trento_server_name) }}
 CHECKS_SERVICE_BASE_URL={{ wanda_proxy_location }}
 {% else %}
-CHECKS_SERVICE_BASE_URL=http://127.0.0.1:{{ wanda_port }}
+CHECKS_SERVICE_BASE_URL=http://127.0.0.1:{{ wanda_listen_port }}
 {% endif %}
 ENABLE_OIDC={{ enable_oidc }}
 OIDC_CLIENT_ID={{ oidc_client_id }}
