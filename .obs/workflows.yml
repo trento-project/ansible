@@ -2,7 +2,7 @@ rolling_release:
   steps:
     - trigger_services:
         project: devel:sap:trento:factory
-        package: ansible_trento
+        package: ansible-trento
 
   filters:
     event: push
