@@ -8,7 +8,7 @@ rolling_release:
     event: push
     branches:
       only:
-        - add-obs-integration
+        - main
 
 release:
   steps:
