@@ -300,12 +300,21 @@ the container |ghcr.io/trento-project/trento-web:rolling
 
 |web_listen_port |Port where the Web service is exposed |4000
 
+|web_oas_server_url|Web OpenAPI server url
+|https://{{ trento_server_name }}
+
 |wanda_container_image |Name of the Wanda container image to use to
 create the container |ghcr.io/trento-project/trento-wanda:rolling
 
 |wanda_container_name |Name of the Wanda container |trento_wanda
 
 |wanda_listen_port |Port where the Wanda service is exposed |4001
+
+|wanda_proxy_location|Path to forward requests to Wanda in the proxy 
+|/wanda
+
+|wanda_oas_server_url|Wanda OpenAPI server url
+|https://{{ trento_server_name }}{{ wanda_proxy_location }}
 
 |force_pull_images |Force pull the container images for trento
 components |false
