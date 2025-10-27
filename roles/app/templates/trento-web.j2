@@ -32,6 +32,12 @@ ENABLE_API_KEY={{ enable_api_key }}
 CHARTS_ENABLED={{ enable_charts }}
 PORT={{ web_listen_port }}
 TRENTO_WEB_ORIGIN={{ trento_server_name }}
+{% if provision_proxy == 'true' %}
+OAS_SERVER_URL={{ web_oas_server_url }}
+CHECKS_SERVICE_BASE_URL={{ wanda_proxy_location }}
+{% else %}
+CHECKS_SERVICE_BASE_URL=http://127.0.0.1:{{ wanda_listen_port }}
+{% endif %}
 ENABLE_OIDC={{ enable_oidc }}
 OIDC_CLIENT_ID={{ oidc_client_id }}
 OIDC_CLIENT_SECRET={{ oidc_client_secret }}

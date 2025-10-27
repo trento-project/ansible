@@ -53,6 +53,7 @@
     https_listen_port: "{{ nginx_vhost_https_listen_port }}"
     wanda_upstream: "{{ wanda_upstream_name }}"
     web_upstream: "{{ web_upstream_name }}"
+    wanda_location: "{{ wanda_proxy_location }}"
   notify:
     - Restart nginx
 
