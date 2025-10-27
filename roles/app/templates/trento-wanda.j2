@@ -7,3 +7,4 @@ PORT={{ wanda_listen_port }}
 {% if provision_proxy == 'true' %}
 OAS_SERVER_URL={{ wanda_oas_server_url }}
 {% endif %}
+AUTH_SERVER_URL=http://127.0.0.1:{{ web_listen_port }}
