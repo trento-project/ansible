@@ -31,7 +31,7 @@ server {
   ssl_session_cache shared:SSL:10m;
 
   # Wanda rule
-  location {{ wanda_proxy_location }}/  {
+  location {{ wanda_location }}/  {
     allow all;
 
     # Proxy Headers
@@ -44,7 +44,7 @@ server {
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
 
-    # Add final slash to replace the wanda_proxy_location value by the value in proxy_pass
+    # Add final slash to replace the wanda_location value by the value in proxy_pass
     # https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
     proxy_pass http://{{ wanda_upstream }}/;
   }
