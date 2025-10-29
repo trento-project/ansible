@@ -14,16 +14,14 @@ interpreter version that supports the execution of the playbook:
 
 [cols=6*^]
 |===
-| Control node | SLES15-SP3 | SLES15-SP4 | SLES15-SP5 | SLES15-SP6 | SLES15-SP7
+| Control node | SLES15-SP4 | SLES15-SP5 | SLES15-SP6 | SLES15-SP7 | SLES16
 
-| ansible9 | python3-only | python3-only | python3-only | python3/3.11 | python3/3.11
+| ansible9 | python3(3.6)-only | python3(3.6)-only | python3(3.6)/3.11 | python3(3.6)/3.11 | X
 
-| ansible11 | X | X | X | python3.11-only | python3.11-only
+| ansible11 | X | X | python3.11-only | python3.11-only | python3(3.13)-only
 |===
 
 NOTE: On SLES 15 SP5 and below, Ansible may default to the newest Python interpreter, causing incompatibility issues between the playbook and the target node. To prevent this, you must explicitly set the interpreter in `vars.json`: to `"ansible_python_interpreter": "/usr/bin/python3"`
-
-NOTE: For SLES15-SP3, Prometheus installation needs to be provided manually.
 
 == Components
 
@@ -310,7 +308,7 @@ create the container |ghcr.io/trento-project/trento-wanda:rolling
 
 |wanda_listen_port |Port where the Wanda service is exposed |4001
 
-|wanda_proxy_location|Path to forward requests to Wanda in the proxy 
+|wanda_proxy_location|Path to forward requests to Wanda in the proxy
 |/wanda
 
 |wanda_oas_server_url|Wanda OpenAPI server url
