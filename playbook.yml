@@ -33,7 +33,12 @@
           # Used in package facts ansible.posix.package_facts
           - "{{ current_python_package_prefix }}-rpm"
           # Used in ansible.posix.firewalld role
-          - "{{ current_python_package_prefix }}-firewall"
+
+          # WARNING: SLES16.0 don't provide properly prefixed package
+          # for firewall bindings, so we revert temporarily to respawn
+          # mechanism for that package:
+          # https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/common/respawn.py
+          - "python3-firewall"
           # Used in ansible.posix.firewalld role when firewalld is not
           # started
           - "{{ current_python_package_prefix }}-nftables"
