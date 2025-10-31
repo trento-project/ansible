@@ -3,4 +3,6 @@ kubevirt_vm_name: devbox
 kubevirt_vm_namespace: default
 kubevirt_vm_sles_password: slesvm
 kubevirt_vm_image_url: "https://download.opensuse.org/repositories/home:/kkanchev:/branches:/SUSE:/Templates:/Images:/SLE-15-SP7/images/SLES15-SP7-Minimal-VM.x86_64-Cloud-Trento.qcow2"
+kubevirt_vm_convert_to_sles4sap: true
 kubevirt_vm_sles4sap_regcode: CHANGEME
+kubevirt_vm_cdi_cacert: ""
