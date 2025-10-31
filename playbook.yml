@@ -37,7 +37,7 @@
           # WARNING: SLES16 doesn't provide properly prefixed package
           # for `firewalld` bindings, so we have to temporarily revert
           # to explicit conditional logic.
-          - "{{ '{}-firewall'.format( (ansible_distribution_major_version == '16') | ternary('python3', current_python_package_prefix)) }}"
+          - "{{ '{}-firewall'.format((ansible_distribution_major_version == '16') | ternary('python3', current_python_package_prefix)) }}"
 
           # Used in ansible.posix.firewalld role when firewalld is not
           # started
