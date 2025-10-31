@@ -20,7 +20,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision "setup_trento", type: "ansible" do |ansible|
-    ansible.playbook = "playbook.yml"
+    ansible.playbook = "../../playbook.yml"
     ansible.groups = {
       "trento_server" => ["machine1"],
       "postgres_hosts" => ["machine1"],
