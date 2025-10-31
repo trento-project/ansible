@@ -65,24 +65,50 @@ as a more convenient way to manage them. It's mainly used to
 start/stop the VMs and attach to their console (either via serial
 console or VNC).
 
+== SLES4SAP base images
+
 Trento is officially supported only on SLES4SAP operating
-systems. However, there are no SLES4SAP VM images provided by
-SUSE. Only SLES images are provided, but they can't be easily accessed
-in a programmatic way. Thus, we devised our own method of deploying
-SLES4SAP that consists of two parts:
-
-- Expose Trento-specific images for easy download
-- Convert SLES into SLES4SAP on initial boot
-
-We prepare SLES images in OBS by following the instructions described
-in the article
+systems. However, depending on what is the target version of SLES4SAP
+OS, such VM images might not be provided by SUSE and we need to
+convert SLES images to SLES4SAP. In any case, though, any SLES-based
+images couldn't be easily acquired in a programmatic way. Thus, we
+prepare our own Trento-specific images for easy download. We prepare
+these images in OBS by following the instructions described in the
+article
 https://docs.harvesterhci.io/v1.6/advanced/customsuseimages[Harvester
 Custom VM Images]. We don't actually introduce any modifications to
 the KIWI templates, our main goal is to track the official images and
 expose them on our download mirror in OBS.
 
-Following initial boot of the VM, we use cloud-init user-data script
-to convert the SLES operating system into SLES4SAP one.
+=== SLES4SAP 16.0 and up
+
+With the release of SLES4SAP 16.0, official VM appliance images are
+available from SUSE. They don't need to be converted, so ensure that
+`kubevirt_vm_convert_to_sles4sap: false` is set in your inventory.
+
+=== SLES4SAP 15-SP3 to 15-SP7
+
+For OSes from the 15 series, only SLES images are provided. Thus, we
+devised our own method of converting them to SLES4SAP.  Following
+initial boot of the VM, we use cloud-init user-data script to convert
+the SLES operating system into SLES4SAP one. Ensure that
+`kubevirt_vm_convert_to_sles4sap: true` is set in your inventory.
+
+=== Pre-release images
+
+Versions of SLES(4SAP) that are not yet released couldn't be mirrored
+on OBS. For this reason, you need to access such images directly
+from IBS. These images are only available to SUSE employees and
+require you to be connected to the internal VPN. Additionally, IBS
+uses its own self-signed certificate, so if you're running
+openSUSE/SLES, you have to:
+
+. Install `ca-certificates-suse` package on you developer machine
+. Set the following _variable_ into your ansible inventory:
++
+----
+kubevirt_vm_cdi_cacert: "{{ lookup('file', '/usr/share/pki/trust/anchors/SUSE_Trust_Root.crt.pem') }}"
+----
 
 == How it works
 
@@ -142,7 +168,7 @@ k3s_servers:
     localhost:
       ansible_connection: local
       ansible_python_interpreter: "{{ansible_playbook_python}}"
----
+----
 
 The K3s setup uses the upstream
 https://github.com/k3s-io/k3s-ansible[K3s ansible role]. So, refer to
