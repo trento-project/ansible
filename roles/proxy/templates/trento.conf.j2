@@ -53,7 +53,7 @@ server {
   location / {
     location /api/session/token/introspect {
         deny all;
-        return 403;
+        return 404;
     }
 
     allow all;
