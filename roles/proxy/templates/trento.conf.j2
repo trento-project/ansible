@@ -51,6 +51,11 @@ server {
 
   # Web rule
   location / {
+    location /api/session/token/introspect {
+        deny all;
+        return 404;
+    }
+
     allow all;
 
     # Proxy Headers
