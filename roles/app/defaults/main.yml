@@ -1,5 +1,5 @@
 ---
-web_listen_port: 4000
+web_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) }}"
 web_postgres_db: webdb
 web_postgres_event_store: event_store
 web_postgres_user: web
