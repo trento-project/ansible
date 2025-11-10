@@ -68,7 +68,6 @@
     env:
       CORS_ORIGIN: "http://localhost" # TODO: Remove placeholder
       SECRET_KEY_BASE: "{{ secret_key_base }}"
-      ACCESS_TOKEN_ENC_SECRET: "{{ access_token_secret }}"
       AMQP_URL: "{{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
       DATABASE_URL: "ecto://{{ wanda_postgres_user }}:{{ wanda_postgres_password }}@{{ wanda_postgres_host }}/{{ wanda_postgres_db }}"
       OAS_SERVER_URL: "{{ omit if provision_proxy != 'true' else wanda_oas_server_url }}"
