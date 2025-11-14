@@ -1,6 +1,6 @@
 ---
 exclude_paths:
   - .github/
+  - devbox/
 skip_list:
-  - var-naming[no-role-prefix]
   - yaml[line-length]

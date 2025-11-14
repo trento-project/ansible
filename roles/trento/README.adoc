@@ -1,0 +1,27 @@
+= Trento Ansible Meta-Role
+
+Special role containing only variables that enables sharing of these
+common variables between various other trento-related roles.
+
+The intended way of using is by adding this role as dependency to
+other roles in their `meta/main.yml`.
+
+Please, strongly consider if the variable really needs to be added as
+a common variable.
+
+== Requirements
+
+This role has no external dependencies.
+
+== Role Variables
+
+We keep all our variables documentation in the main README of the collection.
+
+== License
+
+Apache License, Version 2.0
+
+== Author Information
+
+Developed and maintained by trento-developers@suse.com
+Code repository is hosted on https://github.com/trento-project/ansible
