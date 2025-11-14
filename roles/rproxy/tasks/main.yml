@@ -1,0 +1,77 @@
+# code: language=ansible
+---
+- name: Install nginx
+  when: rproxy_install == 'true'
+  community.general.zypper:
+    name:
+      - nginx
+    state: present
+    update_cache: true
+
+- name: Create the SSL certificate and key
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.content | b64decode if item.base64 == 'true' else item.content }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - content: "{{ rproxy_ssl_cert }}"
+      dest: "/etc/ssl/certs/trento.crt"
+      base64: "{{ rproxy_ssl_cert_as_base64 }}"
+    - content: "{{ rproxy_ssl_key }}"
+      dest: "/etc/ssl/private/trento.key"
+      base64: "{{ rproxy_ssl_key_as_base64 }}"
+
+- name: Override default nginx config
+  when: rproxy_override_default_conf == 'true'
+  ansible.builtin.template:
+    src: "nginx-default.conf.j2"
+    dest: "{{ rproxy_conf_base_dir }}/nginx.conf"
+    owner: "{{ rproxy_os_user }}"
+    group: "{{ rproxy_os_group }}"
+    mode: "0644"
+  vars:
+    conf_folder: "{{ rproxy_conf_dir }}"
+    vhost_folder: "{{ rproxy_vhost_dir }}"
+  notify:
+    - Restart nginx
+
+- name: Configure web project
+  ansible.builtin.template:
+    src: "trento.conf.j2"
+    dest: "{{ rproxy_conf_base_dir }}/{{ rproxy_vhost_dir }}/{{ rproxy_vhost_filename }}.conf"
+    owner: "{{ rproxy_os_user }}"
+    group: "{{ rproxy_os_group }}"
+    mode: "0644"
+  vars:
+    server_name: "{{ rproxy_server_name }}"
+    web_port: "{{ rproxy_web_listen_port }}"
+    wanda_port: "{{ rproxy_wanda_listen_port }}"
+    http_listen_port: "{{ rproxy_vhost_http_listen_port }}"
+    https_listen_port: "{{ rproxy_vhost_https_listen_port }}"
+    web_upstream: "{{ rproxy_web_upstream_name }}"
+    wanda_upstream: "{{ rproxy_wanda_upstream_name }}"
+    wanda_location: "{{ rproxy_wanda_location }}"
+  notify:
+    - Restart nginx
+
+- name: Start nginx service
+  ansible.builtin.service:
+    name: "{{ rproxy_os_service }}"
+    state: started
+    enabled: true
+
+- name: Open HTTP and HTTPS ports in firewalld
+  ansible.posix.firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+    offline: true
+  loop:
+    - "{{ rproxy_vhost_http_listen_port }}/tcp"
+    - "{{ rproxy_vhost_https_listen_port }}/tcp"
+  when: firewalld_installed
+  notify:
+    - Restart firewalld if running

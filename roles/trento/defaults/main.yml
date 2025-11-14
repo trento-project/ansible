@@ -1,0 +1,33 @@
+---
+# WARNING! Please, put variables here only after careful
+# consideration. Put variables only if they are really common among
+# ROLES.
+
+# NOTE: If, for example, the variables are "common" to the playbook
+# consider putting them into playbook host_vars/group_vars. If roles
+# need to be parameterized by these "common" playbook vars, pass them
+# as role parameters, instead. Note, this way is only appropriate if
+# these role vars are not supposed to be changed directly by the
+# users.
+
+# NOTE: Values containing `| default()` are for
+# backwards-compatibility with their deprecated names.
+
+trento_server_name: "{{ undef(hint='Domain name of the trento installation is mandatory') }}"
+trento_wanda_proxy_location: "{{ wanda_proxy_location | default('wanda') }}"
+
+trento_web_listen_port: "{{ web_listen_port | default(32767 | random(start=1024, seed=trento_server_name)) }}"
+trento_wanda_listen_port: "{{ wanda_listen_port | default(32767 | random(start=1024, seed=trento_server_name) + 1) }}"
+
+trento_web_admin_username: "{{ web_admin_username | default('admin') }}"
+trento_web_admin_password: "{{ web_admin_password | default(undef(hint='Password for Web admin interface is mandatory')) }}"
+trento_web_postgres_user: "{{ web_postgres_user | default('web') }}"
+trento_web_postgres_password: "{{ web_postgres_password | default(undef(hint='Password for Postgres Web user is mandatory')) }}"
+trento_web_postgres_db: "{{ web_postgres_db | default('webdb') }}"
+trento_web_postgres_event_store: "{{ web_postgres_event_store | default('event_store') }}"
+trento_wanda_postgres_user: "{{ wanda_postgres_user | default('wanda') }}"
+trento_wanda_postgres_password: "{{ wanda_postgres_password | default(undef(hint='Password for Postgres Wanda user is mandatory')) }}"
+trento_wanda_postgres_db: "{{ wanda_postgres_db | default('wandadb') }}"
+trento_rabbitmq_username: trento
+trento_rabbitmq_password: "{{ undef(hint='Password for RabbitMQ trento user is mandatory') }}"
+trento_rabbitmq_vhost: trento
