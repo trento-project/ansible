@@ -2,9 +2,9 @@
 - name: Check installation method
   ansible.builtin.assert:
     that:
-      - install_method is defined
-      - install_method in ['docker', 'rpm']
-    fail_msg: "install_method value must be one of: docker|rpm"
+      - app_install_method is defined
+      - app_install_method in ['docker', 'rpm']
+    fail_msg: "app_install_method value must be one of: docker|rpm"
 
 - name: Create secrets
   no_log: true
@@ -12,14 +12,14 @@
     "{{ item }}": "{{ lookup('community.general.random_string', base64=True, length=64) }}"
   when: lookup('vars', item) == ""
   loop:
-    - secret_key_base
-    - access_token_secret
-    - refresh_token_secret
+    - app_secret_key_base
+    - app_access_token_secret
+    - app_refresh_token_secret
 
 - name: Include Docker installation tasks
   ansible.builtin.include_tasks: docker.yml
-  when: install_method == 'docker'
+  when: app_install_method == 'docker'
 
 - name: Include RPM installation tasks
   ansible.builtin.include_tasks: rpm.yml
-  when: install_method == 'rpm'
+  when: app_install_method == 'rpm'

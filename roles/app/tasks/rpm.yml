@@ -1,8 +1,5 @@
 # code: language=ansible
 ---
-- name: Include RPM installation vars
-  ansible.builtin.include_vars: "../defaults/rpm.yml"
-
 - name: Install Trento RPM packages
   community.general.zypper:
     name:

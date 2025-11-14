@@ -1,15 +1,14 @@
 {
-    "web_postgres_password": "pass",
-    "wanda_postgres_password": "wanda",
-    "rabbitmq_password": "trento",
-    "prometheus_url": "http://localhost:9090",
-    "web_admin_password": "adminpassword",
     "trento_server_name": "your-server-name",
-    "enable_alerting": "true",
-    "alert_sender": "alert-sender-mail",
-    "alert_recipient": "alert-receiver-mail",
-    "smtp_server": "smtp-server-adress",
-    "smtp_port": "smpt-port",
-    "smtp_user": "smtp-user",
-    "smtp_password": "smtp-password"
+    "trento_web_admin_password": "adminpassword",
+    "trento_web_postgres_password": "pass",
+    "trento_wanda_postgres_password": "wanda",
+    "trento_rabbitmq_password": "trento",
+    "app_enable_alerting": "true",
+    "app_alert_sender": "alert-sender-mail",
+    "app_alert_recipient": "alert-receiver-mail",
+    "app_smtp_server": "smtp-server-adress",
+    "app_smtp_port": "smpt-port",
+    "app_smtp_user": "smtp-user",
+    "app_smtp_password": "smtp-password"
 }

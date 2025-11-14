@@ -24,7 +24,7 @@
         tasks_from: cleanup
     - name: Proxy
       ansible.builtin.include_role:
-        name: proxy
+        name: rproxy
         tasks_from: cleanup
 
 - name: Clean up postgres
