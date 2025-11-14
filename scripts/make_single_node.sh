@@ -60,16 +60,13 @@ key=$(join_lines "$key_file")
 
 cat <<EOF > "$vars_json_file"
 {
-    "provision_prometheus": "true",
-    "provision_proxy": "true",
-    "web_postgres_password": "postgres",
-    "wanda_postgres_password": "postgres",
-    "rabbitmq_password": "guest",
-    "web_admin_password": "adminpassword",
+    "trento_web_postgres_password": "postgres",
+    "trento_wanda_postgres_password": "postgres",
+    "trento_rabbitmq_password": "guest",
+    "trento_web_admin_password": "adminpassword",
     "trento_server_name": "$machine_fqdn",
-    "nginx_ssl_cert": "$crt",
-    "nginx_ssl_key": "$key",
-    "prometheus_url": "http://localhost:9090"
+    "rproxy_ssl_cert": "$crt",
+    "rproxy_ssl_key": "$key",
 }
 EOF
 
@@ -99,18 +96,6 @@ all:
 EOF
 
 cat <<EOF > "$inventory_ini_file"
-[all:vars]
-provision_prometheus=true
-provision_proxy=true
-web_postgres_password=postgres
-wanda_postgres_password=postgres
-rabbitmq_password=guest
-web_admin_password=adminpassword
-trento_server_name="$machine_fqdn"
-nginx_ssl_cert="$crt"
-nginx_ssl_key="$key"
-prometheus_url="http://localhost:9090"
-
 [trento_server]
 vitellone ansible_user=ec2-user ansible_host=$machine_ip
 
