@@ -1,29 +1,25 @@
 ---
-web_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) }}"
-web_postgres_db: webdb
-web_postgres_event_store: event_store
-web_postgres_user: web
-web_oas_server_url: "https://{{ trento_server_name }}"
-wanda_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) + 1 }}"
-wanda_postgres_user: wanda
-wanda_postgres_db: wandadb
-wanda_oas_server_url: "https://{{ trento_server_name~wanda_proxy_location }}"
-rabbitmq_username: trento
-rabbitmq_vhost: "trento"
+# DON'T ADD NEW VALUES TO THIS FILE!
+# It's only available for backwards-compatibility and smooth
+# transition to the new properly named variables. Add new values to
+# `main/main.yml`.
+web_oas_server_url: "https://{{ app_server_name }}"
+wanda_oas_server_url: "https://{{ app_server_name ~ app_wanda_proxy_location }}"
+web_postgres_host: "localhost"
+wanda_postgres_host: "localhost"
+prometheus_url: "http://localhost:9090"
 secret_key_base: ""
 access_token_secret: ""
 refresh_token_secret: ""
-web_admin_username: admin
 enable_api_key: "true"
 enable_charts: "true"
-enable_alerting: null
-smtp_server: null
-smtp_port: null
-smtp_user: null
-smtp_password: null
-alert_sender: null
-alert_recipient: null
-amqp_protocol: amqp
+enable_alerting:
+smtp_server:
+smtp_port:
+smtp_user:
+smtp_password:
+alert_sender:
+alert_recipient:
 install_method: rpm
 enable_oidc: "false"
 oidc_client_id: ""

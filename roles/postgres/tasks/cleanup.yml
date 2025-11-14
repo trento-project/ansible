@@ -6,25 +6,25 @@
   block:
     - name: Remove web database
       community.postgresql.postgresql_db:
-        name: "{{ web_postgres_db }}"
+        name: "{{ postgres_web_db }}"
         state: absent
 
     - name: Remove web event store database
       community.postgresql.postgresql_db:
-        name: "{{ web_postgres_event_store }}"
+        name: "{{ postgres_web_event_store }}"
         state: absent
 
     - name: Remove wanda event store database
       community.postgresql.postgresql_db:
-        name: "{{ wanda_postgres_db }}"
+        name: "{{ postgres_wanda_db }}"
         state: absent
 
     - name: Remove web database user
       community.postgresql.postgresql_user:
-        name: "{{ web_postgres_user }}"
+        name: "{{ postgres_web_user }}"
         state: absent
 
     - name: Remove wanda database user
       community.postgresql.postgresql_user:
-        name: "{{ wanda_postgres_user }}"
+        name: "{{ postgres_wanda_user }}"
         state: absent

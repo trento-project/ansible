@@ -1,0 +1,18 @@
+---
+install_nginx: "true"
+override_nginx_default_conf: "true"
+nginx_vhost_filename: "trento"
+nginx_vhost_http_listen_port: "80"
+nginx_vhost_https_listen_port: "443"
+web_upstream_name: "web"
+wanda_upstream_name: "wanda"
+nginx_ssl_cert: "{{ undef(hint='SSL cert for the reverse proxy is mandatory') }}"
+nginx_ssl_key: "{{ undef(hint='SSL key for the reverse proxy is mandatory') }}"
+nginx_ssl_cert_as_base64: "false"
+nginx_ssl_key_as_base64: "false"
+nginx_conf_base_dir: "/etc/nginx"
+nginx_vhost_dir: "vhosts.d"
+nginx_conf_dir: "conf.d"
+nginx_user: nginx
+nginx_group: nginx
+nginx_service: nginx
