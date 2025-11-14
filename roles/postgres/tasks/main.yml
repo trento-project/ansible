@@ -23,6 +23,12 @@
 - name: Configure Postgres
   become: true
   become_user: postgres
+  vars:
+    # Pipelining as workaround for when SSH connection is not made
+    # with root and then switching to unprivileged user: There are
+    # other possibilities:
+    # https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
+    ansible_ssh_pipelining: true
   block:
     - name: "Configure postgres to listen on *"
       community.postgresql.postgresql_set:
