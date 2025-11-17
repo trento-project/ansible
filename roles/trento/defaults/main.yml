@@ -21,11 +21,11 @@ trento_wanda_listen_port: "{{ wanda_listen_port | default(32767 | random(start=1
 
 trento_web_admin_username: "{{ web_admin_username | default('admin') }}"
 trento_web_admin_password: "{{ web_admin_password | default(undef(hint='Password for Web admin interface is mandatory')) }}"
-trento_web_postgres_user: "{{ web_postgres_user | default('web') }}"
+trento_web_postgres_username: "{{ web_postgres_user | default('web') }}"
 trento_web_postgres_password: "{{ web_postgres_password | default(undef(hint='Password for Postgres Web user is mandatory')) }}"
 trento_web_postgres_db: "{{ web_postgres_db | default('webdb') }}"
 trento_web_postgres_event_store: "{{ web_postgres_event_store | default('event_store') }}"
-trento_wanda_postgres_user: "{{ wanda_postgres_user | default('wanda') }}"
+trento_wanda_postgres_username: "{{ wanda_postgres_user | default('wanda') }}"
 trento_wanda_postgres_password: "{{ wanda_postgres_password | default(undef(hint='Password for Postgres Wanda user is mandatory')) }}"
 trento_wanda_postgres_db: "{{ wanda_postgres_db | default('wandadb') }}"
 trento_rabbitmq_username: trento

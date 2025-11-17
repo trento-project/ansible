@@ -24,7 +24,7 @@
       dest: "/etc/ssl/private/trento.key"
       base64: "{{ rproxy_ssl_key_as_base64 }}"
 
-- name: Override default nginx config
+- name: Override default reverse proxy config
   when: rproxy_override_default_conf == 'true'
   ansible.builtin.template:
     src: "nginx-default.conf.j2"

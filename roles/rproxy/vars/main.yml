@@ -1,0 +1,7 @@
+---
+rproxy_conf_base_dir: "/etc/nginx"
+rproxy_vhost_dir: "vhosts.d"
+rproxy_conf_dir: "conf.d"
+rproxy_os_user: nginx
+rproxy_os_group: nginx
+rproxy_os_service: nginx

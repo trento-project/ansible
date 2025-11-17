@@ -46,7 +46,7 @@
         path: /var/lib/pgsql/data/pg_hba.conf
         regexp: "^host.*{{ postgres_web_db }},{{ postgres_web_event_store }},{{ postgres_wanda_db }}"
         insertafter: "^local.*all.*all.*peer"
-        line: "host\t{{ postgres_web_db }},{{ postgres_web_event_store }},{{ postgres_wanda_db }}\t{{ postgres_web_user }},{{ postgres_wanda_user }}\t0.0.0.0/0\tmd5"
+        line: "host\t{{ postgres_web_db }},{{ postgres_web_event_store }},{{ postgres_wanda_db }}\t{{ postgres_web_username }},{{ postgres_wanda_username }}\t0.0.0.0/0\tmd5"
 
     - name: Create postgres web database
       community.postgresql.postgresql_db:
@@ -66,7 +66,7 @@
     - name: Create web database user
       community.postgresql.postgresql_user:
         login_db: "{{ postgres_web_db }}"
-        name: "{{ postgres_web_user }}"
+        name: "{{ postgres_web_username }}"
         password: "{{ postgres_web_password }}"
         comment: "Web user provisioned by playbook"
         state: present
@@ -74,7 +74,7 @@
     - name: Create wanda database user
       community.postgresql.postgresql_user:
         login_db: "{{ postgres_wanda_db }}"
-        name: "{{ postgres_wanda_user }}"
+        name: "{{ postgres_wanda_username }}"
         password: "{{ postgres_wanda_password }}"
         comment: "Wanda user provisioned by playbook"
         state: present
@@ -83,7 +83,7 @@
       community.postgresql.postgresql_privs:
         login_db: "{{ postgres_web_db }}"
         objs: public
-        roles: "{{ postgres_web_user }}"
+        roles: "{{ postgres_web_username }}"
         privs: ALL
         type: schema
         state: present
@@ -92,7 +92,7 @@
       community.postgresql.postgresql_privs:
         login_db: "{{ postgres_web_event_store }}"
         objs: public
-        roles: "{{ postgres_web_user }}"
+        roles: "{{ postgres_web_username }}"
         privs: ALL
         type: schema
         state: present
@@ -101,7 +101,7 @@
       community.postgresql.postgresql_privs:
         login_db: "{{ postgres_wanda_db }}"
         objs: public
-        roles: "{{ postgres_wanda_user }}"
+        roles: "{{ postgres_wanda_username }}"
         privs: ALL
         type: schema
         state: present

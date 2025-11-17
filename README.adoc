@@ -35,10 +35,7 @@ NOTE: On SLES 15 SP5 and below, Ansible may default to the newest Python interpr
 * nginx
 
 The third parties are installed using `zypper` packages and configured
-with dedicated roles. The `web` and `wanda` components can be
-installed using either docker or zypper. The playbook checks the
-`app_install_method` variable (either `docker` or `rpm`) to determine
-which method to use.
+with dedicated roles.
 
 The `agent` is installed from the configured obs repository using
 `zypper`.
@@ -131,67 +128,53 @@ all:
 
 === 3. Setup playbook variables
 
-Create a vars.json file, following the example below: > *Note*: > The
-default values for variables ending with `_host` usually point to: > -
-`host.docker.internal` when using `docker` install method > -
-`localhost` in the case of `rpm` install method. > These work for
-single-host deployments but be sure to set them explicitly when pointing
-to manually deployed > services either with an *external IP* or an
-*internal IP* based on the infra network configuration or when using
-multi-node deployments.
+Create a vars.json file, following the example below:
+
+NOTE: The default values for variables ending with `_host` usually
+point to `localhost`. This works for single-host deployments but be
+sure to set them explicitly when pointing to manually deployed
+services, either with an *external IP* or an *internal IP*, based on
+the infra network configuration or when using multi-node deployments.
 
 [source,yaml]
-....
+----
 {
-  "postgres_web_password": "postgres",
-  "postgres_wanda_password": "postgres",
-  "trento_rabbitmq_password": "guest",
-  "trento_web_admin_password": "adminpassword",
   "trento_server_name": "trento-deployment.example.com",
+  "trento_web_admin_password": "adminpassword",
+  "trento_web_postgres_password": "postgres",
+  "trento_wanda_postgres_password": "postgres",
+  "trento_rabbitmq_password": "guest",
   "rproxy_ssl_cert": "<paste your SSL certificate here in base64>",
   "rproxy_ssl_key": "<paste your SSL certificate key here in base64>"
 }
-....
+----
 
-____
 Additionally, when deploying trento agents using the playbook, api-key
 auto retrieval from the server is not supported yet, so either use
 `"app_enable_api_key": "false"` and skip `agent_web_api_key` altogether or
 disable agent deployment for the first run, retrieve the api-key from
 the UI and set the `agent_web_api_key` accordingly.
-____
 
 === 4. Run the playbook
 
 Prior to running the playbook, tell ansible to fetch the required
 modules:
-[source,bash]
-....
-ansible-galaxy collection install -r requirements.yml
-....
 
-____
-*Note*: The `@` character in front of the `vars.json` path is
-mandatory. This tells `ansible-playbook` that the variables will not
-be specified in-line but as an external file instead.
-____
+[source,bash]
+----
+ansible-galaxy collection install -r requirements.yml
+----
 
 Run the playbook:
+
 [source,bash]
-....
+----
 ansible-playbook -i path/to/inventory.yml --extra-vars "@path/to/vars.json" playbook.yml
-....
-
-Both trento_server and agent inventory and variables file can be
-combined to deploy both at the same ansible execution.
-
-Having an inventory file called `inventory.yml` and a vars file called
-`extra-vars.json`, you could run the playbook
-
-[source,bash]
 ----
-$ ansible-playbook -i inventory.yml --extra-vars @extra-vars.json playbook.yml
-----
+
+NOTE: The `@` character in front of the `vars.json` path is
+mandatory. This tells `ansible-playbook` that the variables will not
+be specified in-line but as an external file instead.
 
 *This is just an example you can use all the options of
 `ansible-playbook` with your inventory and other methods of variables
@@ -199,9 +182,10 @@ injection.*
 
 === With docker container
 
-You can use the docker image `a`, to run this playbook, the image
-contains the playbook files ready to be provisioned. The docker image
-assumes you mount an `inventory` file and an `extra-vars` file.
+You can use the docker image `ghcr.io/trento-project/ansible`, to run
+this playbook, the image contains the playbook files ready to be
+provisioned. The docker image assumes you mount an `inventory` file
+and an `extra-vars` file.
 
 Mounting your ssh socket will enable you to access the remote machines
 like in your local environment.
@@ -221,28 +205,30 @@ docker run \
 
 == Playbook variables
 
-=== Required Variables to install trento_server
+=== Required Variables to install Trento Server
 
 [width="100%",cols="24%,76%",options="header",]
 |===
 |Name |Description
-|trento_server_name |Server name of the trento web application, used by
-nginx
+| trento_server_name | Domain name of the Trento web application
 
-|postgres_web_password |Password of the postgres user used in web
-project
+| trento_web_admin_password | Password of the admin user in Web
+  application
 
-|postgres_wanda_password |Password of the postgres user used in wanda
-project
+| trento_web_postgres_password | Password of the Postgres user used in
+  Web application
 
-|rabbitmq_password |Password of the rabbitmq user configured for the
-trento projects
+| trento_wanda_postgres_password | Password of the Postgres user used
+  in Wanda application
 
-|rproxy_ssl_cert |String with the content of the .crt file to be used by
-nginx for https
+| trento_rabbitmq_password | Password of the RabbitMQ user configured
+  for the Trento project
 
-|rproxy_ssl_key |String with the content of the .key file used to
-generate the certificate
+| rproxy_ssl_cert | String with the content of the .crt file to beused
+  by the reverse proxy for https
+
+| rproxy_ssl_key | String with the content of the .key file used to
+  generate the certificate
 |===
 
 === Required Variables to install trento agents
@@ -252,298 +238,426 @@ generate the certificate
 |Name |Description
 |agent_web_api_key |API key to connect to the trento_server
 
-|agent_rabbitmq_password |Password of the rabbitmq user configured for the
-trento projects
 |===
 
 === Optional variables
 
-These variables are the defaults of our roles, if you want to override
-the proper roles variables, feel free to inspect them in the playbook
-code, under the vars folder in each role.
+The following are our optional variables, grouped by role, for which
+we provide default values:
 
-*We recommend to not change* them unless you are sure of what are you
-doing in your setup.
-
-*trento-server*
+*Playbook variables*
 
 [width="100%",cols="16%,57%,27%",options="header",]
 |===
-|Name |Description |Default
-|provision_postgres |Provision postgres role, set to false if you
-provide an external postgres to the services |"`true`"
+| Name | Description | Default
 
-|provision_rabbitmq |Provision rabbitmq role, set to false if you
-provide an external rabbitmq to the services |"`true`"
+| provision_postgres | Provision postgres role, set to false if you
+  provide an external postgres to the services | "true"
 
-|provision_proxy |Provision nginx to expose the services, set to false
-to use an existing reverse proxy deployment |"`true`"
+| provision_rabbitmq | Provision rabbitmq role, set to false if you
+  provide an external rabbitmq to the services | "true"
 
-|provision_prometheus |Provision prometheus used by trento to store
-metrics send by agents |"`true`"
+| provision_proxy | Provision nginx to expose the services, set to
+  false to use an existing reverse proxy deployment | "true"
 
-|docker_network_name |Name of the docker network to be used by the
-deployment when using "`docker`" install_method |trentonet
-
-|web_container_image |Name of the Web container image to use to create
-the container |ghcr.io/trento-project/trento-web:rolling
-
-|web_container_name |Name of the Web container |trento_web
-
-|app_web_listen_port |Port where the Web service is exposed |<random value based on `app_server_name`>
-
-|app_web_oas_server_url|Web OpenAPI server url
-|https://<`app_server_name`>
-
-|wanda_container_image |Name of the Wanda container image to use to
-create the container |ghcr.io/trento-project/trento-wanda:rolling
-
-|wanda_container_name |Name of the Wanda container |trento_wanda
-
-|app_wanda_listen_port |Port where the Wanda service is exposed |<random value based on `app_server_name`>
-
-|rproxy_wanda_location|Path to forward requests to Wanda in the proxy
-|/wanda
-
-|app_wanda_oas_server_url|Wanda OpenAPI server url
-|https://<`trento_server_name`><`rproxy_wanda_location`>
-
-|force_pull_images |Force pull the container images for trento
-components |false
-
-|force_recreate_web_container |Recreate the web container |false
-
-|force_recreate_wanda_container |Recreate the wanda container |false
-
-|remove_web_container_image |Remove Web container image in cleanup task
-|true
-
-|remove_wanda_container_image |Remove Wanda container image in cleanup
-task |true
-
-|checks_container_image |Name of the Checks container image to use to
-create the container |ghcr.io/trento-project/checks:rolling
-
-|checks_container_name |Name of the Checks container |trento_checks
-
-|force_recreate_checks_container |Recreate the checks container |false
-
-|remove_checks_container_image |Remove checks container image in cleanup
-task |true
-
-|install_postgres |Install postgresql in the postgres provisioning phase
-|"`true`"
-
-|postgres_web_user |Name of the postgres user used by web application
-|web
-
-|postgres_web_db |Name of the postgres database of the web application
-|webdb
-
-|postgres_web_event_store |Name of the postgres event store database of
-web application |event_store
-
-|postgres_wanda_user |Name of the postgres user used by wanda project
-|wanda
-
-|postgres_wanda_db |Name of the postgres database of wanda application
-|wanda
-
-|app_web_postgres_host |Postgres host of web project container
-|host.docker.internal
-
-|app_wanda_postgres_host |Postgres host of wanda project container
-|host.docker.internal
-
-|rabbitmq_vhost |The rabbitmq vhost used for the current deployment
-|trento
-
-|rabbitmq_username |Username of rabbitmq user, this will be created by
-the rabbitmq role |trento
-
-|rabbitmq_node_name |The name of rabbitmq node |rabbit@localhost
-
-|rabbitmq_host |The rabbitmq host, used by web and wanda containers. It
-could include the service port |host.docker.internal
-
-|app_secret_key_base |The secret of phoenix application |Generated by
-playbook
-
-|app_access_token_secret |The secret used for access tokens JWT signature
-|Generated by playbook
-
-|app_refresh_token_secret |The secret used for refresh tokens JWT signature
-|Generated by playbook
-
-|app_web_admin_username |Username of the admin user in web application
-|admin
-
-|app_web_admin_password |Password of the admin user of the web application
-
-|app_enable_api_key |Enable/Disable API key usage. Mostly for testing
-purposes |true
-
-|app_enable_charts |Enable/Disable charts display based on Prometheus
-metrics |true
-
-|app_enable_alerting |Enable the alerting mechanism on web project |null
-
-|app_alert_sender |Email address used as the "`from`" address in alerts
-|null
-
-|app_alert_recipient |Email address to receive alert notifications |null
-
-|app_smtp_server |IP address of the SMTP server |null
-
-|app_smtp_port |Port number of SMTP server |null
-
-|app_smtp_user |Username for SMTP authentication |null
-
-|app_smtp_password |Password for SMTP authentication |null
-
-|app_enable_oidc |Enable OIDC integration, this disables the
-username/password authentication method (self exclusive SSO type) |false
-
-|app_oidc_client_id |OIDC client id, required when `app_enable_oidc` is true |
-
-|app_oidc_client_secret |OIDC client secret, required when `app_enable_oidc` is
-true |
-
-|app_oidc_server_base_url |OIDC identity provider base url, required when
-`app_enable_oidc` is true |
-
-|app_enable_oauth2 |Enable OAUTH2 integration, this disables the
-username/password authentication method (self exclusive SSO type) |false
-
-|app_oauth2_client_id |OAUTH2 client id, required when `app_enable_oauth2` is true
-|
-
-|app_oauth2_client_secret |OAUTH2 client secret, required when `app_enable_oauth2`
-is true |
-
-|app_oauth2_server_base_url |OAUTH2 identity provider base url, required
-when `app_enable_oauth2` is true |
-
-|app_oauth2_authorize_url |OAUTH2 authorize url, required when `app_enable_oauth2`
-is true |
-
-|app_oauth2_token_url |OAUTH2 token url, required when `app_enable_oauth2` is true
-|
-
-|app_oauth2_user_url |OAUTH2 user information url, required when
-`app_enable_oauth2` is true |
-
-|app_oauth2_scopes |OAUTH2 scopes, required when `app_enable_oauth2` is true
-|"`profile email`"
-
-|app_enable_saml |Enable SAML integration, this disables the
-username/password authentication method (self exclusive SSO type) |false
-
-|app_saml_idp_id |SAML IDP id, required when `app_enable_saml` is true |
-
-|app_saml_idp_nameid_format |SAML IDP name id format, used to interpret the
-attribute name. Whole urn string must be used
-|urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
-
-|app_saml_sp_dir |SAML SP directory, where SP specific required files (such
-as certificates and metadata file) are placed
-|/etc/trento/trento-web/saml
-
-|app_saml_sp_id |SAML SP id, required when `app_enable_saml` is true |
-
-|app_saml_sp_entity_id |SAML SP entity id |
-
-|app_saml_sp_contact_name |SAML SP contact name |"`Trento SP Admin`"
-
-|app_saml_sp_contact_email |SAML SP contact email |"`admin@trento.suse.com`"
-
-|app_saml_sp_org_name |SAML SP organization name |"`Trento SP`"
-
-|app_saml_sp_org_displayname |SAML SP organization display name |"`SAML SP
-build with Trento`"
-
-|app_saml_sp_org_url |SAML SP organization url
-|https://www.trento-project.io/
-
-|app_saml_username_attr_name |SAML user profile "`username`" attribute field
-name. This attribute must exist in the IDP user |username
-
-|app_saml_email_attr_name |SAML user profile "`email`" attribute field name.
-This attribute must exist in the IDP user |email
-
-|app_saml_firstname_attr_name |SAML user profile "`first name`" attribute
-field name. This attribute must exist in the IDP user |firstName
-
-|app_saml_lastname_attr_name |SAML user profile "`last name`" attribute
-field name. This attribute must exist in the IDP user |lastName
-
-|app_saml_metadata_url |URL to retrieve the SAML metadata xml file. One of
-`saml_metadata_url` or `saml_metadata_content` is required |
-
-|app_saml_metadata_content |One line string containing the SAML metadata xml
-file content (`saml_metadata_url` has precedence over this) |
-
-|app_saml_sign_requests |Sign SAML requests in the SP side |true
-
-|app_saml_sign_metadata |Sign SAML metadata documents in the SP side |true
-
-|app_saml_signed_assertion |Require to receive SAML assertion signed from
-the IDP. Set to false if the IDP doesn’t sign the assertion |true
-
-|app_saml_signed_envelopes |Require to receive SAML envelopes signed from
-the IDP. Set to false if the IDP doesn’t sign the envelopes |true
-
-|rproxy_install |Install nginx |true
-
-|rproxy_ssl_cert_as_base64 |Nginx SSL certificate provided as base64
-string |false
-
-|rproxy_ssl_key_as_base64 |Nginx SSL key provided as base64 string |false
-
-|rproxy_override_nginx_default_conf |Override the default nginx conf for one
-that will use the vhosts according to an opinionated directory structure
-|true
-
-|rproxy_vhost_filename |Nginx vhost filename. "`conf`" suffix is added to
-the given name |trento
-
-|rproxy_vhost_http_listen_port |Configure the http listen port for trento
-(redirects to https by default) |80
-
-|rproxy_vhost_https_listen_port |Configure the https listen port for
-trento |443
-
-|rproxy_web_upstream_name |Web nginx upstream name |web
-
-|rproxy_wanda_upstream_name |Wanda nginx upstream name |wanda
-
-|app_amqp_protocol |Change the amqp protocol type for Web and Wanda |amqp
-
-|app_prometheus_url |Prometheus server url |http://localhost:9090
-
-|prometheus_web_url |Base URL for Trento `web` where Prometheus would scrape for metrics |http://localhost
-
-|app_install_method |Installation method for trento components, can be
-either `rpm` or `docker` |rpm
+| provision_prometheus | Provision prometheus used by trento to store
+  metrics send by agents | "true"
 |===
 
-*trento agents*
+*Trento meta-role*
+
+Variables in this role are a bit special. They are shared among
+several other roles. However, every other role has its own variable
+corresponding to one in this meta-role and takes it as a default
+value. In effect, variables in this meta-role are similar to "global
+defaults", and the user can freely override these defaults on a
+per-role basis if appropriate.
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| Name | Description | Default
+
+| trento_wanda_proxy_location | URL Path to Wanda behind a reverse
+  proxy | "wanda"
+
+| trento_web_listen_port | Port where the Web service is exposed |
+  <random value based on `trento_server_name`>
+
+| trento_wanda_listen_port | Port where the Wanda service is exposed |
+  <random value based on `trento_server_name`>
+
+| trento_web_admin_username | Username of the admin user in Web
+ application | "admin"
+
+| trento_web_postgres_username | Name of the Postgres user used by Web
+  application | "web"
+
+| trento_web_postgres_db | Name of the Postgres database of the Web
+  application | "webdb"
+
+| trento_web_postgres_event_store | Name of the Postgres event store
+  database of Web application | "event_store"
+
+| trento_wanda_postgres_username | Name of the Postgres user used by
+  Wanda application | "wanda"
+
+| trento_wanda_postgres_db | Name of the Postgres database of Wanda
+  application | "wandadb"
+
+| trento_rabbitmq_username | Username of RabbitMQ user, this will be
+  created by the RabbitMQ role | "trento"
+
+| trento_rabbitmq_vhost | The rabbitmq vhost used for the current
+  deployment | "trento"
+|===
+
+*App role*
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| Name | Description | Default
+
+| app_server_name | Domain name of the Trento web application | <value
+  of `trento_server_name`>
+
+| app_web_listen_port | Port where the Web service is exposed | <value
+  of `trento_web_listen_port`>
+
+| app_web_postgres_host | Host of the Postgres containing the DB for
+  Web application | localhost
+
+| app_web_postgres_username | Name of the postgres user used by Web
+  application | <value of `trento_web_postgres_username`>
+
+| app_web_postgres_password | Password of the Postgres user used in
+  Web application | <value of `trento_web_postgres_password`>
+
+| app_web_postgres_db | Name of the Postgres database of the Web
+  application | <value of `trento_web_postgres_db`>
+
+| app_web_postgres_event_store | Name of the Postgres event store
+  database of Web application | <value of
+  `trento_web_postgres_event_store`>
+
+| app_web_oas_server_url | Web OpenAPI server url |
+  https://<`app_server_name`>
+
+| app_wanda_listen_port | Port where the Wanda service is exposed |
+  <value of `trento_wanda_listen_port`>
+
+| app_wanda_postgres_host | Host of the Postgres containing the DB for
+  Wanda | localhost
+
+| app_wanda_postgres_username | Name of the Postgres user used by
+  Wanda application | <value of `trento_wanda_postgres_username`>
+
+| app_wanda_postgres_password | Password of the Postgres user used in
+  Wanda application | <value of `trento_wanda_postgres_password`>
+
+| app_wanda_postgres_db | Name of the Postgres database of Wanda
+  application | <value of `trento_wanda_postgres_db`>
+
+| app_wanda_oas_server_url | Wanda OpenAPI server URL |
+  https://<`app_server_name`><`app_wanda_location`>
+
+| app_wanda_proxy_location | URL Path to Wanda behind a reverse
+  proxy | <value of `trento_wanda_proxy_location`>
+
+| app_rabbitmq_host | The host for RabbitMQ. It could include the
+  service port | localhost
+
+| app_rabbitmq_username | Username used to connect to RabbitMQ |
+  <value of `trento_rabbitmq_username`>
+
+| app_rabbitmq_password | Password of the RabbitMQ user | <value of
+  `trento_rabbitmq_password`>
+
+| app_rabbitmq_vhost | The RabbitMQ virtual host | <value of
+  `trento_rabbitmq_vhost`>
+
+| app_prometheus_url | Prometheus server URL | "http://localhost:9090"
+
+| app_secret_key_base | The secret for the Phoenix application |
+  <generated by the playbook>
+
+| app_access_token_secret | The secret used for access tokens JWT
+  signature | <generated by the playbook>
+
+| app_refresh_token_secret | The secret used for refresh tokens JWT
+  signature | <generated by the playbook>
+
+| app_web_admin_username | Username of the admin user for Web
+  application | <value of `trento_web_admin_username>`>
+
+| app_web_admin_password | Password of the admin user for Web
+  application | <value of `trento_web_admin_password`>
+
+| app_enable_api_key | Enable API key usage. Mostly for testing
+  purposes | "true"
+
+| app_enable_charts | Enable charts display based on Prometheus
+  metrics | "true"
+
+| app_enable_alerting | Enable the alerting mechanism for Web application | null
+
+| app_smtp_server | IP address of the SMTP server | null
+
+| app_smtp_port | Port number of SMTP server | null
+
+| app_smtp_user |Username for SMTP authentication | null
+
+| app_smtp_password | Password for SMTP authentication | null
+
+| app_alert_sender | E-mail address used as the "from" address in
+  alerts | null
+
+| app_alert_recipient | E-mail address to receive alert
+  notifications | null
+
+| app_amqp_protocol | URL scheme of the AMQP protocol -- either `amqp`
+  or `amqps`. Used in Web and Wanda when connecting to RabbitMQ | amqp
+
+| app_enable_oidc | Enable OIDC integration, this disables the
+  username/password authentication method (self exclusive SSO
+  type) | "false"
+
+| app_oidc_client_id | OIDC client id, required when `app_enable_oidc`
+  is true | ""
+
+| app_oidc_client_secret | OIDC client secret, required when
+  `app_enable_oidc` is true | ""
+
+| app_oidc_server_base_url | OIDC identity provider base url, required
+  when `app_enable_oidc` is true | ""
+
+| app_enable_oauth2 | Enable OAUTH2 integration, this disables the
+  username/password authentication method (self exclusive SSO
+  type) | "false"
+
+| app_oauth2_client_id | OAUTH2 client id, required when
+  `app_enable_oauth2` is true | ""
+
+| app_oauth2_client_secret | OAUTH2 client secret, required when
+  `app_enable_oauth2` is true | ""
+
+| app_oauth2_server_base_url | OAUTH2 identity provider base url,
+  required when `app_enable_oauth2` is true | ""
+
+| app_oauth2_authorize_url | OAUTH2 authorize url, required when
+  `app_enable_oauth2` is true | ""
+
+| app_oauth2_token_url | OAUTH2 token url, required when
+  `app_enable_oauth2` is true | ""
+
+| app_oauth2_user_url | OAUTH2 user information url, required when
+  app_enable_oauth2` is true | ""
+
+| app_oauth2_scopes | OAUTH2 scopes, required when `app_enable_oauth2`
+  is true | "profile email"
+
+| app_enable_saml | Enable SAML integration, this disables the
+  username/password authentication method (self exclusive SSO
+  type) | "false"
+
+| app_saml_idp_id | SAML IDP id, required when `app_enable_saml` is
+  true | ""
+
+| app_saml_idp_nameid_format | SAML IDP name id format, used to
+  interpret the attribute name. Whole urn string must be
+  used | urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
+
+| app_saml_sp_dir | SAML SP directory, where SP specific required
+  files (such as certificates and metadata file) are placed |
+  /etc/trento/trento-web/saml
+
+| app_saml_sp_id | SAML SP id, required when `app_enable_saml` is
+  true | ""
+
+| app_saml_sp_entity_id | SAML SP entity id | ""
+
+| app_saml_sp_contact_name | SAML SP contact name | "Trento SP Admin"
+
+| app_saml_sp_contact_email | SAML SP contact email | "admin@trento.suse.com"
+
+| app_saml_sp_org_name | SAML SP organization name | "Trento SP"
+
+| app_saml_sp_org_displayname | SAML SP organization display name |
+  "SAML SP build with Trento"
+
+| app_saml_sp_org_url | SAML SP organization url |
+  "https://www.trento-project.io/"
+
+| app_saml_username_attr_name | SAML user profile "username"
+  attribute field name. This attribute must exist in the IDP
+  user | "username"
+
+| app_saml_email_attr_name | SAML user profile "email" attribute
+  field name. This attribute must exist in the IDP user | "email"
+
+| app_saml_firstname_attr_name | SAML user profile "first name"
+  attribute field name. This attribute must exist in the IDP
+  user | "firstName"
+
+| app_saml_lastname_attr_name | SAML user profile "last name"
+  attribute field name. This attribute must exist in the IDP user |
+  "lastName"
+
+| app_saml_metadata_url | URL to retrieve the SAML metadata xml
+  file. One of `saml_metadata_url` or `saml_metadata_content` is
+  required | ""
+
+| app_saml_metadata_content | One line string containing the SAML
+  metadata xml file content (`saml_metadata_url` has precedence over
+  this) | ""
+
+| app_saml_sign_requests | Sign SAML requests in the SP side | "true"
+
+| app_saml_sign_metadata | Sign SAML metadata documents in the SP
+  side | "true"
+
+| app_saml_signed_assertion | Require to receive SAML assertion signed
+  from the IDP. Set to false if the IDP doesn’t sign the assertion |
+  "true"
+
+| app_saml_signed_envelopes | Require to receive SAML envelopes signed
+  from the IDP. Set to false if the IDP doesn’t sign the envelopes |
+  "true"
+|===
+
+*Agent role*
 
 [width="100%",cols="10%,47%,43%",options="header",]
 |===
-|Name |Description |Default
-|agent_trento_server_url |Trento server url |http://localhost:4000
+|Name | Description | Default
 
-|agent_trento_repository |OBS repository from where trento agent is installed
-|https://download.opensuse.org/repositories/devel:sap:trento:factory/SLE_15_SP3/
+| agent_trento_server_url | Trento server URL | "http://<`trento_server_name`>"
 
-|agent_rabbitmq_username |Username of rabbitmq user, this will be created by
-the rabbitmq role |trento
+| agent_trento_repository | OBS repository from where Trento agent is
+  installed |
+  "https://download.opensuse.org/repositories/devel:sap:trento:factory/SLE_15_SP3/"
 
-|agent_rabbitmq_host |The rabbitmq host, used by web and wanda containers. It
-could include the service port |
+| agent_amqp_protocol | URL scheme of the AMQP protocol -- either
+  `amqp` or `amqps`. Used to connect to RabbitMQ | "amqp"
 
-|agent_amqp_protocol |Change the amqp protocol type |amqp
+| agent_rabbitmq_host | The rabbitmq host, used by web and wanda
+  containers. It could include the service port | "localhost"
+
+| agent_rabbitmq_username | Username used to connect to RabbitMQ |
+  <value of `trento_rabbitmq_username`>
+
+| agent_rabbitmq_password | Password of the RabbitMQ user | <value of
+  `trento_rabbitmq_password`>
+
+| agent_rabbitmq_vhost | The RabbitMQ virtual host | <value of
+  `trento_rabbitmq_vhost`>
+|===
+
+*Postgres role*
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| Name | Description | Default
+
+| postgres_install | Install postgresql in the postgres provisioning
+  phase | "true"
+
+| postgres_web_username | Name of the Postgres user used by Web
+  application | <value of `trento_web_postgres_username`>
+
+| postgres_web_password | Password of the Postgres user used in Web
+  application | <value of `trento_web_postgres_password`>
+
+| postgres_web_db | Name of the Postgres database of the Web
+  application | <value of `trento_web_postgres_db`>
+
+| postgres_web_event_store | Name of the Postgres event store database
+  of Web application | <value of `trento_web_postgres_event_store`>
+
+| postgres_wanda_username | Name of the Postgres user used by Wanda
+  application | <value of `trento_wanda_postgres_username`>
+
+| postgres_wanda_password | Password of the Postgres user used in
+  Wanda application | <value of `trento_wanda_postgres_password`>
+
+| postgres_wanda_db | Name of the Postgres database of Wanda
+  application | <value of `trento_wanda_postgres_db`>
+|===
+
+*Prometheus role*
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| Name | Description | Default
+
+| prometheus_port | Port where Prometheus would be exposed | 9090
+
+| prometheus_web_url | Base URL of Trento Web application where
+  Prometheus would scrape for metrics | http://<`trento_server_name`>
+
+| prometheus_web_listen_port | Port on which Web is exposed, to be
+  scraped by Prometheus | <value of `trento_web_listen_port`>
+|===
+
+*RabbitMQ role*
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| Name | Description | Default
+
+| rabbitmq_username | Username used by various Trento applications to
+  connect to RabbitMQ | <value of `trento_rabbitmq_username`>
+
+| rabbitmq_password | Password of the RabbitMQ user used in various
+  Trento applications | <value of `trento_rabbitmq_password`>
+
+| rabbitmq_vhost | The RabbitMQ virtual host used by various Trento
+  applications | <value of `trento_rabbitmq_vhost`>
+
+| rabbitmq_node_name | Name of the RabbitMQ node | "rabbit@localhost"
+|===
+
+*Reverse Proxy role*
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| Name | Description | Default
+
+| rproxy_install | Whether  to install reverse proxy (currently, nginx) | "true"
+
+| rproxy_server_name | Domain name of the Trento web application |
+  <value of `trento_server_name`>
+
+| rproxy_web_listen_port | Port where the Web service is exposed |
+  <value of `trento_web_listen_port`>
+
+| rproxy_wanda_listen_port | Port where the Wanda service is exposed |
+  <value of `trento_wanda_listen_port`>
+
+| rproxy_override_default_conf | Override the default reverse proxy
+  configuration for one that will use the vhosts according to an
+  opinionated directory structure | "true"
+
+| rproxy_vhost_filename | Reverse proxy vhost filename. ".conf" suffix
+  is added to the given name | "trento"
+
+| rproxy_vhost_http_listen_port | Configure the HTTP listen port for
+  Trento (redirects to https by default) | "80"
+
+| rproxy_vhost_https_listen_port | Configure the HTTPS listen port for
+  Trento | "443"
+
+| rproxy_web_upstream_name | Web upstream name | "web"
+
+| rproxy_wanda_upstream_name | Wanda upstream name | "wanda"
+
+| rproxy_wanda_location | Path to forward requests to Wanda in the
+  reverse proxy | "wanda"
+
+| rproxy_ssl_cert_as_base64 | Whether SSL certificate is provided as
+  base64 string | "false"
+
+| rproxy_ssl_key_as_base64 | Whether SSL key is provided as base64
+  string | "false"
 |===
 
 == Clean up
@@ -554,11 +668,11 @@ inventory and variables file than the main playbook.
 
 These are the cleaned resources:
 
-* Web and Wanda containers/images
-* Docker network
+* Stops Web and Wanda services
 * Postgresql database and users
-* Nginx vhost configuration file
+* Reverse proxy vhost configuration file
 * RabbitMQ vhost
+* Reverts Firewall rules
 
 Run the playbook with:
 

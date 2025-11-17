@@ -27,10 +27,10 @@
 
     - name: Remove web database user
       community.postgresql.postgresql_user:
-        name: "{{ postgres_web_user }}"
+        name: "{{ postgres_web_username }}"
         state: absent
 
     - name: Remove wanda database user
       community.postgresql.postgresql_user:
-        name: "{{ postgres_wanda_user }}"
+        name: "{{ postgres_wanda_username }}"
         state: absent

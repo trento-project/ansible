@@ -1,7 +1,7 @@
 CORS_ORIGIN=http://localhost
 SECRET_KEY_BASE={{ app_secret_key_base }}
 AMQP_URL={{ app_amqp_protocol }}://{{ app_rabbitmq_username }}:{{ app_rabbitmq_password }}@{{ app_rabbitmq_host }}/{{ app_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
-DATABASE_URL=ecto://{{ app_wanda_postgres_user }}:{{ app_wanda_postgres_password }}@{{ app_wanda_postgres_host }}/{{ app_wanda_postgres_db }}
+DATABASE_URL=ecto://{{ app_wanda_postgres_username }}:{{ app_wanda_postgres_password }}@{{ app_wanda_postgres_host }}/{{ app_wanda_postgres_db }}
 PORT={{ app_wanda_listen_port }}
 {% if provision_proxy == 'true' %}
 OAS_SERVER_URL={{ app_wanda_oas_server_url }}

@@ -69,7 +69,7 @@
       CORS_ORIGIN: "http://localhost" # TODO: Remove placeholder
       SECRET_KEY_BASE: "{{ app_secret_key_base }}"
       AMQP_URL: "{{ app_amqp_protocol }}://{{ app_rabbitmq_username }}:{{ app_rabbitmq_password }}@{{ app_rabbitmq_host }}/{{ app_rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
-      DATABASE_URL: "ecto://{{ app_wanda_postgres_user }}:{{ app_wanda_postgres_password }}@{{ app_wanda_postgres_host }}/{{ app_wanda_postgres_db }}"
+      DATABASE_URL: "ecto://{{ app_wanda_postgres_username }}:{{ app_wanda_postgres_password }}@{{ app_wanda_postgres_host }}/{{ app_wanda_postgres_db }}"
       OAS_SERVER_URL: "{{ omit if provision_proxy != 'true' else app_wanda_oas_server_url }}"
       AUTH_SERVER_URL: "{{ web_container_name }}:4000"
     volumes_from:
@@ -97,8 +97,8 @@
       - "{{ app_web_listen_port }}:4000"
     env:
       AMQP_URL: "{{ app_amqp_protocol }}://{{ app_rabbitmq_username }}:{{ app_rabbitmq_password }}@{{ app_rabbitmq_host }}/{{ app_rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
-      DATABASE_URL: "ecto://{{ app_web_postgres_user }}:{{ app_web_postgres_password }}@{{ app_web_postgres_host }}/{{ app_web_postgres_db }}"
-      EVENTSTORE_URL: "ecto://{{ app_web_postgres_user }}:{{ app_web_postgres_password }}@{{ app_web_postgres_host }}/{{ app_web_postgres_event_store }}"
+      DATABASE_URL: "ecto://{{ app_web_postgres_username }}:{{ app_web_postgres_password }}@{{ app_web_postgres_host }}/{{ app_web_postgres_db }}"
+      EVENTSTORE_URL: "ecto://{{ app_web_postgres_username }}:{{ app_web_postgres_password }}@{{ app_web_postgres_host }}/{{ app_web_postgres_event_store }}"
       ENABLE_ALERTING: "{{ omit if app_enable_alerting is none else (app_enable_alerting | string | lower) }}"
       SMTP_SERVER: "{{ omit if app_smtp_server is none else app_smtp_server }}"
       SMTP_PORT: "{{ omit if app_smtp_port is none else (app_smtp_port | string) }}"

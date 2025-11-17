@@ -1,6 +1,6 @@
 AMQP_URL={{ app_amqp_protocol }}://{{ app_rabbitmq_username }}:{{ app_rabbitmq_password }}@{{ app_rabbitmq_host }}/{{ app_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
-DATABASE_URL=ecto://{{ app_web_postgres_user }}:{{ app_web_postgres_password }}@{{ app_web_postgres_host }}/{{ app_web_postgres_db }}
-EVENTSTORE_URL=ecto://{{ app_web_postgres_user }}:{{ app_web_postgres_password }}@{{ app_web_postgres_host }}/{{ app_web_postgres_event_store }}
+DATABASE_URL=ecto://{{ app_web_postgres_username }}:{{ app_web_postgres_password }}@{{ app_web_postgres_host }}/{{ app_web_postgres_db }}
+EVENTSTORE_URL=ecto://{{ app_web_postgres_username }}:{{ app_web_postgres_password }}@{{ app_web_postgres_host }}/{{ app_web_postgres_event_store }}
 {% if app_enable_alerting is not none %}
 ENABLE_ALERTING={{ app_enable_alerting | string | lower }}
 {% endif %}
