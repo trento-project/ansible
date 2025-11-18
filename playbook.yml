@@ -97,8 +97,6 @@
   roles:
     - role: app
       become: true
-      vars:
-        app_rabbitmq_host: "{{ rabbitmq_host | default(omit) }}"
 
     - role: rproxy
       become: true
@@ -109,5 +107,3 @@
   roles:
     - role: agent
       become: true
-      vars:
-        agent_rabbitmq_host: "{{ rabbitmq_host | default(omit) }}"

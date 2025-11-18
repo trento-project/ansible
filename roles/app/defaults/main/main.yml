@@ -14,7 +14,7 @@ app_wanda_postgres_password: "{{ trento_wanda_postgres_password }}"
 app_wanda_postgres_db: "{{ trento_wanda_postgres_db }}"
 app_wanda_oas_server_url: "{{ wanda_oas_server_url }}"
 app_wanda_proxy_location: "{{ trento_wanda_proxy_location }}"
-app_rabbitmq_host: "localhost"
+app_rabbitmq_host: "{{ rabbitmq_host | default('localhost') }}"  # # `rabbitmq_host` for backwards-compatibility
 app_rabbitmq_username: "{{ rabbitmq_username | default(trento_rabbitmq_username) }}"  # `rabbimtq_username` for backwards-compatibility
 app_rabbitmq_password: "{{ rabbitmq_password | default(trento_rabbitmq_password) }}"  # `rabbimtq_password` for backwards-compatibility
 app_rabbitmq_vhost: "{{ rabbitmq_vhost | default(trento_rabbitmq_vhost) }}"  # `rabbimtq_vhost` for backwards-compatibility
