@@ -1,12 +1,11 @@
 # code: language=ansible
 ---
-- name: Restart firewalld if running
+- name: Restart Firewalld
   ansible.builtin.service:
     name: firewalld
     state: restarted
-  when: firewalld_status.status.ActiveState == "active"
 
-- name: Restart prometheus
+- name: Restart Prometheus
   ansible.builtin.service:
     name: prometheus
     state: restarted

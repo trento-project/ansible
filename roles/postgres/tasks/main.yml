@@ -8,10 +8,24 @@
     state: present
     update_cache: true
 
+- name: Get current Python's package manger prefix
+  # Linter tries to be smart, but it's not -- there is no Ansible
+  # module to do RPM queries. Thus, silence this lint error.
+  # noqa: command-instead-of-module
+  ansible.builtin.shell: |
+    set -o pipefail
+    rpm -qf {{ ansible_python.executable }} | grep -E -o 'python3[[:digit:]]{0,2}'
+  register: __postgres_python_prefix_result
+  changed_when: false
+
+- name: Save current Python's package manger prefix
+  ansible.builtin.set_fact:
+    __postgres_current_python_package_prefix: "{{ __postgres_python_prefix_result.stdout }}"
+
 - name: Install postgres python management deps
   community.general.zypper:
     name:
-      - "{{ current_python_package_prefix }}-psycopg2"
+      - "{{ __postgres_current_python_package_prefix }}-psycopg2"
     state: present
 
 - name: Start postgresql service
