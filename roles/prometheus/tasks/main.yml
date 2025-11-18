@@ -20,7 +20,7 @@
     name: golang-github-prometheus-prometheus
     state: present
 
-- name: Place prometheus config
+- name: Create Prometheus config
   ansible.builtin.template:
     src: prometheus.yml.j2
     dest: /etc/prometheus/prometheus.yml
@@ -28,50 +28,10 @@
     group: prometheus
     mode: "0644"
   notify:
-    - Restart prometheus
+    - Restart Prometheus
 
 - name: Enable prometheus service
   ansible.builtin.service:
     name: prometheus
     state: started
     enabled: true
-
-- name: Handle firewall
-  block:
-    - name: Get current Python's package manager prefix
-      # Linter tries to be smart, but it's not -- there is no Ansible
-      # module to do RPM queries. Thus, silence this lint error.
-      # noqa: command-instead-of-module
-      ansible.builtin.shell: |
-        set -o pipefail
-        rpm -qf {{ ansible_python.executable }} | grep -E -o 'python3[[:digit:]]{0,2}'
-      register: __prometheus_python_prefix_result
-      changed_when: false
-
-    - name: Save current Python's package manager prefix
-      ansible.builtin.set_fact:
-        __prometheus_current_python_package_prefix: "{{ __prometheus_python_prefix_result.stdout }}"
-
-    - name: Install Python pre-requisites for Firewalld
-      community.general.zypper:
-        name:
-          # Used in ansible.posix.firewalld role
-          # WARNING: SLES16 doesn't provide properly prefixed package
-          # for `firewalld` bindings, so we have to temporarily revert
-          # to explicit conditional logic.
-          - "{{ '{}-firewall'.format((ansible_distribution_major_version == '16') | ternary('python3', __prometheus_current_python_package_prefix)) }}"
-
-          # Used in ansible.posix.firewalld role when firewalld is not
-          # started.
-          # - "{{ __prometheus_current_python_package_prefix }}-nftables"
-        state: present
-        update_cache: true
-
-    - name: Open prometheus port using Firewalld
-      ansible.posix.firewalld:
-        state: enabled
-        port: "{{ prometheus_port }}/tcp"
-        permanent: true
-        offline: false
-      notify:
-        - Restart firewalld

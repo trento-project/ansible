@@ -1,6 +1,6 @@
 # code: language=ansible
 ---
-- name: Check Trento would be installed on SLES
+- name: Check if Trento would be installed on SLES
   hosts: trento_server
   become: true
   tasks:
@@ -29,6 +29,13 @@
       become: true
       when: provision_prometheus == 'true'
 
+    - role: firewall
+      become: true
+      firewall_ports:
+        - "{{ prometheus_port }}/tcp"
+      when: provision_prometheus == 'true'
+
+
 - name: Provision RabbitMQ
   vars:
     provision_rabbitmq: "true"
@@ -49,6 +56,12 @@
     - role: rproxy
       become: true
       when: provision_proxy == 'true'
+
+    - role: firewall
+      become: true
+      firewall_ports:
+        - "{{ rproxy_vhost_http_listen_port }}/tcp"
+        - "{{ rproxy_vhost_https_listen_port }}/tcp"
 
 - name: Configure Trento agents
   hosts: agents
