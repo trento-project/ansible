@@ -1,4 +1,5 @@
 ---
-rabbitmq_username: trento
+rabbitmq_username: "{{ trento_rabbitmq_username }}"
+rabbitmq_password: "{{ trento_rabbitmq_password }}"
+rabbitmq_vhost: "{{ trento_rabbitmq_vhost }}"
 rabbitmq_node_name: "rabbit@localhost"
-rabbitmq_vhost: "trento"

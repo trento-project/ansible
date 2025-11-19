@@ -64,49 +64,46 @@
       register: firewalld_status
 
 - name: Provision postgres
-  become: true
   vars:
     provision_postgres: "true"
   hosts: postgres_hosts
   roles:
     - role: postgres
-      when: provision_postgres == 'true'
       become: true
+      when: provision_postgres == 'true'
 
 - name: Provision prometheus
-  become: true
+  hosts: prometheus_hosts
   vars:
     provision_prometheus: "true"
-  hosts: prometheus_hosts
   roles:
     - role: prometheus
-      when: provision_prometheus == 'true'
       become: true
+      when: provision_prometheus == 'true'
 
 - name: Provision rabbitmq
-  become: true
   vars:
     provision_rabbitmq: "true"
   hosts: rabbitmq_hosts
   roles:
     - role: rabbitmq
+      become: true
       when: provision_rabbitmq == 'true'
 
 - name: Configure trento components
   vars:
     provision_proxy: "true"
   hosts: trento_server
-  become: true
   roles:
     - role: app
       become: true
-    - role: proxy
-      when: provision_proxy == 'true'
+
+    - role: rproxy
       become: true
+      when: provision_proxy == 'true'
 
 - name: Configure trento agents
   hosts: agents
-  become: true
   roles:
     - role: agent
       become: true

@@ -1,7 +1,9 @@
 ---
-web_postgres_db: webdb
-web_postgres_event_store: event_store
-web_postgres_user: web
-wanda_postgres_user: wanda
-wanda_postgres_db: wandadb
-install_postgres: "true"
+postgres_install: "{{ install_postgres | default('true') }}" # `install_postgres` is for backwards-compatibility
+postgres_web_username: "{{ trento_web_postgres_username }}"
+postgres_web_password: "{{ trento_web_postgres_password }}"
+postgres_web_db: "{{ trento_web_postgres_db }}"
+postgres_web_event_store: "{{ trento_web_postgres_event_store }}"
+postgres_wanda_username: "{{ trento_wanda_postgres_username }}"
+postgres_wanda_password: "{{ trento_wanda_postgres_password }}"
+postgres_wanda_db: "{{ trento_wanda_postgres_db }}"

@@ -1,3 +1,4 @@
 ---
 prometheus_port: 9090
-web_host: http://localhost
+prometheus_web_url: "{{ web_host | default('http://{}'.format(trento_server_name)) }}" # `web_host` is for backwards-compatibility
+prometheus_web_listen_port: "{{ trento_web_listen_port }}"

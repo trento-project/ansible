@@ -1,7 +1,7 @@
 # code: language=ansible
 ---
 - name: Install postgresql
-  when: install_postgres == 'true'
+  when: postgres_install == 'true'
   community.general.zypper:
     name:
       - postgresql-server
@@ -23,6 +23,12 @@
 - name: Configure Postgres
   become: true
   become_user: postgres
+  vars:
+    # Pipelining as workaround for when SSH connection is not made
+    # with root and then switching to unprivileged user: There are
+    # other possibilities:
+    # https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
+    ansible_ssh_pipelining: true
   block:
     - name: "Configure postgres to listen on *"
       community.postgresql.postgresql_set:
@@ -38,64 +44,64 @@
       notify: Restart postgres
       ansible.builtin.lineinfile:
         path: /var/lib/pgsql/data/pg_hba.conf
-        regexp: "^host.*{{ web_postgres_db }},{{ web_postgres_event_store }},{{ wanda_postgres_db }}"
+        regexp: "^host.*{{ postgres_web_db }},{{ postgres_web_event_store }},{{ postgres_wanda_db }}"
         insertafter: "^local.*all.*all.*peer"
-        line: "host\t{{ web_postgres_db }},{{ web_postgres_event_store }},{{ wanda_postgres_db }}\t{{ web_postgres_user }},{{ wanda_postgres_user }}\t0.0.0.0/0\tmd5"
+        line: "host\t{{ postgres_web_db }},{{ postgres_web_event_store }},{{ postgres_wanda_db }}\t{{ postgres_web_username }},{{ postgres_wanda_username }}\t0.0.0.0/0\tmd5"
 
     - name: Create postgres web database
       community.postgresql.postgresql_db:
-        name: "{{ web_postgres_db }}"
+        name: "{{ postgres_web_db }}"
         state: present
 
     - name: Create postgres web event store
       community.postgresql.postgresql_db:
-        name: "{{ web_postgres_event_store }}"
+        name: "{{ postgres_web_event_store }}"
         state: present
 
     - name: Create postgres wanda database
       community.postgresql.postgresql_db:
-        name: "{{ wanda_postgres_db }}"
+        name: "{{ postgres_wanda_db }}"
         state: present
 
     - name: Create web database user
       community.postgresql.postgresql_user:
-        db: "{{ web_postgres_db }}"
-        name: "{{ web_postgres_user }}"
-        password: "{{ web_postgres_password }}"
+        login_db: "{{ postgres_web_db }}"
+        name: "{{ postgres_web_username }}"
+        password: "{{ postgres_web_password }}"
         comment: "Web user provisioned by playbook"
         state: present
 
     - name: Create wanda database user
       community.postgresql.postgresql_user:
-        db: "{{ wanda_postgres_db }}"
-        name: "{{ wanda_postgres_user }}"
-        password: "{{ wanda_postgres_password }}"
+        login_db: "{{ postgres_wanda_db }}"
+        name: "{{ postgres_wanda_username }}"
+        password: "{{ postgres_wanda_password }}"
         comment: "Wanda user provisioned by playbook"
         state: present
 
     - name: Grant privilegies to the web user for the web database
       community.postgresql.postgresql_privs:
-        db: "{{ web_postgres_db }}"
+        login_db: "{{ postgres_web_db }}"
         objs: public
-        roles: "{{ web_postgres_user }}"
+        roles: "{{ postgres_web_username }}"
         privs: ALL
         type: schema
         state: present
 
     - name: Grant privilegies to the web user for the web event store
       community.postgresql.postgresql_privs:
-        db: "{{ web_postgres_event_store }}"
+        login_db: "{{ postgres_web_event_store }}"
         objs: public
-        roles: "{{ web_postgres_user }}"
+        roles: "{{ postgres_web_username }}"
         privs: ALL
         type: schema
         state: present
 
     - name: Grant privilegies to the wanda user for the wanda database
       community.postgresql.postgresql_privs:
-        db: "{{ wanda_postgres_db }}"
+        login_db: "{{ postgres_wanda_db }}"
         objs: public
-        roles: "{{ wanda_postgres_user }}"
+        roles: "{{ postgres_wanda_username }}"
         privs: ALL
         type: schema
         state: present

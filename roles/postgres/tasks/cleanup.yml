@@ -3,28 +3,34 @@
 - name: Cleanup Postgres installation
   become: true
   become_user: postgres
+  vars:
+    # Pipelining as workaround for when SSH connection is not made
+    # with root and then switching to unprivileged user: There are
+    # other possibilities:
+    # https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
+    ansible_ssh_pipelining: true
   block:
     - name: Remove web database
       community.postgresql.postgresql_db:
-        name: "{{ web_postgres_db }}"
+        name: "{{ postgres_web_db }}"
         state: absent
 
     - name: Remove web event store database
       community.postgresql.postgresql_db:
-        name: "{{ web_postgres_event_store }}"
+        name: "{{ postgres_web_event_store }}"
         state: absent
 
     - name: Remove wanda event store database
       community.postgresql.postgresql_db:
-        name: "{{ wanda_postgres_db }}"
+        name: "{{ postgres_wanda_db }}"
         state: absent
 
     - name: Remove web database user
       community.postgresql.postgresql_user:
-        name: "{{ web_postgres_user }}"
+        name: "{{ postgres_web_username }}"
         state: absent
 
     - name: Remove wanda database user
       community.postgresql.postgresql_user:
-        name: "{{ wanda_postgres_user }}"
+        name: "{{ postgres_wanda_username }}"
         state: absent

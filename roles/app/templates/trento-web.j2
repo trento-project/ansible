@@ -1,73 +1,73 @@
-AMQP_URL={{ amqp_protocol }}://{{ rabbitmq_username }}:{{ rabbitmq_password }}@{{ rabbitmq_host }}/{{ rabbitmq_vhost | urlencode | replace('/', '%2F') }}
-DATABASE_URL=ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}
-EVENTSTORE_URL=ecto://{{ web_postgres_user }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}
-{% if enable_alerting is not none %}
-ENABLE_ALERTING={{ enable_alerting | string | lower }}
+AMQP_URL={{ app_amqp_protocol }}://{{ app_rabbitmq_username }}:{{ app_rabbitmq_password }}@{{ app_rabbitmq_host }}/{{ app_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
+DATABASE_URL=ecto://{{ app_web_postgres_username }}:{{ app_web_postgres_password }}@{{ app_web_postgres_host }}/{{ app_web_postgres_db }}
+EVENTSTORE_URL=ecto://{{ app_web_postgres_username }}:{{ app_web_postgres_password }}@{{ app_web_postgres_host }}/{{ app_web_postgres_event_store }}
+{% if app_enable_alerting is not none %}
+ENABLE_ALERTING={{ app_enable_alerting | string | lower }}
 {% endif %}
-{% if smtp_server is not none %}
-SMTP_SERVER={{ smtp_server }}
+{% if app_smtp_server is not none %}
+SMTP_SERVER={{ app_smtp_server }}
 {% endif %}
-{% if smtp_port is not none %}
-SMTP_PORT={{ smtp_port | string }}
+{% if app_smtp_port is not none %}
+SMTP_PORT={{ app_smtp_port | string }}
 {% endif %}
-{% if smtp_user is not none %}
-SMTP_USER={{ smtp_user }}
+{% if app_smtp_user is not none %}
+SMTP_USER={{ app_smtp_user }}
 {% endif %}
-{% if smtp_password is not none %}
-SMTP_PASSWORD={{ smtp_password }}
+{% if app_smtp_password is not none %}
+SMTP_PASSWORD={{ app_smtp_password }}
 {% endif %}
-{% if alert_sender is not none %}
-ALERT_SENDER={{ alert_sender }}
+{% if app_alert_sender is not none %}
+ALERT_SENDER={{ app_alert_sender }}
 {% endif %}
-{% if alert_recipient is not none %}
-ALERT_RECIPIENT={{ alert_recipient }}
+{% if app_alert_recipient is not none %}
+ALERT_RECIPIENT={{ app_alert_recipient }}
 {% endif %}
-PROMETHEUS_URL={{ prometheus_url }}
-SECRET_KEY_BASE={{ secret_key_base }}
-ACCESS_TOKEN_ENC_SECRET={{ access_token_secret }}
-REFRESH_TOKEN_ENC_SECRET={{ refresh_token_secret }}
-ADMIN_USER={{ web_admin_username }}
-ADMIN_PASSWORD={{ web_admin_password }}
-ENABLE_API_KEY={{ enable_api_key }}
-CHARTS_ENABLED={{ enable_charts }}
-PORT={{ web_listen_port }}
-TRENTO_WEB_ORIGIN={{ trento_server_name }}
+PROMETHEUS_URL={{ app_prometheus_url }}
+SECRET_KEY_BASE={{ app_secret_key_base }}
+ACCESS_TOKEN_ENC_SECRET={{ app_access_token_secret }}
+REFRESH_TOKEN_ENC_SECRET={{ app_refresh_token_secret }}
+ADMIN_USER={{ app_web_admin_username }}
+ADMIN_PASSWORD={{ app_web_admin_password }}
+ENABLE_API_KEY={{ app_enable_api_key }}
+CHARTS_ENABLED={{ app_enable_charts }}
+PORT={{ app_web_listen_port }}
+TRENTO_WEB_ORIGIN={{ app_server_name }}
 {% if provision_proxy == 'true' %}
-OAS_SERVER_URL={{ web_oas_server_url }}
-CHECKS_SERVICE_BASE_URL={{ wanda_proxy_location }}
+OAS_SERVER_URL={{ app_web_oas_server_url }}
+CHECKS_SERVICE_BASE_URL={{ app_wanda_proxy_location }}
 {% else %}
-CHECKS_SERVICE_BASE_URL=http://127.0.0.1:{{ wanda_listen_port }}
+CHECKS_SERVICE_BASE_URL=http://127.0.0.1:{{ app_wanda_listen_port }}
 {% endif %}
-ENABLE_OIDC={{ enable_oidc }}
-OIDC_CLIENT_ID={{ oidc_client_id }}
-OIDC_CLIENT_SECRET={{ oidc_client_secret }}
-OIDC_BASE_URL={{ oidc_server_base_url }}
-ENABLE_OAUTH2={{ enable_oauth2 }}
-OAUTH2_CLIENT_ID={{ oauth2_client_id }}
-OAUTH2_CLIENT_SECRET={{ oauth2_client_secret }}
-OAUTH2_BASE_URL={{ oauth2_server_base_url }}
-OAUTH2_AUTHORIZE_URL={{ oauth2_authorize_url }}
-OAUTH2_TOKEN_URL={{ oauth2_token_url }}
-OAUTH2_USER_URL={{ oauth2_user_url }}
-OAUTH2_SCOPES={{ oauth2_scopes }}
-ENABLE_SAML="{{ enable_saml }}"
-SAML_IDP_ID="{{ saml_idp_id }}"
-SAML_IDP_NAMEID_FORMAT="{{ saml_idp_nameid_format }}"
-SAML_SP_DIR="{{ saml_sp_dir }}"
-SAML_SP_ID="{{ saml_sp_id }}"
-SAML_SP_ENTITY_ID="{{ saml_sp_entity_id }}"
-SAML_SP_CONTACT_NAME="{{ saml_sp_contact_name }}"
-SAML_SP_CONTACT_EMAIL="{{ saml_sp_contact_email }}"
-SAML_SP_ORG_NAME="{{ saml_sp_org_name }}"
-SAML_SP_ORG_DISPLAYNAME="{{ saml_sp_org_displayname }}"
-SAML_SP_ORG_URL="{{ saml_sp_org_url }}"
-SAML_USERNAME_ATTR_NAME="{{ saml_username_attr_name }}"
-SAML_EMAIL_ATTR_NAME="{{ saml_email_attr_name }}"
-SAML_FIRSTNAME_ATTR_NAME="{{ saml_firstname_attr_name }}"
-SAML_LASTNAME_ATTR_NAME="{{ saml_lastname_attr_name }}"
-SAML_METADATA_URL="{{ saml_metadata_url }}"
-SAML_METADATA_CONTENT="{{ saml_metadata_content }}"
-SAML_SIGN_REQUESTS="{{ saml_sign_requests }}"
-SAML_SIGN_METADATA="{{ saml_sign_metadata }}"
-SAML_SIGNED_ASSERTION="{{ saml_signed_assertion }}"
-SAML_SIGNED_ENVELOPES="{{ saml_signed_envelopes }}"
+ENABLE_OIDC={{ app_enable_oidc }}
+OIDC_CLIENT_ID={{ app_oidc_client_id }}
+OIDC_CLIENT_SECRET={{ app_oidc_client_secret }}
+OIDC_BASE_URL={{ app_oidc_server_base_url }}
+ENABLE_OAUTH2={{ app_enable_oauth2 }}
+OAUTH2_CLIENT_ID={{ app_oauth2_client_id }}
+OAUTH2_CLIENT_SECRET={{ app_oauth2_client_secret }}
+OAUTH2_BASE_URL={{ app_oauth2_server_base_url }}
+OAUTH2_AUTHORIZE_URL={{ app_oauth2_authorize_url }}
+OAUTH2_TOKEN_URL={{ app_oauth2_token_url }}
+OAUTH2_USER_URL={{ app_oauth2_user_url }}
+OAUTH2_SCOPES={{ app_oauth2_scopes }}
+ENABLE_SAML="{{ app_enable_saml }}"
+SAML_IDP_ID="{{ app_saml_idp_id }}"
+SAML_IDP_NAMEID_FORMAT="{{ app_saml_idp_nameid_format }}"
+SAML_SP_DIR="{{ app_saml_sp_dir }}"
+SAML_SP_ID="{{ app_saml_sp_id }}"
+SAML_SP_ENTITY_ID="{{ app_saml_sp_entity_id }}"
+SAML_SP_CONTACT_NAME="{{ app_saml_sp_contact_name }}"
+SAML_SP_CONTACT_EMAIL="{{ app_saml_sp_contact_email }}"
+SAML_SP_ORG_NAME="{{ app_saml_sp_org_name }}"
+SAML_SP_ORG_DISPLAYNAME="{{ app_saml_sp_org_displayname }}"
+SAML_SP_ORG_URL="{{ app_saml_sp_org_url }}"
+SAML_USERNAME_ATTR_NAME="{{ app_saml_username_attr_name }}"
+SAML_EMAIL_ATTR_NAME="{{ app_saml_email_attr_name }}"
+SAML_FIRSTNAME_ATTR_NAME="{{ app_saml_firstname_attr_name }}"
+SAML_LASTNAME_ATTR_NAME="{{ app_saml_lastname_attr_name }}"
+SAML_METADATA_URL="{{ app_saml_metadata_url }}"
+SAML_METADATA_CONTENT="{{ app_saml_metadata_content }}"
+SAML_SIGN_REQUESTS="{{ app_saml_sign_requests }}"
+SAML_SIGN_METADATA="{{ app_saml_sign_metadata }}"
+SAML_SIGNED_ASSERTION="{{ app_saml_signed_assertion }}"
+SAML_SIGNED_ENVELOPES="{{ app_saml_signed_envelopes }}"
