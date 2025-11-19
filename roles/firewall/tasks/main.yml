@@ -24,7 +24,8 @@
 
     - name: Collect package facts
       ansible.builtin.package_facts:
-        manager: zypper
+        # `zypper` is not recognized on ansible9.
+        manager: auto
 
     - name: Check if a specific package is installed
       ansible.builtin.set_fact:
