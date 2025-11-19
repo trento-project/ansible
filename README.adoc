@@ -278,7 +278,7 @@ per-role basis if appropriate.
 | Name | Description | Default
 
 | trento_wanda_proxy_location | URL Path to Wanda behind a reverse
-  proxy | "wanda"
+  proxy | "/wanda"
 
 | trento_web_listen_port | Port where the Web service is exposed |
   <random value based on `trento_server_name`>

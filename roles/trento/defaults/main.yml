@@ -14,7 +14,7 @@
 # backwards-compatibility with their deprecated names.
 
 trento_server_name: "{{ undef(hint='Domain name of the trento installation is mandatory') }}"
-trento_wanda_proxy_location: "{{ wanda_proxy_location | default('wanda') }}"
+trento_wanda_proxy_location: "{{ wanda_proxy_location | default('/wanda') }}"
 
 trento_web_listen_port: "{{ web_listen_port | default(32767 | random(start=1024, seed=trento_server_name)) }}"
 trento_wanda_listen_port: "{{ wanda_listen_port | default(32767 | random(start=1024, seed=trento_server_name) + 1) }}"
