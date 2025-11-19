@@ -1,2 +1,3 @@
 ---
 firewall_ports: "{{ undef() }}"
+firewall_state: "enabled"

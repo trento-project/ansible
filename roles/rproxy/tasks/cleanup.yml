@@ -6,16 +6,3 @@
     state: absent
   notify:
     - Restart nginx
-
-- name: Close http and https ports using firewalld
-  ansible.posix.firewalld:
-    port: "{{ item }}"
-    permanent: true
-    state: disabled
-    offline: true
-  loop:
-    - "{{ rproxy_vhost_http_listen_port }}/tcp"
-    - "{{ rproxy_vhost_https_listen_port }}/tcp"
-  when: firewalld_installed
-  notify:
-    - Restart firewalld if running

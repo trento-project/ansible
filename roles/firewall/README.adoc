@@ -28,6 +28,9 @@ dependencies. Additionally, it needs `zypper` package manger.
 | firewall_ports | List of port definitions to be opened. Every value
   should comply with `ansible.posix.firewalld` module's `port`
   parameter. | <undefined/mandatory>
+| firewall_state | Operation to perform on the firewall. Every value
+  should comply with `ansible.posix.firewalld` module's `state`
+  parameter. | enabled
 |===
 == Dependencies
 
@@ -41,6 +44,7 @@ Including an example of how to use your role (for instance, with variables passe
     - hosts: servers
       roles:
          - role: suse.trento.firewall
+           firewall_state: enabled
            firewall_ports:
              - "80/tcp"
 

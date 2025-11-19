@@ -53,11 +53,11 @@
         name: firewalld.service
       register: __firewall_firewalld_status
 
-    - name: Open Ports
+    - name: Act on FirewallD
       ansible.posix.firewalld:
         port: "{{ item }}"
         permanent: true
-        state: enabled
+        state: "{{ firewall_state }}"
       when: __firewall_firewalld_installed
       loop: "{{ firewall_ports }}"
       notify:
