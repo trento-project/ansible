@@ -5,12 +5,12 @@
     state: present
     name:
       - python3-kubernetes
-  register: deps_install_result
+  register: __kubevirt_deps_install_result
   failed_when:
-    - deps_install_result.rc != 0
+    - __kubevirt_deps_install_result.rc != 0
     # On openSUSE if some repos failed to refresh, such as when you're
     # not in the VPN.
-    - deps_install_result.rc != 106
+    - __kubevirt_deps_install_result.rc != 106
   tags:
     - k3s_servers_mod
 
@@ -21,7 +21,7 @@
     - name: Check AppArmor is used
       become: true
       ansible.builtin.command: aa-status
-      register: apparmor_result
+      register: __kubevirt_apparmor_result
       changed_when: false
 
     - name: Patch AppArmor policy with QEMU path in the container
@@ -33,7 +33,7 @@
         state: present
         insertafter: '^\s+/usr/sbin/\* PUx,'
         firstmatch: true
-      when: apparmor_result.rc == 0
+      when: __kubevirt_apparmor_result.rc == 0
       notify:
         - Restart AppArmor
 
@@ -66,7 +66,8 @@
 - name: Install `virtctl` on the nodes
   become: true
   ansible.builtin.get_url:
-    url: "https://github.com/kubevirt/kubevirt/releases/download/{{ kubevirt_version }}/virtctl-{{ kubevirt_version }}-linux-{{ ansible_architecture | replace('x86_64', 'amd64') }}"
+    url: "https://github.com/kubevirt/kubevirt/releases/download/{{ kubevirt_version }}/virtctl-{{ kubevirt_version }}-linux-\
+          {{ ansible_architecture | replace('x86_64', 'amd64') }}"
     dest: /usr/local/bin/virtctl
     mode: "+x"
   tags:
