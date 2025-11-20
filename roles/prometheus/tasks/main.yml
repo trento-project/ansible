@@ -20,7 +20,7 @@
     name: golang-github-prometheus-prometheus
     state: present
 
-- name: Place prometheus config
+- name: Create Prometheus config
   ansible.builtin.template:
     src: prometheus.yml.j2
     dest: /etc/prometheus/prometheus.yml
@@ -28,20 +28,10 @@
     group: prometheus
     mode: "0644"
   notify:
-    - Restart prometheus
+    - Restart Prometheus
 
 - name: Enable prometheus service
   ansible.builtin.service:
     name: prometheus
     state: started
     enabled: true
-
-- name: Open prometheus port using firewalld
-  ansible.posix.firewalld:
-    port: "{{ prometheus_port }}/tcp"
-    permanent: true
-    state: enabled
-    offline: true
-  when: firewalld_installed
-  notify:
-    - Restart firewalld if running

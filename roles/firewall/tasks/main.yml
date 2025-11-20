@@ -1,0 +1,65 @@
+---
+- name: Identify Python package manger prefix
+  block:
+    - name: Get current Python's package manger prefix
+      # Linter tries to be smart, but it's not -- there is no Ansible
+      # module to do RPM queries. Thus, silence this lint error.
+      # noqa: command-instead-of-module
+      ansible.builtin.shell: |
+        set -o pipefail
+        rpm -qf {{ ansible_python.executable }} | grep -E -o 'python3[[:digit:]]{0,2}'
+      register: __firewall_python_prefix_result
+      changed_when: false
+
+    - name: Save current Python's package manger prefix
+      ansible.builtin.set_fact:
+        __firewall_current_python_package_prefix: "{{ __firewall_python_prefix_result.stdout }}"
+
+- name: Check if FirewallD is installed
+  block:
+    - name: Install Python pre-requisites for package facts gathering
+      community.general.zypper:
+        name:
+          - "{{ __firewall_current_python_package_prefix }}-rpm"
+
+    - name: Collect package facts
+      ansible.builtin.package_facts:
+        # `zypper` is not recognized on ansible9.
+        manager: auto
+
+    - name: Check if a specific package is installed
+      ansible.builtin.set_fact:
+        __firewall_firewalld_installed: "{{ 'firewalld' in ansible_facts.packages }}"
+
+- name: Act on FirewallD if installed
+  when: __firewall_firewalld_installed
+  block:
+    - name: Install Python pre-requisites for FirewallD operation
+      community.general.zypper:
+        name:
+          # Used in ansible.posix.firewalld role
+          # WARNING: SLES16 doesn't provide properly prefixed package
+          # for `firewalld` bindings, so we have to temporarily revert
+          # to explicit conditional logic.
+          - "{{ '{}-firewall'.format((ansible_distribution_major_version == '16') | ternary('python3', __firewall_current_python_package_prefix)) }}"
+
+          # Used in ansible.posix.firewalld role when firewalld is not
+          # started
+          - "{{ __firewall_current_python_package_prefix }}-nftables"
+        state: present
+        update_cache: true
+
+    - name: Get current status of FirewallD
+      ansible.builtin.systemd:
+        name: firewalld.service
+      register: __firewall_firewalld_status
+
+    - name: Act on FirewallD
+      ansible.posix.firewalld:
+        port: "{{ item }}"
+        permanent: true
+        state: "{{ firewall_state }}"
+      when: __firewall_firewalld_installed
+      loop: "{{ firewall_ports }}"
+      notify:
+        - Restart FirewallD if previously running

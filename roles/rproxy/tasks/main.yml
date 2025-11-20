@@ -62,16 +62,3 @@
     name: "{{ rproxy_os_service }}"
     state: started
     enabled: true
-
-- name: Open HTTP and HTTPS ports in firewalld
-  ansible.posix.firewalld:
-    port: "{{ item }}"
-    permanent: true
-    state: enabled
-    offline: true
-  loop:
-    - "{{ rproxy_vhost_http_listen_port }}/tcp"
-    - "{{ rproxy_vhost_https_listen_port }}/tcp"
-  when: firewalld_installed
-  notify:
-    - Restart firewalld if running

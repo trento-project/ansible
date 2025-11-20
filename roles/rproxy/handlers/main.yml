@@ -4,9 +4,3 @@
   ansible.builtin.service:
     name: nginx
     state: restarted
-
-- name: Restart firewalld if running
-  ansible.builtin.service:
-    name: firewalld
-    state: restarted
-  when: firewalld_status.status.ActiveState == "active"

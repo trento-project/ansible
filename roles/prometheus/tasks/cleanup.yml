@@ -1,11 +1,4 @@
 # code: language=ansible
 ---
-- name: Close prometheus port using firewalld
-  ansible.posix.firewalld:
-    port: "{{ prometheus_port }}/tcp"
-    permanent: true
-    state: disabled
-    offline: true
-  when: firewalld_installed
-  notify:
-    - Restart firewalld if running
+# It's intentionally empty. Used in cleanup to load the variables for
+# later use in firewall cleanup.

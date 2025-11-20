@@ -1,10 +1,9 @@
 # code: language=ansible
 ---
-- name: Install common dependencies
+- name: Check if Trento would be installed on SLES
   hosts: trento_server
   become: true
-
-  pre_tasks:
+  tasks:
     - name: Check SLES distribution and version
       ansible.builtin.fail:
         msg: "This playbook only runs on SLES for SAP 15 SP3 or above. Detected: {{ ansible_distribution }} {{ ansible_distribution_version }}"
@@ -12,58 +11,7 @@
         (ansible_distribution != "SLES_SAP") or
         (ansible_distribution_version is version('15.3', '<'))
 
-  tasks:
-    - name: Get current Python's package manger prefix
-      # Linter tries to be smart, but it's not -- there is no Ansible
-      # module to do RPM queries. Thus, silence this lint error.
-      # noqa: command-instead-of-module
-      ansible.builtin.shell: |
-        set -o pipefail
-        rpm -qf {{ ansible_python.executable }} | grep -E -o 'python3[[:digit:]]{0,2}'
-      register: python_prefix_result
-      changed_when: false
-
-    - name: Save current Python's package manger prefix
-      ansible.builtin.set_fact:
-        current_python_package_prefix: "{{ python_prefix_result.stdout }}"
-
-    - name: Install python prerequisites
-      community.general.zypper:
-        name:
-          # Used in package facts ansible.posix.package_facts
-          - "{{ current_python_package_prefix }}-rpm"
-
-          # Used in ansible.posix.firewalld role
-          # WARNING: SLES16 doesn't provide properly prefixed package
-          # for `firewalld` bindings, so we have to temporarily revert
-          # to explicit conditional logic.
-          - "{{ '{}-firewall'.format((ansible_distribution_major_version == '16') | ternary('python3', current_python_package_prefix)) }}"
-
-          # Used in ansible.posix.firewalld role when firewalld is not
-          # started
-          - "{{ current_python_package_prefix }}-nftables"
-        state: present
-        update_cache: true
-
-- name: Check firewalld package on prometheus and trento_server hosts
-  hosts: prometheus_hosts:trento_server
-  tasks:
-    - name: Collect package facts
-      ansible.builtin.package_facts:
-        manager: auto
-
-    - name: Check if a specific package is installed
-      ansible.builtin.set_fact:
-        firewalld_installed: "{{ 'firewalld' in ansible_facts.packages }}"
-
-    # This task is required because immediate: true does not work with offline
-    # This should be fixed in newer ansible versions and could be removed in the future
-    - name: Check the status of firewalld
-      ansible.builtin.systemd:
-        name: firewalld.service
-      register: firewalld_status
-
-- name: Provision postgres
+- name: Provision Postgres
   vars:
     provision_postgres: "true"
   hosts: postgres_hosts
@@ -72,7 +20,7 @@
       become: true
       when: provision_postgres == 'true'
 
-- name: Provision prometheus
+- name: Provision Prometheus
   hosts: prometheus_hosts
   vars:
     provision_prometheus: "true"
@@ -81,7 +29,14 @@
       become: true
       when: provision_prometheus == 'true'
 
-- name: Provision rabbitmq
+    - role: firewall
+      become: true
+      firewall_ports:
+        - "{{ prometheus_port }}/tcp"
+      when: provision_prometheus == 'true'
+
+
+- name: Provision RabbitMQ
   vars:
     provision_rabbitmq: "true"
   hosts: rabbitmq_hosts
@@ -90,7 +45,7 @@
       become: true
       when: provision_rabbitmq == 'true'
 
-- name: Configure trento components
+- name: Configure Trento components
   vars:
     provision_proxy: "true"
   hosts: trento_server
@@ -102,7 +57,13 @@
       become: true
       when: provision_proxy == 'true'
 
-- name: Configure trento agents
+    - role: firewall
+      become: true
+      firewall_ports:
+        - "{{ rproxy_vhost_http_listen_port }}/tcp"
+        - "{{ rproxy_vhost_https_listen_port }}/tcp"
+
+- name: Configure Trento agents
   hosts: agents
   roles:
     - role: agent

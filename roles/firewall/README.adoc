@@ -1,0 +1,59 @@
+= Filrewall Ansible Role
+
+Helper role that allows us to concentrate our common firewall handling
+into a single re-usable component. This role is not intended to be
+used directly by end-users.
+
+Our common handling includes:
+. Installing proper Python dependencies needed by Ansible modules
+involved;
+. Check if FirewallD is installed;
+. Handles firewall operations
+.. If FirewallD is not installed, processing concludes.
+.. If FirewallD is installed, open the needed ports, even if
+FirewallD is not currently running (eg. offline mode).
+... Restart FirewallD only if it was running.
+
+== Requirements
+
+This role uses `ansible.posix.firewalld` and
+`ansible.builtin.package_facts`, so it depends on their
+dependencies. Additionally, it needs `zypper` package manger.
+
+== Role Variables
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| Name | Description | Default
+| firewall_ports | List of port definitions to be opened. Every value
+  should comply with `ansible.posix.firewalld` module's `port`
+  parameter. | <undefined/mandatory>
+| firewall_state | Operation to perform on the firewall. Every value
+  should comply with `ansible.posix.firewalld` module's `state`
+  parameter. | enabled
+|===
+== Dependencies
+
+This role does not have any dependencies on other roles, nor exports
+any variables.
+
+== Example Playbook
+
+Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+
+    - hosts: servers
+      roles:
+         - role: suse.trento.firewall
+           firewall_state: enabled
+           firewall_ports:
+             - "80/tcp"
+
+
+== License
+
+Apache License, Version 2.0
+
+== Author Information
+
+Developed and maintained by trento-developers@suse.com
+Code repository is hosted on https://github.com/trento-project/ansible
