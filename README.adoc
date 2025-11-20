@@ -651,7 +651,7 @@ per-role basis if appropriate.
 | rproxy_wanda_upstream_name | Wanda upstream name | "wanda"
 
 | rproxy_wanda_location | Path to forward requests to Wanda in the
-  reverse proxy | "wanda"
+  reverse proxy | "/wanda"
 
 | rproxy_ssl_cert_as_base64 | Whether SSL certificate is provided as
   base64 string | "false"
