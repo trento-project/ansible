@@ -5,7 +5,7 @@
     type: rsa
     path: "{{ lookup('ansible.builtin.env', 'HOME') ~ '/.ssh/id_devbox_rsa' }}"
     comment: "sles@devbox"
-  register: devbox_keypair_res
+  register: kubevirt_vm_devbox_keypair_res
   run_once: true
   delegate_to: localhost
   tags:
@@ -24,7 +24,7 @@
         name: "devbox-publickey"
         namespace: "{{ kubevirt_vm_namespace }}"
       data:
-        key1: "{{ devbox_keypair_res.public_key | b64encode }}"
+        key1: "{{ kubevirt_vm_devbox_keypair_res.public_key | b64encode }}"
   run_once: true
   no_log: false
 
