@@ -382,7 +382,7 @@ the previous command modified as following:
 
 [source, bash]
 ----
-$ ansible-playbook -i inventory playbooks/deploy_devbox.yml --ask-become-pass
+$ ansible-playbook -i inventory/ playbooks/deploy_devbox.yml --ask-become-pass
 ----
 
 Additionally, you can disable all modifications on you development
