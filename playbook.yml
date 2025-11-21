@@ -12,8 +12,6 @@
         (ansible_distribution_version is version('15.3', '<'))
 
 - name: Provision Postgres
-  vars:
-    provision_postgres: "true"
   hosts: postgres_hosts
   roles:
     - role: postgres
@@ -22,8 +20,6 @@
 
 - name: Provision Prometheus
   hosts: prometheus_hosts
-  vars:
-    provision_prometheus: "true"
   roles:
     - role: prometheus
       become: true
@@ -37,8 +33,6 @@
 
 
 - name: Provision RabbitMQ
-  vars:
-    provision_rabbitmq: "true"
   hosts: rabbitmq_hosts
   roles:
     - role: rabbitmq
@@ -46,12 +40,14 @@
       when: provision_rabbitmq == 'true'
 
 - name: Configure Trento components
-  vars:
-    provision_proxy: "true"
   hosts: trento_server
   roles:
     - role: app
       become: true
+      vars:
+        app_web_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
+        app_wanda_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
+        app_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else '' }}"
 
     - role: rproxy
       become: true
@@ -62,9 +58,12 @@
       firewall_ports:
         - "{{ rproxy_vhost_http_listen_port }}/tcp"
         - "{{ rproxy_vhost_https_listen_port }}/tcp"
+      when: provision_proxy == 'true'
 
 - name: Configure Trento agents
   hosts: agents
   roles:
     - role: agent
       become: true
+      vars:
+        agent_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else ''}}"

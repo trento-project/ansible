@@ -1,0 +1,27 @@
+---
+# Auto-discovery -- if `*_host_group` variable is not empty string,
+# then we'll ignore the corresponding `*_host` variable and search the
+# inventory for the specified group and take the first host from that
+# group. We also handle the case where hostname aliases are used,
+# hence the `*_inventory_host` and `_ansible_host` variables.
+
+# Web Postgres auto-discovery
+__app_web_postgres_inventory_host: "{{ groups[app_web_postgres_host_group][0] }}"
+__app_web_postgres_ansible_host: "{{ hostvars[__app_web_postgres_inventory_host].ansible_host }}"
+__app_web_postgres_effective_host: "{{ app_web_postgres_host_group is truthy
+                                       | ternary(__app_web_postgres_ansible_host | default(__app_web_postgres_inventory_host),
+                                                 app_web_postgres_host) }}"
+
+# Wanda Postgres auto-discovery
+__app_wanda_postgres_inventory_host: "{{ groups[app_wanda_postgres_host_group][0] }}"
+__app_wanda_postgres_ansible_host: "{{ hostvars[__app_wanda_postgres_inventory_host].ansible_host }}"
+__app_wanda_postgres_effective_host: "{{ app_wanda_postgres_host_group is truthy
+                                         | ternary(__app_wanda_postgres_ansible_host | default(__app_wanda_postgres_inventory_host),
+                                                   app_wanda_postgres_host) }}"
+
+# RabbitMQ auto-discovery
+__app_rabbitmq_inventory_host: "{{ groups[app_rabbitmq_host_group][0] }}"
+__app_rabbitmq_ansible_host: "{{ hostvars[__app_rabbitmq_inventory_host].ansible_host }}"
+__app_rabbitmq_effective_host: "{{ app_rabbitmq_host_group is truthy
+                                   | ternary(__app_rabbitmq_ansible_host | default(__app_rabbitmq_inventory_host),
+                                             app_rabbitmq_host) }}"
