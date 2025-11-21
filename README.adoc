@@ -247,20 +247,33 @@ we provide default values:
 
 *Playbook variables*
 
+The following variables control whether this playbook would take care
+of provisioning third-party application dependencies by installing
+them and/or configuring them. In addition to that, if their value is
+`true` they would enable a feature of the playbook that allows for
+automatic population of some variables.
+
 [width="100%",cols="16%,57%,27%",options="header",]
 |===
 | Name | Description | Default
 
-| provision_postgres | Provision postgres role, set to false if you
-  provide an external postgres to the services | "true"
+| provision_postgres | Whether to provision Postgres. If set to
+  `true`, the variables `app_web_postgres_host` and
+  `app_wanda_postgres_host` would be ignored and host discovery would
+  use the hosts specified in the inventory. Set to `false` if you
+  provide an external Postgres to the services.  | "true"
 
-| provision_rabbitmq | Provision rabbitmq role, set to false if you
-  provide an external rabbitmq to the services | "true"
+| provision_rabbitmq | Whether to provision RabbitMQ. If set to
+  `true`, the variables `app_rabbitmq_host` and `agent_rabbitmq_host`
+  would be ignored and host discovery would use the hosts specified in
+  the inventory. Set to `false` if you provide an external RabbitMQ to
+  the services. | "true"
 
-| provision_proxy | Provision nginx to expose the services, set to
-  false to use an existing reverse proxy deployment | "true"
+| provision_proxy | Whether to provision a Reverse Proxy to expose the
+  services, set to `false` to use an existing reverse proxy
+  deployment | "true"
 
-| provision_prometheus | Provision prometheus used by trento to store
+| provision_prometheus | Whether to provision Prometheus used by Trento to store
   metrics send by agents | "true"
 |===
 
@@ -323,8 +336,9 @@ per-role basis if appropriate.
 | app_web_listen_port | Port where the Web service is exposed | <value
   of `trento_web_listen_port`>
 
-| app_web_postgres_host | Host of the Postgres containing the DB for
-  Web application | localhost
+| app_web_postgres_host | Host of the Postgres DB for Web
+  application. This value is ignored when `provision_postgres` is
+  true. | localhost
 
 | app_web_postgres_username | Name of the postgres user used by Web
   application | <value of `trento_web_postgres_username`>
@@ -345,8 +359,9 @@ per-role basis if appropriate.
 | app_wanda_listen_port | Port where the Wanda service is exposed |
   <value of `trento_wanda_listen_port`>
 
-| app_wanda_postgres_host | Host of the Postgres containing the DB for
-  Wanda | localhost
+| app_wanda_postgres_host | Host of the Postgres DB for Wanda
+  application. This value is ignored when `provision_postgres` is
+  true. | localhost
 
 | app_wanda_postgres_username | Name of the Postgres user used by
   Wanda application | <value of `trento_wanda_postgres_username`>
@@ -364,7 +379,8 @@ per-role basis if appropriate.
   proxy | <value of `trento_wanda_proxy_location`>
 
 | app_rabbitmq_host | The host for RabbitMQ. It could include the
-  service port | localhost
+  service port. This value is ignored when `provision_rabbitmq` is
+  true. | localhost
 
 | app_rabbitmq_username | Username used to connect to RabbitMQ |
   <value of `trento_rabbitmq_username`>
@@ -539,8 +555,9 @@ per-role basis if appropriate.
 | agent_amqp_protocol | URL scheme of the AMQP protocol -- either
   `amqp` or `amqps`. Used to connect to RabbitMQ | "amqp"
 
-| agent_rabbitmq_host | The rabbitmq host, used by web and wanda
-  containers. It could include the service port | "localhost"
+| agent_rabbitmq_host | The host for RabbitMQ. It could include the
+  service port. This value is ignored when `provision_rabbitmq` is
+  true. | "localhost"
 
 | agent_rabbitmq_username | Username used to connect to RabbitMQ |
   <value of `trento_rabbitmq_username`>

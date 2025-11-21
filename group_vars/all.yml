@@ -1,0 +1,5 @@
+---
+provision_postgres: "true"
+provision_prometheus: "true"
+provision_rabbitmq: "true"
+provision_proxy: "true"
