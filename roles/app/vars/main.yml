@@ -3,25 +3,38 @@
 # then we'll ignore the corresponding `*_host` variable and search the
 # inventory for the specified group and take the first host from that
 # group. We also handle the case where hostname aliases are used,
-# hence the `*_inventory_host` and `_ansible_host` variables.
+# hence the `*_inventory_host` and `_ansible_host` variables. There is
+# a special case in the auto-discovery for reasons of performance and
+# circumventing various network "hairpinning" scenarios -- when the
+# third party applications are installed on the same host as this
+# role, then we enforce the services to talk over `localhost`.
 
 # Web Postgres auto-discovery
 __app_web_postgres_inventory_host: "{{ groups[app_web_postgres_host_group][0] }}"
 __app_web_postgres_ansible_host: "{{ hostvars[__app_web_postgres_inventory_host].ansible_host }}"
+__app_web_postgres_override_host: "{{ (inventory_hostname in groups[app_web_postgres_host_group])
+                                      | ternary('localhost',
+                                                (__app_web_postgres_ansible_host | default(__app_web_postgres_inventory_host))) }}"
 __app_web_postgres_effective_host: "{{ app_web_postgres_host_group is truthy
-                                       | ternary(__app_web_postgres_ansible_host | default(__app_web_postgres_inventory_host),
+                                       | ternary(__app_web_postgres_override_host,
                                                  app_web_postgres_host) }}"
 
 # Wanda Postgres auto-discovery
 __app_wanda_postgres_inventory_host: "{{ groups[app_wanda_postgres_host_group][0] }}"
 __app_wanda_postgres_ansible_host: "{{ hostvars[__app_wanda_postgres_inventory_host].ansible_host }}"
+__app_wanda_postgres_override_host: "{{ (inventory_hostname in groups[app_wanda_postgres_host_group])
+                                        | ternary('localhost',
+                                                  __app_wanda_postgres_ansible_host | default(__app_wanda_postgres_inventory_host)) }}"
 __app_wanda_postgres_effective_host: "{{ app_wanda_postgres_host_group is truthy
-                                         | ternary(__app_wanda_postgres_ansible_host | default(__app_wanda_postgres_inventory_host),
+                                         | ternary(__app_wanda_postgres_override_host,
                                                    app_wanda_postgres_host) }}"
 
 # RabbitMQ auto-discovery
 __app_rabbitmq_inventory_host: "{{ groups[app_rabbitmq_host_group][0] }}"
 __app_rabbitmq_ansible_host: "{{ hostvars[__app_rabbitmq_inventory_host].ansible_host }}"
+__app_rabbitmq_override_host: "{{ (inventory_hostname in groups[app_rabbitmq_host_group])
+                                  | ternary('localhost',
+                                            __app_rabbitmq_ansible_host | default(__app_rabbitmq_inventory_host)) }}"
 __app_rabbitmq_effective_host: "{{ app_rabbitmq_host_group is truthy
-                                   | ternary(__app_rabbitmq_ansible_host | default(__app_rabbitmq_inventory_host),
+                                   | ternary(__app_rabbitmq_override_host,
                                              app_rabbitmq_host) }}"
