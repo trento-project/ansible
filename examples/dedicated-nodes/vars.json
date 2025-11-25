@@ -1,8 +1,4 @@
 {
-    "app_web_postgres_host": "vitellone-pg",
-    "app_wanda_postgres_host": "vitellone-pg",
-    "app_rabbitmq_host": "vitellone-mq:5671",
-    "agent_rabbitmq_host": "vitellone-mq:5671",
     "trento_server_name": "yourserver.com"
     "trento_web_admin_password": "adminpassword",
     "trento_web_postgres_password": "pass",
