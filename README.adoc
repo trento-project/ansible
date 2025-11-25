@@ -247,11 +247,11 @@ we provide default values:
 
 *Playbook variables*
 
-The following variables control whether this playbook would take care
-of provisioning third-party application dependencies by installing
-them and/or configuring them. In addition to that, if their value is
-`true` they would enable a feature of the playbook that allows for
-automatic population of some variables.
+The following variables control whether this playbook takes care of
+provisioning third-party application dependencies by installing them
+and/or configuring them. In addition to that, if their value is `true`
+they enable a feature of the playbook that allows for automatic
+population of some variables.
 
 [width="100%",cols="16%,57%,27%",options="header",]
 |===
@@ -259,15 +259,15 @@ automatic population of some variables.
 
 | provision_postgres | Whether to provision Postgres. If set to
   `true`, the variables `app_web_postgres_host` and
-  `app_wanda_postgres_host` would be ignored and host discovery would
-  use the hosts specified in the inventory. Set to `false` if you
-  provide an external Postgres to the services.  | "true"
+  `app_wanda_postgres_host` are ignored and host discovery uses the
+  hosts specified in the inventory. Set to `false` if you provide an
+  external Postgres to the services.  | "true"
 
 | provision_rabbitmq | Whether to provision RabbitMQ. If set to
   `true`, the variables `app_rabbitmq_host` and `agent_rabbitmq_host`
-  would be ignored and host discovery would use the hosts specified in
-  the inventory. Set to `false` if you provide an external RabbitMQ to
-  the services. | "true"
+  are ignored and host discovery uses the hosts specified in the
+  inventory. Set to `false` if you provide an external RabbitMQ to the
+  services. | "true"
 
 | provision_proxy | Whether to provision a Reverse Proxy to expose the
   services, set to `false` to use an existing reverse proxy
@@ -606,10 +606,10 @@ per-role basis if appropriate.
 |===
 | Name | Description | Default
 
-| prometheus_port | Port where Prometheus would be exposed | 9090
+| prometheus_port | Port where Prometheus is exposed | 9090
 
 | prometheus_web_url | Base URL of Trento Web application where
-  Prometheus would scrape for metrics | http://<`trento_server_name`>
+  Prometheus scrapes for metrics | http://<`trento_server_name`>
 
 | prometheus_web_listen_port | Port on which Web is exposed, to be
   scraped by Prometheus | <value of `trento_web_listen_port`>
