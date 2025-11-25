@@ -38,7 +38,7 @@
     state: present
 
 - name: Force pull trento images
-  when: force_pull_images == 'true'
+  when: force_pull_images | bool
   loop:
     - "{{ wanda_container_image }}"
     - "{{ web_container_image }}"
@@ -56,7 +56,7 @@
   community.docker.docker_container:
     name: "{{ checks_container_name }}"
     image: "{{ checks_container_image }}"
-    recreate: "{{ force_recreate_checks_container == 'true' }}"
+    recreate: "{{ force_recreate_checks_container | bool }}"
     pull: true
     volumes:
       - "/usr/share/trento/checks"
@@ -66,7 +66,7 @@
     name: "{{ wanda_container_name }}"
     state: started
     restart_policy: unless-stopped
-    recreate: "{{ force_recreate_wanda_container == 'true' }}"
+    recreate: "{{ force_recreate_wanda_container | bool }}"
     networks:
       - name: "{{ docker_network_name }}"
     image: "{{ wanda_container_image }}"
@@ -86,7 +86,7 @@
       SECRET_KEY_BASE: "{{ app_secret_key_base }}"
       AMQP_URL: "{{ app_amqp_protocol }}://{{ app_rabbitmq_username }}:{{ app_rabbitmq_password }}@{{ app_rabbitmq_host }}/{{ app_rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
       DATABASE_URL: "ecto://{{ app_wanda_postgres_username }}:{{ app_wanda_postgres_password }}@{{ app_wanda_postgres_host }}/{{ app_wanda_postgres_db }}"
-      OAS_SERVER_URL: "{{ omit if provision_proxy != 'true' else app_wanda_oas_server_url }}"
+      OAS_SERVER_URL: "{{ omit if not (provision_proxy | bool) else app_wanda_oas_server_url }}"
       AUTH_SERVER_URL: "{{ web_container_name }}:4000"
     volumes_from:
       - "{{ checks_container_name }}:ro"
@@ -95,7 +95,7 @@
   community.docker.docker_container:
     name: "{{ web_container_name }}"
     state: started
-    recreate: "{{ force_recreate_web_container == 'true' }}"
+    recreate: "{{ force_recreate_web_container | bool }}"
     restart_policy: unless-stopped
     image: "{{ web_container_image }}"
     pull: true
@@ -128,16 +128,16 @@
       REFRESH_TOKEN_ENC_SECRET: "{{ app_refresh_token_secret }}"
       ADMIN_USER: "{{ app_web_admin_username }}"
       ADMIN_PASSWORD: "{{ app_web_admin_password }}"
-      ENABLE_API_KEY: "{{ app_enable_api_key }}"
-      CHARTS_ENABLED: "{{ app_enable_charts }}"
+      ENABLE_API_KEY: "{{ app_enable_api_key | bool }}"
+      CHARTS_ENABLED: "{{ app_enable_charts | bool }}"
       TRENTO_WEB_ORIGIN: "{{ app_server_name }}"
-      OAS_SERVER_URL: "{{ omit if provision_proxy != 'true' else app_web_oas_server_url }}"
-      CHECKS_SERVICE_BASE_URL: "{{ (provision_proxy == 'true') | ternary(app_wanda_proxy_location, 'http://127.0.0.1:'~app_wanda_listen_port) }}"
-      ENABLE_OIDC: "{{ app_enable_oidc }}"
+      OAS_SERVER_URL: "{{ omit if not (provision_proxy | bool) else app_web_oas_server_url }}"
+      CHECKS_SERVICE_BASE_URL: "{{ (provision_proxy | bool) | ternary(app_wanda_proxy_location, 'http://127.0.0.1:' ~ app_wanda_listen_port) }}"
+      ENABLE_OIDC: "{{ app_enable_oidc | bool }}"
       OIDC_CLIENT_ID: "{{ app_oidc_client_id }}"
       OIDC_CLIENT_SECRET: "{{ app_oidc_client_secret }}"
       OIDC_BASE_URL: "{{ app_oidc_server_base_url }}"
-      ENABLE_OAUTH2: "{{ app_enable_oauth2 }}"
+      ENABLE_OAUTH2: "{{ app_enable_oauth2 | bool }}"
       OAUTH2_CLIENT_ID: "{{ app_oauth2_client_id }}"
       OAUTH2_CLIENT_SECRET: "{{ app_oauth2_client_secret }}"
       OAUTH2_BASE_URL: "{{ app_oauth2_server_base_url }}"
@@ -145,7 +145,7 @@
       OAUTH2_TOKEN_URL: "{{ app_oauth2_token_url }}"
       OAUTH2_USER_URL: "{{ app_oauth2_user_url }}"
       OAUTH2_SCOPES: "{{ app_oauth2_scopes }}"
-      ENABLE_SAML: "{{ app_enable_saml }}"
+      ENABLE_SAML: "{{ app_enable_saml | bool }}"
       SAML_IDP_ID: "{{ app_saml_idp_id }}"
       SAML_IDP_NAMEID_FORMAT: "{{ app_saml_idp_nameid_format }}"
       SAML_SP_DIR: "{{ app_saml_sp_dir }}"
@@ -162,7 +162,7 @@
       SAML_LASTNAME_ATTR_NAME: "{{ app_saml_lastname_attr_name }}"
       SAML_METADATA_URL: "{{ app_saml_metadata_url }}"
       SAML_METADATA_CONTENT: "{{ app_saml_metadata_content }}"
-      SAML_SIGN_REQUESTS: "{{ app_saml_sign_requests }}"
-      SAML_SIGN_METADATA: "{{ app_saml_sign_metadata }}"
-      SAML_SIGNED_ASSERTION: "{{ app_saml_signed_assertion }}"
-      SAML_SIGNED_ENVELOPES: "{{ app_saml_signed_envelopes }}"
+      SAML_SIGN_REQUESTS: "{{ app_saml_sign_requests | bool }}"
+      SAML_SIGN_METADATA: "{{ app_saml_sign_metadata | bool }}"
+      SAML_SIGNED_ASSERTION: "{{ app_saml_signed_assertion | bool }}"
+      SAML_SIGNED_ENVELOPES: "{{ app_saml_signed_envelopes | bool }}"

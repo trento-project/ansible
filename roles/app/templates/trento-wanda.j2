@@ -3,7 +3,7 @@ SECRET_KEY_BASE={{ app_secret_key_base }}
 AMQP_URL={{ app_amqp_protocol }}://{{ app_rabbitmq_username }}:{{ app_rabbitmq_password }}@{{ __app_rabbitmq_effective_host }}/{{ app_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
 DATABASE_URL=ecto://{{ app_wanda_postgres_username }}:{{ app_wanda_postgres_password }}@{{ __app_wanda_postgres_effective_host }}/{{ app_wanda_postgres_db }}
 PORT={{ app_wanda_listen_port }}
-{% if provision_proxy == 'true' %}
+{% if provision_proxy | bool %}
 OAS_SERVER_URL={{ app_wanda_oas_server_url }}
 {% endif %}
 AUTH_SERVER_URL=http://127.0.0.1:{{ app_web_listen_port }}
