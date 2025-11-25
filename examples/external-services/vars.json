@@ -1,4 +1,6 @@
 {
+    "provision_postgres": false,
+    "provision_rabbitmq": false,
     "app_web_postgres_host": "yourexternalpg.com",
     "app_wanda_postgres_host": "yourexternalpg.com",
     "app_rabbitmq_host": "yourexternalrabbit.com:5671",

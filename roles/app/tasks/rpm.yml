@@ -11,6 +11,36 @@
     - Restart trento-web
     - Restart trento-wanda
 
+- name: Show host discovery results for Web Postgres
+  ansible.builtin.debug:
+    msg: |
+      Effective Postgres host for Web is {{ __app_web_postgres_effective_host }}.
+      Override host is {{ __app_web_postgres_override_host | default('undefined') }}.
+      Inventory host is {{ __app_web_postgres_inventory_host | default('undefined') }}.
+      Inventory ansible host is {{ __app_web_postgres_ansible_host | default('undefined') }}.
+      User value is {{ app_web_postgres_host }}
+    verbosity: 1
+
+- name: Show host discovery results for RabbitMQ
+  ansible.builtin.debug:
+    msg: |
+      Effective RabbitMQ host for Web and Wanda is {{ __app_rabbitmq_effective_host }}.
+      Override host is {{ __app_rabbitmq_override_host | default('undefined') }}.
+      Inventory host is {{ __app_rabbitmq_inventory_host | default('undefined') }}.
+      Inventory ansible host is {{ __app_rabbitmq_ansible_host | default('undefined') }}.
+      User value is {{ app_rabbitmq_host }}
+    verbosity: 1
+
+- name: Show host discovery results for Wanda Postgres
+  ansible.builtin.debug:
+    msg: |
+      Effective Postgres host for Wanda is {{ __app_wanda_postgres_effective_host }}.
+      Override host is {{ __app_wanda_postgres_override_host | default('undefined') }}.
+      Inventory host is {{ __app_wanda_postgres_inventory_host | default('undefined') }}.
+      Inventory ansible host is {{ __app_wanda_postgres_ansible_host | default('undefined') }}.
+      User value is {{ app_wanda_postgres_host }}
+    verbosity: 1
+
 - name: Configure trento-web config
   ansible.builtin.template:
     src: trento-web.j2
