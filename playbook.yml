@@ -16,20 +16,20 @@
   roles:
     - role: postgres
       become: true
-      when: provision_postgres == 'true'
+      when: provision_postgres | bool
 
 - name: Provision Prometheus
   hosts: prometheus_hosts
   roles:
     - role: prometheus
       become: true
-      when: provision_prometheus == 'true'
+      when: provision_prometheus | bool
 
     - role: firewall
       become: true
       firewall_ports:
         - "{{ prometheus_port }}/tcp"
-      when: provision_prometheus == 'true'
+      when: provision_prometheus | bool
 
 
 - name: Provision RabbitMQ
@@ -37,7 +37,7 @@
   roles:
     - role: rabbitmq
       become: true
-      when: provision_rabbitmq == 'true'
+      when: provision_rabbitmq | bool
 
 - name: Configure Trento components
   hosts: trento_server
@@ -51,14 +51,14 @@
 
     - role: rproxy
       become: true
-      when: provision_proxy == 'true'
+      when: provision_proxy | bool
 
     - role: firewall
       become: true
       firewall_ports:
         - "{{ rproxy_vhost_http_listen_port }}/tcp"
         - "{{ rproxy_vhost_https_listen_port }}/tcp"
-      when: provision_proxy == 'true'
+      when: provision_proxy | bool
 
 - name: Configure Trento agents
   hosts: agents

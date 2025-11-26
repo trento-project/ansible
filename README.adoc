@@ -21,7 +21,11 @@ interpreter version that supports the execution of the playbook:
 | ansible11 | X | X | python3.11-only | python3.11-only | python3(3.13)-only
 |===
 
-NOTE: On SLES 15 SP5 and below, Ansible may default to the newest Python interpreter, causing incompatibility issues between the playbook and the target node. To prevent this, you must explicitly set the interpreter in `vars.json`: to `"ansible_python_interpreter": "/usr/bin/python3"`
+NOTE: On SLES 15 SP5 and below, Ansible may default to the newest
+Python interpreter, causing incompatibility issues between the
+playbook and the target node. To prevent this, you must explicitly set
+the interpreter in `vars.json`: to `"ansible_python_interpreter":
+"/usr/bin/python3"`
 
 == Components
 
@@ -151,7 +155,7 @@ the infra network configuration or when using multi-node deployments.
 
 Additionally, when deploying trento agents using the playbook, api-key
 auto retrieval from the server is not supported yet, so either use
-`"app_enable_api_key": "false"` and skip `agent_web_api_key` altogether or
+`"app_enable_api_key": false` and skip `agent_web_api_key` altogether or
 disable agent deployment for the first run, retrieve the api-key from
 the UI and set the `agent_web_api_key` accordingly.
 
@@ -261,20 +265,20 @@ population of some variables.
   `true`, the variables `app_web_postgres_host` and
   `app_wanda_postgres_host` are ignored and host discovery uses the
   hosts specified in the inventory. Set to `false` if you provide an
-  external Postgres to the services.  | "true"
+  external Postgres to the services.  | true
 
 | provision_rabbitmq | Whether to provision RabbitMQ. If set to
   `true`, the variables `app_rabbitmq_host` and `agent_rabbitmq_host`
   are ignored and host discovery uses the hosts specified in the
   inventory. Set to `false` if you provide an external RabbitMQ to the
-  services. | "true"
+  services. | true
 
 | provision_proxy | Whether to provision a Reverse Proxy to expose the
   services, set to `false` to use an existing reverse proxy
-  deployment | "true"
+  deployment | true
 
 | provision_prometheus | Whether to provision Prometheus used by Trento to store
-  metrics send by agents | "true"
+  metrics send by agents | true
 |===
 
 *Trento meta-role*
@@ -409,10 +413,10 @@ per-role basis if appropriate.
   application | <value of `trento_web_admin_password`>
 
 | app_enable_api_key | Enable API key usage. Mostly for testing
-  purposes | "true"
+  purposes | true
 
 | app_enable_charts | Enable charts display based on Prometheus
-  metrics | "true"
+  metrics | true
 
 | app_enable_alerting | Enable the alerting mechanism for Web application | null
 
@@ -435,7 +439,7 @@ per-role basis if appropriate.
 
 | app_enable_oidc | Enable OIDC integration, this disables the
   username/password authentication method (self exclusive SSO
-  type) | "false"
+  type) | false
 
 | app_oidc_client_id | OIDC client id, required when `app_enable_oidc`
   is true | ""
@@ -448,7 +452,7 @@ per-role basis if appropriate.
 
 | app_enable_oauth2 | Enable OAUTH2 integration, this disables the
   username/password authentication method (self exclusive SSO
-  type) | "false"
+  type) | false
 
 | app_oauth2_client_id | OAUTH2 client id, required when
   `app_enable_oauth2` is true | ""
@@ -473,7 +477,7 @@ per-role basis if appropriate.
 
 | app_enable_saml | Enable SAML integration, this disables the
   username/password authentication method (self exclusive SSO
-  type) | "false"
+  type) | false
 
 | app_saml_idp_id | SAML IDP id, required when `app_enable_saml` is
   true | ""
@@ -526,18 +530,18 @@ per-role basis if appropriate.
   metadata xml file content (`saml_metadata_url` has precedence over
   this) | ""
 
-| app_saml_sign_requests | Sign SAML requests in the SP side | "true"
+| app_saml_sign_requests | Sign SAML requests in the SP side | true
 
 | app_saml_sign_metadata | Sign SAML metadata documents in the SP
-  side | "true"
+  side | true
 
 | app_saml_signed_assertion | Require to receive SAML assertion signed
   from the IDP. Set to false if the IDP doesn’t sign the assertion |
-  "true"
+  true
 
 | app_saml_signed_envelopes | Require to receive SAML envelopes signed
   from the IDP. Set to false if the IDP doesn’t sign the envelopes |
-  "true"
+  true
 |===
 
 *Agent role*
@@ -576,7 +580,7 @@ per-role basis if appropriate.
 | Name | Description | Default
 
 | postgres_install | Install postgresql in the postgres provisioning
-  phase | "true"
+  phase | true
 
 | postgres_web_username | Name of the Postgres user used by Web
   application | <value of `trento_web_postgres_username`>
@@ -639,7 +643,7 @@ per-role basis if appropriate.
 |===
 | Name | Description | Default
 
-| rproxy_install | Whether  to install reverse proxy (currently, nginx) | "true"
+| rproxy_install | Whether  to install reverse proxy (currently, nginx) | true
 
 | rproxy_server_name | Domain name of the Trento web application |
   <value of `trento_server_name`>
@@ -652,7 +656,7 @@ per-role basis if appropriate.
 
 | rproxy_override_default_conf | Override the default reverse proxy
   configuration for one that will use the vhosts according to an
-  opinionated directory structure | "true"
+  opinionated directory structure | true
 
 | rproxy_vhost_filename | Reverse proxy vhost filename. ".conf" suffix
   is added to the given name | "trento"
@@ -668,13 +672,13 @@ per-role basis if appropriate.
 | rproxy_wanda_upstream_name | Wanda upstream name | "wanda"
 
 | rproxy_wanda_location | Path to forward requests to Wanda in the
-  reverse proxy | "/wanda"
+  reverse proxy | <value of `trento_wanda_proxy_location`>
 
 | rproxy_ssl_cert_as_base64 | Whether SSL certificate is provided as
-  base64 string | "false"
+  base64 string | false
 
 | rproxy_ssl_key_as_base64 | Whether SSL key is provided as base64
-  string | "false"
+  string | false
 |===
 
 == Clean up

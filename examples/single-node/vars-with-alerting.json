@@ -4,7 +4,7 @@
     "trento_web_postgres_password": "pass",
     "trento_wanda_postgres_password": "wanda",
     "trento_rabbitmq_password": "trento",
-    "app_enable_alerting": "true",
+    "app_enable_alerting": true,
     "app_alert_sender": "alert-sender-mail",
     "app_alert_recipient": "alert-receiver-mail",
     "app_smtp_server": "smtp-server-adress",

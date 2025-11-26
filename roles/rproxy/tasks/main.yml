@@ -1,7 +1,7 @@
 # code: language=ansible
 ---
 - name: Install nginx
-  when: rproxy_install == 'true'
+  when: rproxy_install | bool
   community.general.zypper:
     name:
       - nginx
@@ -11,7 +11,7 @@
 - name: Create the SSL certificate and key
   no_log: true
   ansible.builtin.copy:
-    content: "{{ item.content | b64decode if item.base64 == 'true' else item.content }}"
+    content: "{{ (item.content | b64decode) if item.base64 else item.content }}"
     dest: "{{ item.dest }}"
     owner: root
     group: root
@@ -19,13 +19,13 @@
   loop:
     - content: "{{ rproxy_ssl_cert }}"
       dest: "/etc/ssl/certs/trento.crt"
-      base64: "{{ rproxy_ssl_cert_as_base64 }}"
+      base64: "{{ rproxy_ssl_cert_as_base64 | bool }}"
     - content: "{{ rproxy_ssl_key }}"
       dest: "/etc/ssl/private/trento.key"
-      base64: "{{ rproxy_ssl_key_as_base64 }}"
+      base64: "{{ rproxy_ssl_key_as_base64 | bool }}"
 
 - name: Override default reverse proxy config
-  when: rproxy_override_default_conf == 'true'
+  when: rproxy_override_default_conf | bool
   ansible.builtin.template:
     src: "nginx-default.conf.j2"
     dest: "{{ rproxy_conf_base_dir }}/nginx.conf"
