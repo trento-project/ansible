@@ -1,7 +1,6 @@
 ---
+agent_web_api_key: "{{ undef(hint='API key for Trento Web is mandatory') }}"
 agent_trento_server_url: "{{ trento_server_url | default('http://{}'.format(trento_server_name)) }}"
-agent_trento_repository: "{{ trento_repository }}"
-agent_web_api_key: "{{ trento_api_key }}"
 agent_amqp_protocol: "{{ amqp_protocol | default('amqp') }}" # `amqp_protocol` is for backwards-compatibility
 agent_rabbitmq_host: "{{ rabbitmq_host | default('localhost') }}"  # `rabbitmq_host` for backwards-compatibility
 agent_rabbitmq_host_group: ""

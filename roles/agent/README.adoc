@@ -1,0 +1,47 @@
+= Trento Agent Role
+
+Installs and configures Trento agent.
+
+== Requirements
+
+Only requires `zypper` package manager.
+
+== Role Variables
+
+We keep all our variables documentation in the main README of the collection.
+
+Defaults not documented by the main README because they are overridden
+by the playbook:
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| agent_web_api_key | API key of Trento Web that allows communicating
+  with its collection endpoint | <undefined/mandatory>
+| agent_rabbitmq_host_group | Name of the inventory group specifying
+  RabbitMQ hosts. If this value is not an empty string, activates
+  auto-discovery of RabbitMQ hosts and ignores the value of
+  `agent_rabbitmq_host` | ""
+|===
+
+== Dependencies
+
+This role is dependent on `suse.trento.trento` meta-role.
+
+== Example Playbook
+
+[source, yaml]
+----
+- hosts: agents
+  roles:
+    - role: suse.trento.agent
+      agent_web_api_key: "<api-key-you-extracted-from-trento-server>"
+----
+
+== License
+
+Apache License, Version 2.0
+
+== Author Information
+
+Developed and maintained by trento-developers@suse.com
+Code repository is hosted on https://github.com/trento-project/ansible

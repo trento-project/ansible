@@ -23,3 +23,35 @@
 - name: Include RPM installation tasks
   ansible.builtin.include_tasks: rpm.yml
   when: app_install_method == 'rpm'
+
+- name: Extract agents API Key
+  run_once: true
+  block:
+    - name: Login to Trento Web
+      ansible.builtin.uri:
+        url: "http://localhost:{{ app_web_listen_port }}/api/session"
+        method: POST
+        body_format: json
+        body:
+          username: "{{ app_web_admin_username }}"
+          password: "{{ app_web_admin_password }}"
+        status_code: [200]
+      # Hide the admin password from logs
+      no_log: true
+      register: __app_web_login_result
+
+    - name: Get the agents API key
+      ansible.builtin.uri:
+        url: "http://localhost:{{ app_web_listen_port }}/api/v1/settings/api_key"
+        headers:
+          Authorization: "Bearer {{ __app_web_login_result.json.access_token }}"
+        unredirected_headers:
+          - Authorization
+        status_code: [200]
+      # Hide the access_token from logs
+      no_log: true
+      register: __app_agents_api_key_result
+
+    - name: Save the API token
+      ansible.builtin.set_fact:
+        app_agents_api_key: "{{ __app_agents_api_key_result.json.generated_api_key }}"
