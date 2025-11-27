@@ -67,3 +67,4 @@
       become: true
       vars:
         agent_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else ''}}"
+        agent_web_api_key: "{{ hostvars[groups['trento_server'][0]].app_agents_api_key }}"

@@ -1,3 +1,0 @@
----
-trento_repository: "https://download.opensuse.org/repositories/devel:sap:trento:factory/SLE_15_SP3/"
-trento_api_key: "{{ undef(hint='API key for Trento Web is mandatory') }}"

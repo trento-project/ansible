@@ -1,8 +1,9 @@
 = Trento Ansible
 ifndef::site-gen-antora[:relfileprefix: docs/]
 
-This playbook aims to install Trento components and the belonging third
-parties.
+This playbook aims to install Trento components and the belonging
+third parties. Additionally, API Key for the agents is automatically
+retrieved from Trento server and passed to the deployed agents.
 
 == Support matrix
 
@@ -40,9 +41,6 @@ the interpreter in `vars.json`: to `"ansible_python_interpreter":
 
 The third parties are installed using `zypper` packages and configured
 with dedicated roles.
-
-The `agent` is installed from the configured obs repository using
-`zypper`.
 
 The nginx configuration acts as a reverse proxy for all the components.
 
@@ -128,6 +126,11 @@ all:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
+   agents:
+     hosts:
+       vitellone:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
 ----
 
 === 3. Setup playbook variables
@@ -152,12 +155,6 @@ the infra network configuration or when using multi-node deployments.
   "rproxy_ssl_key": "<paste your SSL certificate key here in base64>"
 }
 ----
-
-Additionally, when deploying trento agents using the playbook, api-key
-auto retrieval from the server is not supported yet, so either use
-`"app_enable_api_key": false` and skip `agent_web_api_key` altogether or
-disable agent deployment for the first run, retrieve the api-key from
-the UI and set the `agent_web_api_key` accordingly.
 
 === 4. Run the playbook
 
@@ -233,15 +230,6 @@ docker run \
 
 | rproxy_ssl_key | String with the content of the .key file used to
   generate the certificate
-|===
-
-=== Required Variables to install trento agents
-
-[width="100%",cols="21%,79%",options="header",]
-|===
-|Name |Description
-|agent_web_api_key |API key to connect to the trento_server
-
 |===
 
 === Optional variables
@@ -412,9 +400,6 @@ per-role basis if appropriate.
 | app_web_admin_password | Password of the admin user for Web
   application | <value of `trento_web_admin_password`>
 
-| app_enable_api_key | Enable API key usage. Mostly for testing
-  purposes | true
-
 | app_enable_charts | Enable charts display based on Prometheus
   metrics | true
 
@@ -551,10 +536,6 @@ per-role basis if appropriate.
 |Name | Description | Default
 
 | agent_trento_server_url | Trento server URL | "http://<`trento_server_name`>"
-
-| agent_trento_repository | OBS repository from where Trento agent is
-  installed |
-  "https://download.opensuse.org/repositories/devel:sap:trento:factory/SLE_15_SP3/"
 
 | agent_amqp_protocol | URL scheme of the AMQP protocol -- either
   `amqp` or `amqps`. Used to connect to RabbitMQ | "amqp"
