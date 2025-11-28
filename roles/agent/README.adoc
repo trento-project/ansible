@@ -8,7 +8,8 @@ Only requires `zypper` package manager.
 
 == Role Variables
 
-We keep all our variables documentation in the main README of the collection.
+All the variables documentation is kept in the main README of the
+collection.
 
 Defaults not documented by the main README because they are overridden
 by the playbook:
