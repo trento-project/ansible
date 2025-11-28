@@ -1,7 +1,0 @@
-{
-    "trento_server_name": "yourserver.com"
-    "trento_web_admin_password": "adminpassword",
-    "trento_web_postgres_password": "pass",
-    "trento_wanda_postgres_password": "wanda",
-    "trento_rabbitmq_password": "trento",
-}

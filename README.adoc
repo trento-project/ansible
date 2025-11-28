@@ -51,12 +51,20 @@ The nginx configuration acts as a reverse proxy for all the components.
 
 == Playbooks overview
 
-=== Sever
+=== Server
 
 `server.yml` playbook installs Trento server components (Web and
 Wanda) along with the supporting third-party application dependencies.
 
-==== SUSE LINUX ENTERPRISE USERS
+This playbook supports auto-discovery of the hosts for RabbitMQ and
+Postgres in Web and Wanda. This feature is enabled when
+`provision_postgres` and `provision_rabbitmq` flags are true. When
+auto-discovery is active, `*_host` variables in `app` role are
+ignored. If you want to use external services for these dependencies,
+turn off the respective flag and specify the `*_host` variable in your
+inventory.
+
+==== SUSE Linux Enterprise Users
 
 *This playbook requires that the host where you are going to install
 Trento server components has an activated license* for one of the
@@ -71,7 +79,14 @@ current version):
 
 === Agent
 
-`agent.yml` playbook installs Trento agent.
+`agent.yml` playbook installs and configures Trento agent.
+
+This playbook supports auto-discovery of the host for RabbitMQ for use
+in agents. This feature is enabled when `provision_rabbitmq` flag is
+true. When auto-discovery is active, `agent_rabbitmq_host` variables
+in `agent` role is ignored. If you want to use external service for
+this dependency, turn off the `provision_rabbitmq` flag and specify the
+`agent_rabbitmq_host` variable in your inventory.
 
 === Site
 
@@ -91,39 +106,20 @@ passed on to the deployed agents. Thus, the value of
 
 Get to the `ansible` directory: `cd ansible`
 
-Make sure all hosts with active roles allow access from the machine that
-is executing the playbooks:
+Make sure all hosts with active roles allow access from the machine
+that is executing the playbooks. If connecting to the machines with
+SSH keys, you might want to execute:
 
-....
-ssh-copy-id root@192.168.1.1
-....
+[source, console]
+----
+$ ssh-copy-id <username>@<ip-of-the-host>
+----
 
-Create an `inventory.yml` file, defining the IP address of the machine
-where each role will be deployed to. You might use the same machine for
-more than one role. Use `;` to comment out any role that you might not
-want to cover.
+Create an `inventory.yml` file, defining the IP address or domain name
+of the machines for each group expected in the playbook. You might use
+the same machine in more than one group.
 
 Example:
-
-....
-[trento_server]
-192.168.1.1 ansible_user=root ansible_ssh_private_key_file=/home/user/.ssh/id_rsa
-
-[postgres_hosts]
-192.168.1.1 ansible_user=root ansible_ssh_private_key_file=/home/user/.ssh/id_rsa
-
-[rabbitmq_hosts]
-192.168.1.1 ansible_user=root ansible_ssh_private_key_file=/home/user/.ssh/id_rsa
-
-[prometheus_hosts]
-192.168.1.1 ansible_user=root ansible_ssh_private_key_file=/home/user/.ssh/id_rsa
-
-[agents]
-192.168.1.2 ansible_user=root ansible_ssh_private_key_file=/home/user/.ssh/id_rsa
-....
-
-Alternatively, you can use yaml syntax for this. In the following
-example we use a user/password instead of an SSH key:
 
 [source,yaml]
 ----
@@ -134,49 +130,64 @@ all:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
+          ansible_ssh_private_key_file: "/home/user/.ssh/id_rsa"
     postgres_hosts:
       hosts:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
+          ansible_password: "your-password"
     rabbitmq_hosts:
       hosts:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
+          ansible_ssh_private_key_file: "/home/user/.ssh/id_rsa"
     prometheus_hosts:
       hosts:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
+          ansible_ssh_private_key_file: "/home/user/.ssh/id_rsa"
    agents:
      hosts:
        vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
+          ansible_password: "your-password"
 ----
+
+Here, a mixture of password and SSH keys authentication is used for
+the hosts.
 
 === 3. Setup playbook variables
 
-Create a vars.json file, following the example below:
-
-NOTE: The default values for variables ending with `_host` usually
-point to `localhost`. This works for single-host deployments but be
-sure to set them explicitly when pointing to manually deployed
-services, either with an *external IP* or an *internal IP*, based on
-the infra network configuration or when using multi-node deployments.
+Add the desired variables to the inventory. Use either `vars:` section
+in the inventory file itself or use host_vars/group_vars directories:
 
 [source,yaml]
 ----
-{
-  "trento_server_name": "trento-deployment.example.com",
-  "trento_web_admin_password": "adminpassword",
-  "trento_web_postgres_password": "postgres",
-  "trento_wanda_postgres_password": "postgres",
-  "trento_rabbitmq_password": "guest",
-  "rproxy_ssl_cert": "<paste your SSL certificate here in base64>",
-  "rproxy_ssl_key": "<paste your SSL certificate key here in base64>"
-}
+all:
+  children:
+    trento_server:
+      hosts: ...
+    postgres_hosts:
+      hosts: ...
+    rabbitmq_hosts:
+      hosts: ...
+    prometheus_hosts:
+      hosts: ...
+    agents:
+      hosts: ...
+
+  vars:
+    trento_server_name": "trento-deployment.example.com",
+    trento_web_admin_password: "adminpassword",
+    trento_web_postgres_password: "postgres",
+    trento_wanda_postgres_password: "postgres",
+    trento_rabbitmq_password: "guest",
+    rproxy_ssl_cert: "<paste your SSL certificate here in base64>",
+    rproxy_ssl_key: "<paste your SSL certificate key here in base64>"
 ----
 
 === 4. Run the playbooks
@@ -184,25 +195,34 @@ the infra network configuration or when using multi-node deployments.
 Prior to running the playbooks, tell ansible to fetch the required
 modules:
 
-[source,bash]
+[source, console]
 ----
-ansible-galaxy collection install -r requirements.yml
+$ ansible-galaxy collection install -r requirements.yml
 ----
 
 Run a playbook:
 
-[source,bash]
+[source, console]
 ----
-ansible-playbook -i path/to/inventory.yml --extra-vars "@path/to/vars.json" <playbook-name>.yml
+$ ansible-playbook -i path/to/inventory.yml <playbook-name.yml>
 ----
 
-NOTE: The `@` character in front of the `vars.json` path is
-mandatory. This tells `ansible-playbook` that the variables will not
-be specified in-line but as an external file instead.
+[NOTE]
+====
+You could also use `--extra-vars` argument to `ansible-playbook`
+command to override every variable in the playbook. We advise against
+its usage but if the need arises you can create a `vars.yaml` file
+with your overrides and pass it as following:
 
-*This is just an example you can use all the options of
-`ansible-playbook` with your inventory and other methods of variables
-injection.*
+[source, console]
+----
+$ ansible-playbook -i path/to/inventory.yml <playbook-name.yml> --extra-vars "@path/to/vars.yaml"
+----
+
+The `@` character in front of the `vars.yaml` tells `ansible-playbook`
+that the variables will not be specified in-line but as an external
+file instead.
+====
 
 === With docker container
 
@@ -215,16 +235,16 @@ Mounting your ssh socket will enable you to access the remote machines
 like in your local environment.
 
 Assuming you have in the current folder a file called `inventory.yml`
-and `extra-vars.json`
+and `extra-vars.yaml`
 
-[source,bash]
+[source, console]
 ----
-docker run \
-  -e "SSH_AUTH_SOCK=/ssh-agent" \
-  -v $(pwd)/inventory.yml:/playbook/inventory.yml \
-  -v $(pwd)/extra-vars.json:/playbook/extra-vars.json \
-  -v $SSH_AUTH_SOCK:/ssh-agent \
-  ghcr.io/trento-project/ansible:rolling /playbook/inventory.yml /playbook/extra-vars.json
+$ docker run \
+   -e "SSH_AUTH_SOCK=/ssh-agent" \
+   -v $(pwd)/inventory.yml:/playbook/inventory.yml \
+   -v $(pwd)/extra-vars.yaml:/playbook/extra-vars.yaml \
+   -v $SSH_AUTH_SOCK:/ssh-agent \
+   ghcr.io/trento-project/ansible:rolling /playbook/inventory.yml /playbook/extra-vars.yaml
 ----
 
 == Playbook variables
@@ -360,9 +380,15 @@ per-role basis if appropriate.
 | app_web_listen_port | Port where the Web service is exposed | <value
   of `trento_web_listen_port`>
 
-| app_web_postgres_host | Host of the Postgres DB for Web
-  application. This value is ignored when `provision_postgres` is
-  true. | localhost
+| app_web_postgres_host | The host where Postgres database for Web is
+  located. This value is ignored when `app_web_postgres_host_group` is
+  non-empty string. | localhost
+
+| app_web_postgres_host_group | Name of the host group where Postgres
+  database for Web is located. If this value is not empty string,
+  activates auto-discovery of the Postgres host by searching it in the
+  specified group. When auto-discovery is active, the value of
+  `app_web_postgres_host` is ignored. | ""
 
 | app_web_postgres_username | Name of the postgres user used by Web
   application | <value of `trento_web_postgres_username`>
@@ -383,9 +409,15 @@ per-role basis if appropriate.
 | app_wanda_listen_port | Port where the Wanda service is exposed |
   <value of `trento_wanda_listen_port`>
 
-| app_wanda_postgres_host | Host of the Postgres DB for Wanda
-  application. This value is ignored when `provision_postgres` is
-  true. | localhost
+| app_wanda_postgres_host | The host where Postgres database for Wanda
+  is located. This value is ignored when
+  `app_wanda_postgres_host_group` is non-empty string. | localhost
+
+| app_wanda_postgres_host_group | Name of the host group where
+  Postgres database for Wanda is located. If this value is not empty
+  string, activates auto-discovery of the Postgres host by searching
+  it in the specified group. When auto-discovery is active, the value
+  of `app_wanda_postgres_host` is ignored. | ""
 
 | app_wanda_postgres_username | Name of the Postgres user used by
   Wanda application | <value of `trento_wanda_postgres_username`>
@@ -402,9 +434,15 @@ per-role basis if appropriate.
 | app_wanda_proxy_location | URL Path to Wanda behind a reverse
   proxy | <value of `trento_wanda_proxy_location`>
 
-| app_rabbitmq_host | The host for RabbitMQ. It could include the
-  service port. This value is ignored when `provision_rabbitmq` is
-  true. | localhost
+| app_rabbitmq_host | The host where RabbitMQ is located. It could
+  include the service port. This value is ignored when
+  `app_rabbitmq_host_group` is non-empty string. | localhost
+
+| app_rabbitmq_host_group | Name of the host group where RabbitMQ is
+  located. It could include the service port. If this value is not
+  empty string, activates auto-discovery of the RabbitMQ host by
+  searching it in the specified group. When auto-discovery is active,
+  the value of `app_rabbitmq_host` is ignored. | ""
 
 | app_rabbitmq_username | Username used to connect to RabbitMQ |
   <value of `trento_rabbitmq_username`>
@@ -572,9 +610,15 @@ per-role basis if appropriate.
 | agent_amqp_protocol | URL scheme of the AMQP protocol -- either
   `amqp` or `amqps`. Used to connect to RabbitMQ | "amqp"
 
-| agent_rabbitmq_host | The host for RabbitMQ. It could include the
-  service port. This value is ignored when `provision_rabbitmq` is
-  true. | "localhost"
+| agent_rabbitmq_host | The host where RabbitMQ is located. It could
+  include the service port. This value is ignored when
+  `agent_rabbitmq_host_group` is non-empty string. | localhost
+
+| agent_rabbitmq_host_group | Name of the host group where RabbitMQ is
+  located. It could include the service port. If this value is not
+  empty string, activates auto-discovery of the RabbitMQ host by
+  searching it in the specified group. When auto-discovery is active,
+  the value of `agent_rabbitmq_host` is ignored. | ""
 
 | agent_rabbitmq_username | Username used to connect to RabbitMQ |
   <value of `trento_rabbitmq_username`>
@@ -697,7 +741,7 @@ per-role basis if appropriate.
 == Clean up
 
 In order to clean up most of the applied changes and created resources,
-the `playbook.cleanup` playbook could be used. It uses the same
+the `playbook.cleanup.yml` playbook could be used. It uses the same
 inventory and variables file than the main playbook.
 
 These are the cleaned resources:
@@ -710,9 +754,9 @@ These are the cleaned resources:
 
 Run the playbook with:
 
-[source,bash]
+[source, console]
 ----
-$ ansible-playbook -i inventory.yml --extra-vars @extra-vars.json playbook.cleanup.yml
+$ ansible-playbook -i inventory.yml playbook.cleanup.yml
 ----
 
 *Disclaimer: The installed packages are not removed as most of the times
