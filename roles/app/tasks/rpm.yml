@@ -67,6 +67,13 @@
     state: started
     enabled: true
 
+- name: Wait for Web to be available
+  ansible.builtin.uri:
+    url: "http://localhost:{{ app_web_listen_port }}/api/healthz"
+    status_code: [200]
+  retries: 3
+  delay: 5
+
 - name: Start trento-wanda service
   ansible.builtin.service:
     name: trento-wanda

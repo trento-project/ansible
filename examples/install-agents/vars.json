@@ -1,5 +1,0 @@
-{
-    "agent_trento_server_url:": "http://localhost",
-    "agent_rabbitmq_host": "localhost",
-    "agent_web_api_key": "api-key-obtained-from-server"
-}

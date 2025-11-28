@@ -11,7 +11,6 @@ prometheus_url: "http://localhost:9090"
 secret_key_base: ""
 access_token_secret: ""
 refresh_token_secret: ""
-enable_api_key: true
 enable_charts: true
 enable_alerting:
 smtp_server:
