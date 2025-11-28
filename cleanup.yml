@@ -1,0 +1,59 @@
+# code: language=ansible
+---
+- name: Clean up trento components
+  hosts: trento_server
+  become: true
+  tasks:
+    - name: Clean up Trento services
+      ansible.builtin.import_role:
+        name: app
+        tasks_from: cleanup
+
+    - name: Clean up Proxy
+      ansible.builtin.import_role:
+        name: rproxy
+        tasks_from: cleanup
+
+    - name: Clean up Firewall
+      ansible.builtin.import_role:
+        name: firewall
+      vars:
+        firewall_ports:
+          - "{{ rproxy_vhost_http_listen_port }}/tcp"
+          - "{{ rproxy_vhost_https_listen_port }}/tcp"
+        firewall_state: disabled
+
+- name: Clean up postgres
+  hosts: postgres_hosts
+  become: true
+  tasks:
+    - name: Postgres
+      ansible.builtin.import_role:
+        name: postgres
+        tasks_from: cleanup
+
+- name: Clean up rabbitmq
+  hosts: rabbitmq_hosts
+  become: true
+  tasks:
+    - name: Rabbitmq
+      ansible.builtin.import_role:
+        name: rabbitmq
+        tasks_from: cleanup
+
+- name: Prometheus cleanup
+  hosts: prometheus_hosts
+  become: true
+  tasks:
+    - name: Prometheus
+      ansible.builtin.import_role:
+        name: prometheus
+        tasks_from: cleanup
+
+    - name: Clean up Firewall
+      ansible.builtin.import_role:
+        name: firewall
+      vars:
+        firewall_ports:
+          - "{{ prometheus_port }}/tcp"
+        firewall_state: disabled

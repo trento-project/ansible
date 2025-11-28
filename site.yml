@@ -1,0 +1,9 @@
+---
+- name: Provision Trento server components
+  ansible.builtin.import_playbook: server.yml
+
+- name: Provision Trento agents
+  ansible.builtin.import_playbook: agent.yml
+  vars:
+    agent_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else ''}}"
+    agent_web_api_key: "{{ hostvars[groups['trento_server'][0]].app_agents_api_key }}"
