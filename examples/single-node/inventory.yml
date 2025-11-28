@@ -26,3 +26,19 @@ all:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
+
+  vars:
+    trento_server_name: "your-server-name"
+    trento_web_admin_password: "adminpassword"
+    trento_web_postgres_password: "pass"
+    trento_wanda_postgres_password: "wanda"
+    trento_rabbitmq_password: "trento"
+
+    # Alerting configuration, optional
+    app_enable_alerting: true
+    app_alert_sender: "alert-sender-mail"
+    app_alert_recipient: "alert-receiver-mail"
+    app_smtp_server: "smtp-server-adress"
+    app_smtp_port: "smpt-port"
+    app_smtp_user: "smtp-user"
+    app_smtp_password: "smtp-password"
