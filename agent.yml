@@ -4,3 +4,5 @@
   roles:
     - role: agent
       become: true
+      vars:
+        agent_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else ''}}"
