@@ -21,3 +21,11 @@ all:
         vitellone-metrics:
           ansible_host: "your-host"
           ansible_user: "your-user"
+    agents:
+      hosts:
+        hana01:
+          ansible_host: "your-hana01-host"
+          ansible_user: root
+        hana02:
+          ansible_host: "your-hana02-host"
+          ansible_user: root

@@ -1,0 +1,6 @@
+---
+- name: Provision Trento agents
+  hosts: agents
+  roles:
+    - role: agent
+      become: true

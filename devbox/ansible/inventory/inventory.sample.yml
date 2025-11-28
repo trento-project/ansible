@@ -113,5 +113,5 @@ prometheus_hosts:
   children:
     devboxes:
 agents:
-  # children:
-  #   devboxes:
+  children:
+    devboxes:

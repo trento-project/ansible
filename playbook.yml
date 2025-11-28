@@ -1,70 +1,9 @@
-# code: language=ansible
 ---
-- name: Check if Trento would be installed on SLES
-  hosts: trento_server
-  become: true
-  tasks:
-    - name: Check SLES distribution and version
-      ansible.builtin.fail:
-        msg: "This playbook only runs on SLES for SAP 15 SP3 or above. Detected: {{ ansible_distribution }} {{ ansible_distribution_version }}"
-      when: >
-        (ansible_distribution != "SLES_SAP") or
-        (ansible_distribution_version is version('15.3', '<'))
+- name: Provision Trento server components
+  ansible.builtin.import_playbook: server.yml
 
-- name: Provision Postgres
-  hosts: postgres_hosts
-  roles:
-    - role: postgres
-      become: true
-      when: provision_postgres | bool
-
-- name: Provision Prometheus
-  hosts: prometheus_hosts
-  roles:
-    - role: prometheus
-      become: true
-      when: provision_prometheus | bool
-
-    - role: firewall
-      become: true
-      firewall_ports:
-        - "{{ prometheus_port }}/tcp"
-      when: provision_prometheus | bool
-
-
-- name: Provision RabbitMQ
-  hosts: rabbitmq_hosts
-  roles:
-    - role: rabbitmq
-      become: true
-      when: provision_rabbitmq | bool
-
-- name: Configure Trento components
-  hosts: trento_server
-  roles:
-    - role: app
-      become: true
-      vars:
-        app_web_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
-        app_wanda_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
-        app_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else '' }}"
-
-    - role: rproxy
-      become: true
-      when: provision_proxy | bool
-
-    - role: firewall
-      become: true
-      firewall_ports:
-        - "{{ rproxy_vhost_http_listen_port }}/tcp"
-        - "{{ rproxy_vhost_https_listen_port }}/tcp"
-      when: provision_proxy | bool
-
-- name: Configure Trento agents
-  hosts: agents
-  roles:
-    - role: agent
-      become: true
-      vars:
-        agent_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else ''}}"
-        agent_web_api_key: "{{ hostvars[groups['trento_server'][0]].app_agents_api_key }}"
+- name: Provision Trento agents
+  ansible.builtin.import_playbook: agent.yml
+  vars:
+    agent_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else ''}}"
+    agent_web_api_key: "{{ hostvars[groups['trento_server'][0]].app_agents_api_key }}"
