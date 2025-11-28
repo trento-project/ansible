@@ -1,17 +1,16 @@
 = Trento Ansible
 ifndef::site-gen-antora[:relfileprefix: docs/]
 
-This playbook aims to install Trento components and the belonging
-third parties. Additionally, API Key for the agents is automatically
-retrieved from Trento server and passed to the deployed agents.
+Collection of playbooks that aim in installing Trento and its
+third-party dependencies.
 
 == Support matrix
 
-The playbook could only be run on target nodes running SLES4SAP.
+The playbooks could only be run on target nodes running SLES4SAP.
 
 Refer to the following table for supported control and target node
 combinations. The specified value in the target cell is the _Python_
-interpreter version that supports the execution of the playbook:
+interpreter version that supports the execution of the playbooks:
 
 [cols=6*^]
 |===
@@ -30,10 +29,15 @@ the interpreter in `vars.json`: to `"ansible_python_interpreter":
 
 == Components
 
+Trento components:
+
 * https://github.com/trento-project/web[web]
 * https://github.com/trento-project/wanda[wanda]
 * https://github.com/trento-project/checks[checks]
 * https://github.com/trento-project/agent[agent]
+
+Third-party dependencies:
+
 * postgresql
 * rabbitmq
 * prometheus
@@ -44,19 +48,38 @@ with dedicated roles.
 
 The nginx configuration acts as a reverse proxy for all the components.
 
-=== SUSE LINUX ENTERPRISE USERS
+
+== Playbooks overview
+
+=== Sever
+
+`server.yml` playbook installs Trento server components (Web and
+Wanda) along with the supporting third-party application dependencies.
+
+==== SUSE LINUX ENTERPRISE USERS
 
 *This playbook requires that the host where you are going to install
-trento-server has an activated license* for one of the supported OSs,
-with the following modules (Change `x` to match your current version):
+Trento server components has an activated license* for one of the
+supported OSs, with the following modules (Change `x` to match your
+current version):
 
 * Basesystem Module 15 x86_64 -
 `SUSEConnect -p sle-module-basesystem/15.x/x86_64`
 * SUSE Package Hub 15 x86_64 - `SUSEConnect -p PackageHub/15.x/x86_64`
-* (Optional: for `docker` installation method) Containers Module 15
-x86_64 - `SUSEConnect -p sle-module-containers/15.x/x86_64`
 * (15.6 only) Legacy Module 15 x86_64 -
 `SUSEConnect -p sle-module-legacy/15.6/x86_64`
+
+=== Agent
+
+`agent.yml` playbook installs Trento agent.
+
+=== Site
+
+`site.yml` is playbook that makes full Trento installation. It
+installs both the server components and agents. Additionally, the API
+key for the agents is automatically retrieved from Trento server and
+passed on to the deployed agents. Thus, the value of
+`agent_web_api_key` variables is ignored when using this playbook.
 
 == Usage
 
@@ -69,7 +92,7 @@ x86_64 - `SUSEConnect -p sle-module-containers/15.x/x86_64`
 Get to the `ansible` directory: `cd ansible`
 
 Make sure all hosts with active roles allow access from the machine that
-is executing the playbook:
+is executing the playbooks:
 
 ....
 ssh-copy-id root@192.168.1.1
@@ -156,9 +179,9 @@ the infra network configuration or when using multi-node deployments.
 }
 ----
 
-=== 4. Run the playbook
+=== 4. Run the playbooks
 
-Prior to running the playbook, tell ansible to fetch the required
+Prior to running the playbooks, tell ansible to fetch the required
 modules:
 
 [source,bash]
@@ -166,11 +189,11 @@ modules:
 ansible-galaxy collection install -r requirements.yml
 ----
 
-Run the playbook:
+Run a playbook:
 
 [source,bash]
 ----
-ansible-playbook -i path/to/inventory.yml --extra-vars "@path/to/vars.json" playbook.yml
+ansible-playbook -i path/to/inventory.yml --extra-vars "@path/to/vars.json" <playbook-name>.yml
 ----
 
 NOTE: The `@` character in front of the `vars.json` path is
@@ -206,7 +229,7 @@ docker run \
 
 == Playbook variables
 
-=== Required Variables to install Trento Server
+=== Required Variables to install Trento server
 
 [width="100%",cols="24%,76%",options="header",]
 |===
@@ -232,6 +255,15 @@ docker run \
   generate the certificate
 |===
 
+=== Required Variables to install Trento agent
+
+[width="100%",cols="24%,76%",options="header",]
+|===
+|Name |Description
+| agent_web_api_key | API key for accessing Trento Web collection
+  endpoint.
+|===
+
 === Optional variables
 
 The following are our optional variables, grouped by role, for which
@@ -239,10 +271,10 @@ we provide default values:
 
 *Playbook variables*
 
-The following variables control whether this playbook takes care of
+The following variables control whether the playbooks takes care of
 provisioning third-party application dependencies by installing them
 and/or configuring them. In addition to that, if their value is `true`
-they enable a feature of the playbook that allows for automatic
+they enable a feature of the playbooks that allows for automatic
 population of some variables.
 
 [width="100%",cols="16%,57%,27%",options="header",]

@@ -21,3 +21,8 @@ all:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
+    agents:
+      hosts:
+        vitellone:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
