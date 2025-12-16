@@ -1,0 +1,88 @@
+---
+- name: Install needed dependencies
+  ansible.builtin.pip:
+    name: kubernetes
+  tags:
+    - k3s_servers_mod
+
+- name: Patch AppArmor policy with QEMU path in the container
+  tags:
+    - k3s_servers_mod
+  block:
+    - name: Check AppArmor is used
+      become: true
+      ansible.builtin.command: aa-status
+      register: __kubevirt_apparmor_result
+      failed_when: false
+      changed_when: false
+
+    - name: Patch AppArmor policy with QEMU path in the container
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/apparmor.d/usr.sbin.virtqemud
+        regex: '^\s+/usr/libexec/qemu-kvm'
+        line: '  /usr/libexec/qemu-kvm PUx,'
+        state: present
+        insertafter: '^\s+/usr/sbin/\* PUx,'
+        firstmatch: true
+      when: __kubevirt_apparmor_result.rc == 0
+      notify:
+        - Restart AppArmor
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
+
+- name: Install KubeVirt
+  run_once: true
+  block:
+    - name: Install KubeVirt Operator manifest
+      kubernetes.core.k8s:
+        state: present
+        src: "https://github.com/kubevirt/kubevirt/releases/download/{{ kubevirt_version }}/kubevirt-operator.yaml"
+
+    - name: Install KubeVirt CR configuration
+      kubernetes.core.k8s:
+        state: present
+        src: "https://github.com/kubevirt/kubevirt/releases/download/{{ kubevirt_version }}/kubevirt-cr.yaml"
+
+    - name: Wait to complete KubeVirt install
+      kubernetes.core.k8s:
+        namespace: kubevirt
+        kind: KubeVirt
+        name: kubevirt
+        wait: true
+        wait_condition:
+          type: Available
+        wait_timeout: 180
+
+- name: Install `virtctl` on the nodes
+  become: true
+  ansible.builtin.get_url:
+    url: "https://github.com/kubevirt/kubevirt/releases/download/{{ kubevirt_version }}/virtctl-{{ kubevirt_version }}-linux-\
+          {{ ansible_architecture | replace('x86_64', 'amd64') }}"
+    dest: /usr/local/bin/virtctl
+    mode: "+x"
+  tags:
+    - k3s_servers_mod
+
+- name: Install CDI
+  run_once: true
+  block:
+    - name: Install CDI Operator manifest
+      kubernetes.core.k8s:
+        state: present
+        src: https://github.com/kubevirt/containerized-data-importer/releases/download/{{ kubevirt_cdi_version }}/cdi-operator.yaml
+
+    - name: Install CDI CR configuration
+      kubernetes.core.k8s:
+        state: present
+        src: https://github.com/kubevirt/containerized-data-importer/releases/download/{{ kubevirt_cdi_version }}/cdi-cr.yaml
+
+    - name: Wait to complete CDI install
+      kubernetes.core.k8s:
+        api_version: "cdi.kubevirt.io/v1beta1"
+        kind: CDI
+        name: cdi
+        wait: true
+        wait_condition:
+          type: Available

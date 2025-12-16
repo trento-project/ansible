@@ -1,5 +1,6 @@
 ---
 exclude_paths:
   - .github/
+  - devbox/
 skip_list:
   - yaml[line-length]
