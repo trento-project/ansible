@@ -228,6 +228,15 @@ machine.
 $ virtctl ssh sles@vm/devbox -i ~/.ssh/id_devbox_rsa
 ----
 
+It's advisable to disable strict host key verification by adding the
+following to `~/.ssh/config`:
+
+[source, config]
+----
+Host vm.devbox.default
+        StrictHostKeyChecking no
+----
+
 [NOTE]
 ====
 You could also use your native SSH client to access the VM but then

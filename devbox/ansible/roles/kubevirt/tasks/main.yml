@@ -1,16 +1,7 @@
 ---
 - name: Install needed dependencies
-  become: true
-  ansible.builtin.package:
-    state: present
-    name:
-      - python3-kubernetes
-  register: __kubevirt_deps_install_result
-  failed_when:
-    - __kubevirt_deps_install_result.rc != 0
-    # On openSUSE if some repos failed to refresh, such as when you're
-    # not in the VPN.
-    - __kubevirt_deps_install_result.rc != 106
+  ansible.builtin.pip:
+    name: kubernetes
   tags:
     - k3s_servers_mod
 
@@ -22,6 +13,7 @@
       become: true
       ansible.builtin.command: aa-status
       register: __kubevirt_apparmor_result
+      failed_when: false
       changed_when: false
 
     - name: Patch AppArmor policy with QEMU path in the container

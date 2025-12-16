@@ -10,6 +10,7 @@
   delegate_to: localhost
   tags:
     - control_node_mod
+    - test_playbook
 
 # KubeVirt only supports distributing publickeys in secret. Public key
 # is not a real secret, don't use `no_log` in this specific case.
@@ -67,7 +68,7 @@
       name: opensuse_leap
     instancetype:
       name: u1.medium
-    run_strategy: Once
+    run_strategy: RerunOnFailure
     spec:
       domain:
         devices:
@@ -81,7 +82,7 @@
           interfaces:
             - name: default
               masquerade: {}
-              # Might be needed in the future?
+              # By default all ports are forwarded.
               # ports:
               # - port: 22
       # KubeVirt doesn't support startupProbe.
