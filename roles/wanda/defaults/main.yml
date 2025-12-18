@@ -1,0 +1,4 @@
+---
+wanda_oas_server_url: "https://{{ trento_server_name ~ trento_wanda_proxy_location }}"
+wanda_amqp_protocol: "{{ amqp_protocol | default('amqp') }}" # `amqp_protocol` is for backwards-compatibility
+wanda_secret_key_base: "{{ secret_key_base | default('') }}" # `secret_key_base` is for backwards-compatibility

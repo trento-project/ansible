@@ -2,12 +2,12 @@
 ---
 - name: Remove rabbitmq trento user
   community.rabbitmq.rabbitmq_user:
-    user: "{{ rabbitmq_username }}"
+    user: "{{ trento_rabbitmq_username }}"
     node: "{{ rabbitmq_node_name }}"
     state: absent
 
 - name: Remove rabbitmq trento vhost
   community.rabbitmq.rabbitmq_vhost:
-    name: "{{ rabbitmq_vhost }}"
+    name: "{{ trento_rabbitmq_vhost }}"
     node: "{{ rabbitmq_node_name }}"
     state: absent

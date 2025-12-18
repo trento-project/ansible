@@ -1,0 +1,6 @@
+# code: language=ansible
+---
+- name: Restart trento-web
+  ansible.builtin.service:
+    name: trento-web
+    state: restarted

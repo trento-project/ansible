@@ -1,0 +1,128 @@
+# code: language=ansible
+---
+- name: Include Docker installation variables
+  ansible.builtin.include_vars: "../vars/docker.yml"
+
+- name: Install docker
+  community.general.zypper:
+    name: docker
+    state: present
+    update_cache: true
+
+- name: Start docker service
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Identify Python package manger prefix
+  block:
+    - name: Get current Python's package manger prefix
+      # Linter tries to be smart, but it's not -- there is no Ansible
+      # module to do RPM queries. Thus, silence this lint error.
+      # noqa: command-instead-of-module
+      ansible.builtin.shell: |
+        set -o pipefail
+        rpm -qf {{ ansible_python.executable }} | grep -E -o 'python3[[:digit:]]{0,2}'
+      register: __web_python_prefix_result
+      changed_when: false
+
+    - name: Save current Python's package manger prefix
+      ansible.builtin.set_fact:
+        __web_current_python_package_prefix: "{{ __web_python_prefix_result.stdout }}"
+
+- name: Install docker Python management deps
+  community.general.zypper:
+    name:
+      - "{{ __web_current_python_package_prefix }}-docker"
+    state: present
+
+- name: Force pull Trento Web images
+  when: trento_force_pull_images | bool
+  community.docker.docker_image:
+    name: "{{ web_container_image }}"
+    force_source: true
+    source: pull
+
+- name: Create Trento docker network
+  community.docker.docker_network:
+    name: "{{ trento_docker_network_name }}"
+
+- name: Web container
+  community.docker.docker_container:
+    name: "{{ trento_web_container_name }}"
+    state: healthy
+    recreate: "{{ web_force_recreate_web_container | bool }}"
+    restart_policy: unless-stopped
+    image: "{{ web_container_image }}"
+    pull: true
+    networks:
+      - name: "{{ trento_docker_network_name }}"
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        '/app/bin/trento eval "Trento.Release.init()" && /app/bin/trento start',
+      ]
+    etc_hosts:
+      host.docker.internal: "host-gateway"
+    ports:
+      - "{{ trento_web_listen_port }}:4000"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:4000/api/healthz"]
+      interval: 5s
+    env:
+      AMQP_URL: "{{ web_amqp_protocol }}://{{ trento_rabbitmq_username }}:{{ trento_rabbitmq_password }}@{{ trento_rabbitmq_host }}/{{ trento_rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
+      DATABASE_URL: "ecto://{{ trento_web_postgres_username }}:{{ trento_web_postgres_password }}@{{ trento_postgres_host }}/{{ trento_web_postgres_db }}"
+      EVENTSTORE_URL: "ecto://{{ trento_web_postgres_username }}:{{ trento_web_postgres_password }}@{{ trento_postgres_host }}/{{ trento_web_postgres_event_store }}"
+      ENABLE_ALERTING: "{{ omit if web_enable_alerting is none else (web_enable_alerting | string | lower) }}"
+      SMTP_SERVER: "{{ omit if web_smtp_server is none else web_smtp_server }}"
+      SMTP_PORT: "{{ omit if web_smtp_port is none else (web_smtp_port | string) }}"
+      SMTP_USER: "{{ omit if web_smtp_user is none else web_smtp_user }}"
+      SMTP_PASSWORD: "{{ omit if web_smtp_password is none else web_smtp_password }}"
+      ALERT_SENDER: "{{ omit if web_alert_sender is none else web_alert_sender }}"
+      ALERT_RECIPIENT: "{{ omit if web_alert_recipient is none else web_alert_recipient }}"
+      PROMETHEUS_URL: "{{ web_prometheus_url }}"
+      SECRET_KEY_BASE: "{{ web_secret_key_base }}"
+      ACCESS_TOKEN_ENC_SECRET: "{{ web_access_token_secret }}"
+      REFRESH_TOKEN_ENC_SECRET: "{{ web_refresh_token_secret }}"
+      ADMIN_USER: "{{ trento_web_admin_username }}"
+      ADMIN_PASSWORD: "{{ trento_web_admin_password }}"
+      ENABLE_API_KEY: "{{ web_enable_api_key | string | lower }}"
+      CHARTS_ENABLED: "{{ web_enable_charts | string | lower }}"
+      TRENTO_WEB_ORIGIN: "{{ trento_server_name }}"
+      OAS_SERVER_URL: "{{ omit if not (provision_proxy | bool) else web_oas_server_url }}"
+      CHECKS_SERVICE_BASE_URL: "{{ (provision_proxy | bool) | ternary(trento_wanda_proxy_location, 'http://127.0.0.1:' ~ trento_wanda_listen_port) }}"
+      ENABLE_OIDC: "{{ web_enable_oidc | string | lower }}"
+      OIDC_CLIENT_ID: "{{ web_oidc_client_id }}"
+      OIDC_CLIENT_SECRET: "{{ web_oidc_client_secret }}"
+      OIDC_BASE_URL: "{{ web_oidc_server_base_url }}"
+      ENABLE_OAUTH2: "{{ web_enable_oauth2 | string | lower }}"
+      OAUTH2_CLIENT_ID: "{{ web_oauth2_client_id }}"
+      OAUTH2_CLIENT_SECRET: "{{ web_oauth2_client_secret }}"
+      OAUTH2_BASE_URL: "{{ web_oauth2_server_base_url }}"
+      OAUTH2_AUTHORIZE_URL: "{{ web_oauth2_authorize_url }}"
+      OAUTH2_TOKEN_URL: "{{ web_oauth2_token_url }}"
+      OAUTH2_USER_URL: "{{ web_oauth2_user_url }}"
+      OAUTH2_SCOPES: "{{ web_oauth2_scopes }}"
+      ENABLE_SAML: "{{ web_enable_saml | string | lower }}"
+      SAML_IDP_ID: "{{ web_saml_idp_id }}"
+      SAML_IDP_NAMEID_FORMAT: "{{ web_saml_idp_nameid_format }}"
+      SAML_SP_DIR: "{{ web_saml_sp_dir }}"
+      SAML_SP_ID: "{{ web_saml_sp_id }}"
+      SAML_SP_ENTITY_ID: "{{ web_saml_sp_entity_id }}"
+      SAML_SP_CONTACT_NAME: "{{ web_saml_sp_contact_name }}"
+      SAML_SP_CONTACT_EMAIL: "{{ web_saml_sp_contact_email }}"
+      SAML_SP_ORG_NAME: "{{ web_saml_sp_org_name }}"
+      SAML_SP_ORG_DISPLAYNAME: "{{ web_saml_sp_org_displayname }}"
+      SAML_SP_ORG_URL: "{{ web_saml_sp_org_url }}"
+      SAML_USERNAME_ATTR_NAME: "{{ web_saml_username_attr_name }}"
+      SAML_EMAIL_ATTR_NAME: "{{ web_saml_email_attr_name }}"
+      SAML_FIRSTNAME_ATTR_NAME: "{{ web_saml_firstname_attr_name }}"
+      SAML_LASTNAME_ATTR_NAME: "{{ web_saml_lastname_attr_name }}"
+      SAML_METADATA_URL: "{{ web_saml_metadata_url }}"
+      SAML_METADATA_CONTENT: "{{ web_saml_metadata_content }}"
+      SAML_SIGN_REQUESTS: "{{ web_saml_sign_requests | string | lower }}"
+      SAML_SIGN_METADATA: "{{ web_saml_sign_metadata | string | lower }}"
+      SAML_SIGNED_ASSERTION: "{{ web_saml_signed_assertion | string | lower }}"
+      SAML_SIGNED_ENVELOPES: "{{ web_saml_signed_envelopes | string | lower }}"

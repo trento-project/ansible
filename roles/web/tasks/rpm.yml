@@ -1,0 +1,33 @@
+# code: language=ansible
+---
+- name: Install Trento Web RPM packages
+  community.general.zypper:
+    name:
+      - trento-web
+    state: latest
+    update_cache: true
+  notify:
+    - Restart trento-web
+
+- name: Configure trento-web config
+  ansible.builtin.template:
+    src: trento-web.j2
+    dest: /etc/trento/trento-web
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart trento-web
+
+- name: Start trento-web service
+  ansible.builtin.service:
+    name: trento-web
+    state: started
+    enabled: true
+
+- name: Wait for Web to be available
+  ansible.builtin.uri:
+    url: "http://localhost:{{ trento_web_listen_port }}/api/healthz"
+    status_code: [200]
+  retries: 3
+  delay: 5

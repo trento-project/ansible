@@ -35,10 +35,10 @@ all:
     trento_rabbitmq_password: "trento"
 
     # Alerting configuration, optional
-    app_enable_alerting: true
-    app_alert_sender: "alert-sender-mail"
-    app_alert_recipient: "alert-receiver-mail"
-    app_smtp_server: "smtp-server-adress"
-    app_smtp_port: "smpt-port"
-    app_smtp_user: "smtp-user"
-    app_smtp_password: "smtp-password"
+    web_enable_alerting: true
+    web_alert_sender: "alert-sender-mail"
+    web_alert_recipient: "alert-receiver-mail"
+    web_smtp_server: "smtp-server-address"
+    web_smtp_port: "smpt-port"
+    web_smtp_user: "smtp-user"
+    web_smtp_password: "smtp-password"

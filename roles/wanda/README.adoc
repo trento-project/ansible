@@ -1,0 +1,41 @@
+= Trento Wanda Role
+
+Installs and configures Trento Wanda component.
+
+== Requirements
+
+On the target:
+* `zypper` package manager.
+
+== Role Variables
+
+All the variables documentation is kept in the main README of the
+collection.
+
+== Dependencies
+
+This role is dependent on `suse.trento.trento` meta-role.
+
+== Example Playbook
+
+Some of the default values in this role come from the `trento`
+meta-role. You can configure them in your inventory instead of
+overriding the variables in this role.
+
+[source, yaml]
+----
+- hosts: servers
+  roles:
+    - role: suse.trento.wanda
+      trento_server_name: "example.com"
+      trento_wanda_postgres_password: "examplepass"
+----
+
+== License
+
+Apache License, Version 2.0
+
+== Author Information
+
+Developed and maintained by trento-developers@suse.com
+Code repository is hosted on https://github.com/trento-project/ansible

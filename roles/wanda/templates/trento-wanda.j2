@@ -1,0 +1,9 @@
+CORS_ORIGIN=http://localhost
+SECRET_KEY_BASE={{ wanda_secret_key_base }}
+AMQP_URL={{ wanda_amqp_protocol }}://{{ trento_rabbitmq_username }}:{{ trento_rabbitmq_password }}@{{ trento_rabbitmq_effective_host }}/{{ trento_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
+DATABASE_URL=ecto://{{ trento_wanda_postgres_username }}:{{ trento_wanda_postgres_password }}@{{ trento_postgres_effective_host }}/{{ trento_wanda_postgres_db }}
+PORT={{ trento_wanda_listen_port }}
+{% if provision_proxy | bool %}
+OAS_SERVER_URL={{ wanda_oas_server_url }}
+{% endif %}
+AUTH_SERVER_URL=http://127.0.0.1:{{ trento_web_listen_port }}

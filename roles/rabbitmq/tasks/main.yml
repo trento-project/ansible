@@ -1,20 +1,20 @@
 # code: language=ansible
 ---
-- name: Install rabbitmq
+- name: Install RabbitMQ
   community.general.zypper:
     name: rabbitmq-server
     state: present
     update_cache: true
 
-- name: Start rabbitmq service
+- name: Start RabbitMQ service
   ansible.builtin.service:
     name: rabbitmq-server
     state: started
     enabled: true
 
-- name: Create rabbitmq trento vhost
+- name: Create RabbitMQ Trento vhost
   community.rabbitmq.rabbitmq_vhost:
-    name: "{{ rabbitmq_vhost }}"
+    name: "{{ trento_rabbitmq_vhost }}"
     node: "{{ rabbitmq_node_name }}"
     state: present
 

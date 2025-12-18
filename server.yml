@@ -41,12 +41,18 @@
 - name: Configure Trento components
   hosts: trento_server
   roles:
-    - role: app
-      become: true
+    # Explicitly call the trento role with the passed parameters to
+    # please the linter.
+    - role: trento
       vars:
-        app_web_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
-        app_wanda_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
-        app_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else '' }}"
+        trento_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
+        trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else '' }}"
+
+    - role: web
+      become: true
+
+    - role: wanda
+      become: true
 
     - role: rproxy
       become: true

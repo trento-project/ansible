@@ -1,0 +1,6 @@
+---
+- name: Disable and stop trento-wanda service
+  ansible.builtin.service:
+    name: trento-wanda
+    state: stopped
+    enabled: false

@@ -1,0 +1,33 @@
+---
+- name: Include Docker installation variables
+  ansible.builtin.include_vars: "../vars/docker.yml"
+
+- name: Stop wanda container
+  community.docker.docker_container:
+    name: "{{ wanda_container_name }}"
+    state: absent
+    keep_volumes: false
+
+- name: Stop checks container
+  community.docker.docker_container:
+    name: "{{ wanda_checks_container_name }}"
+    state: absent
+    keep_volumes: false
+
+- name: Remove wanda container image
+  when: remove_wanda_container_image | bool
+  community.docker.docker_image:
+    state: absent
+    name: "{{ wanda_container_image }}"
+
+- name: Remove checks container image
+  when: remove_checks_container_image | bool
+  community.docker.docker_image:
+    state: absent
+    name: "{{ wanda_checks_container_image }}"
+
+- name: Remove trento docker network
+  community.docker.docker_network:
+    name: "{{ trento_docker_network_name }}"
+    state: absent
+    force: true

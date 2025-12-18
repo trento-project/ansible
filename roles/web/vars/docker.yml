@@ -1,0 +1,9 @@
+---
+web_container_image: ghcr.io/trento-project/trento-web:rolling
+web_force_recreate_web_container: "{{ force_recreate_web_container | default(false) }}"
+web_remove_web_container_image: "{{ remove_web_container_image | default(true) }}"
+
+# Overrides
+web_prometheus_url: "http://host.docker.internal:9090"
+trento_postgres_host: "host.docker.internal"  # noqa: var-naming[no-role-prefix]
+trento_rabbitmq_host: host.docker.internal    # noqa: var-naming[no-role-prefix]

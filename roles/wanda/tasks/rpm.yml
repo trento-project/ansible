@@ -1,0 +1,25 @@
+---
+- name: Install Trento Wanda RPM packages
+  community.general.zypper:
+    name:
+      - trento-wanda
+    state: latest
+    update_cache: true
+  notify:
+    - Restart trento-wanda
+
+- name: Configure trento-wanda config
+  ansible.builtin.template:
+    src: trento-wanda.j2
+    dest: /etc/trento/trento-wanda
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart trento-wanda
+
+- name: Start trento-wanda service
+  ansible.builtin.service:
+    name: trento-wanda
+    state: started
+    enabled: true

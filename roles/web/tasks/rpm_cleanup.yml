@@ -1,0 +1,7 @@
+# code: language=ansible
+---
+- name: Disable and stop trento-web service
+  ansible.builtin.service:
+    name: trento-web
+    state: stopped
+    enabled: false
