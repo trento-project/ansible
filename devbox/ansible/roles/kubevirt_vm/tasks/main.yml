@@ -45,7 +45,7 @@
         userdata: "{{ lookup('ansible.builtin.template', 'cloudconfig.yml.j2') | b64encode }}"
 
 - name: Setup a ConfigMap with custom CA cert used when downloading images with CDI
-  when: kubevirt_vm_cdi_cacert
+  when: kubevirt_vm_cdi_cacert is truthy
   run_once: true
   kubernetes.core.k8s:
     state: present
@@ -126,6 +126,6 @@
           source:
             http:
               url: "{{ kubevirt_vm_image_url }}"
-              certConfigMap: "{{ 'devbox-cdi-cacert' if kubevirt_vm_cdi_cacert else omit }}"
+              certConfigMap: "{{ 'devbox-cdi-cacert' if (kubevirt_vm_cdi_cacert is truthy) else omit }}"
     wait: true
     wait_timeout: 240
