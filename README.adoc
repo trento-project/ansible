@@ -6,7 +6,7 @@ third-party dependencies.
 
 == Support matrix
 
-The playbooks could only be run on target nodes running SLES4SAP.
+The playbooks can only be run on target nodes running SLES4SAP.
 
 Refer to the following table for supported control and target node
 combinations. The specified value in the target cell is the _Python_
