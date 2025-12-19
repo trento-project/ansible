@@ -1,5 +1,5 @@
 = Local Development Environment with Vagrant
-o
+
 == Prerequisites
 
 To run the playbook on a devbox several groups of requirements need to

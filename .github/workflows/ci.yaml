@@ -149,6 +149,10 @@ jobs:
                   hosts:
                     server:
                       ansible_host: ${{ env.TEST_HOST_IP }}
+                agents:
+                  hosts:
+                    agent:
+                      ansible_host: ${{ env.TEST_HOST_IP }}
           options: |
             --extra-vars "web_postgres_password='trento' \
             wanda_postgres_password='wanda' \

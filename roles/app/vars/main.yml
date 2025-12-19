@@ -1,5 +1,11 @@
 ---
-# Auto-discovery -- if `*_host_group` variable is not empty string,
+#
+# Protected values -- The following values are not intended to be
+# specified by end-users:
+app_enable_api_key: "{{ enable_api_key | default(true) }}"  # `enable_api_key` is for backwards_compatibility
+
+#
+# -- Auto-discovery -- if `*_host_group` variable is not empty string,
 # then we'll ignore the corresponding `*_host` variable and search the
 # inventory for the specified group and take the first host from that
 # group. We also handle the case where hostname aliases are used,

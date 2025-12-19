@@ -1,16 +1,16 @@
 = Trento Ansible
 ifndef::site-gen-antora[:relfileprefix: docs/]
 
-This playbook aims to install Trento components and the belonging third
-parties.
+Collection of playbooks that aim in installing Trento and its
+third-party dependencies.
 
 == Support matrix
 
-The playbook could only be run on target nodes running SLES4SAP.
+The playbooks can only be run on target nodes running SLES4SAP.
 
 Refer to the following table for supported control and target node
 combinations. The specified value in the target cell is the _Python_
-interpreter version that supports the execution of the playbook:
+interpreter version that supports the execution of the playbooks:
 
 [cols=6*^]
 |===
@@ -29,10 +29,15 @@ the interpreter in `vars.json`: to `"ansible_python_interpreter":
 
 == Components
 
+Trento components:
+
 * https://github.com/trento-project/web[web]
 * https://github.com/trento-project/wanda[wanda]
 * https://github.com/trento-project/checks[checks]
 * https://github.com/trento-project/agent[agent]
+
+Third-party dependencies:
+
 * postgresql
 * rabbitmq
 * prometheus
@@ -41,24 +46,40 @@ the interpreter in `vars.json`: to `"ansible_python_interpreter":
 The third parties are installed using `zypper` packages and configured
 with dedicated roles.
 
-The `agent` is installed from the configured obs repository using
-`zypper`.
-
 The nginx configuration acts as a reverse proxy for all the components.
 
-=== SUSE LINUX ENTERPRISE USERS
+
+== Playbooks overview
+
+=== Sever
+
+`server.yml` playbook installs Trento server components (Web and
+Wanda) along with the supporting third-party application dependencies.
+
+==== SUSE LINUX ENTERPRISE USERS
 
 *This playbook requires that the host where you are going to install
-trento-server has an activated license* for one of the supported OSs,
-with the following modules (Change `x` to match your current version):
+Trento server components has an activated license* for one of the
+supported OSs, with the following modules (Change `x` to match your
+current version):
 
 * Basesystem Module 15 x86_64 -
 `SUSEConnect -p sle-module-basesystem/15.x/x86_64`
 * SUSE Package Hub 15 x86_64 - `SUSEConnect -p PackageHub/15.x/x86_64`
-* (Optional: for `docker` installation method) Containers Module 15
-x86_64 - `SUSEConnect -p sle-module-containers/15.x/x86_64`
 * (15.6 only) Legacy Module 15 x86_64 -
 `SUSEConnect -p sle-module-legacy/15.6/x86_64`
+
+=== Agent
+
+`agent.yml` playbook installs Trento agent.
+
+=== Site
+
+`site.yml` is playbook that makes full Trento installation. It
+installs both the server components and agents. Additionally, the API
+key for the agents is automatically retrieved from Trento server and
+passed on to the deployed agents. Thus, the value of
+`agent_web_api_key` variables is ignored when using this playbook.
 
 == Usage
 
@@ -71,7 +92,7 @@ x86_64 - `SUSEConnect -p sle-module-containers/15.x/x86_64`
 Get to the `ansible` directory: `cd ansible`
 
 Make sure all hosts with active roles allow access from the machine that
-is executing the playbook:
+is executing the playbooks:
 
 ....
 ssh-copy-id root@192.168.1.1
@@ -128,6 +149,11 @@ all:
         vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
+   agents:
+     hosts:
+       vitellone:
+          ansible_host: "your-host"
+          ansible_user: "your-user"
 ----
 
 === 3. Setup playbook variables
@@ -153,15 +179,9 @@ the infra network configuration or when using multi-node deployments.
 }
 ----
 
-Additionally, when deploying trento agents using the playbook, api-key
-auto retrieval from the server is not supported yet, so either use
-`"app_enable_api_key": false` and skip `agent_web_api_key` altogether or
-disable agent deployment for the first run, retrieve the api-key from
-the UI and set the `agent_web_api_key` accordingly.
+=== 4. Run the playbooks
 
-=== 4. Run the playbook
-
-Prior to running the playbook, tell ansible to fetch the required
+Prior to running the playbooks, tell ansible to fetch the required
 modules:
 
 [source,bash]
@@ -169,11 +189,11 @@ modules:
 ansible-galaxy collection install -r requirements.yml
 ----
 
-Run the playbook:
+Run a playbook:
 
 [source,bash]
 ----
-ansible-playbook -i path/to/inventory.yml --extra-vars "@path/to/vars.json" playbook.yml
+ansible-playbook -i path/to/inventory.yml --extra-vars "@path/to/vars.json" <playbook-name>.yml
 ----
 
 NOTE: The `@` character in front of the `vars.json` path is
@@ -209,7 +229,7 @@ docker run \
 
 == Playbook variables
 
-=== Required Variables to install Trento Server
+=== Required Variables to install Trento server
 
 [width="100%",cols="24%,76%",options="header",]
 |===
@@ -235,13 +255,13 @@ docker run \
   generate the certificate
 |===
 
-=== Required Variables to install trento agents
+=== Required Variables to install Trento agent
 
-[width="100%",cols="21%,79%",options="header",]
+[width="100%",cols="24%,76%",options="header",]
 |===
 |Name |Description
-|agent_web_api_key |API key to connect to the trento_server
-
+| agent_web_api_key | API key for accessing Trento Web collection
+  endpoint.
 |===
 
 === Optional variables
@@ -251,10 +271,10 @@ we provide default values:
 
 *Playbook variables*
 
-The following variables control whether this playbook takes care of
+The following variables control whether the playbooks takes care of
 provisioning third-party application dependencies by installing them
 and/or configuring them. In addition to that, if their value is `true`
-they enable a feature of the playbook that allows for automatic
+they enable a feature of the playbooks that allows for automatic
 population of some variables.
 
 [width="100%",cols="16%,57%,27%",options="header",]
@@ -412,9 +432,6 @@ per-role basis if appropriate.
 | app_web_admin_password | Password of the admin user for Web
   application | <value of `trento_web_admin_password`>
 
-| app_enable_api_key | Enable API key usage. Mostly for testing
-  purposes | true
-
 | app_enable_charts | Enable charts display based on Prometheus
   metrics | true
 
@@ -551,10 +568,6 @@ per-role basis if appropriate.
 |Name | Description | Default
 
 | agent_trento_server_url | Trento server URL | "http://<`trento_server_name`>"
-
-| agent_trento_repository | OBS repository from where Trento agent is
-  installed |
-  "https://download.opensuse.org/repositories/devel:sap:trento:factory/SLE_15_SP3/"
 
 | agent_amqp_protocol | URL scheme of the AMQP protocol -- either
   `amqp` or `amqps`. Used to connect to RabbitMQ | "amqp"
