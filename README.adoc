@@ -302,15 +302,17 @@ population of some variables.
 | Name | Description | Default
 
 | provision_postgres | Whether to provision Postgres. If set to
-  `true`, the variables `app_web_postgres_host` and
-  `app_wanda_postgres_host` are ignored and host discovery uses the
-  hosts specified in the inventory. Set to `false` if you provide an
-  external Postgres to the services.  | true
+  `true`, the variable `trento_postgres_host` is ignored and host
+  discovery uses the hosts specified in the inventory. This would
+  affect the default values of the `*_postgres_host` variables in some
+  roles. Set to `false` if you provide an external Postgres to the
+  services.  | true
 
 | provision_rabbitmq | Whether to provision RabbitMQ. If set to
-  `true`, the variables `app_rabbitmq_host` and `agent_rabbitmq_host`
-  are ignored and host discovery uses the hosts specified in the
-  inventory. Set to `false` if you provide an external RabbitMQ to the
+  `true`, the variable `trento_rabbitmq_host` is ignored and host
+  discovery uses the hosts specified in the inventory. This would
+  affect the default values of the `*_rabbitmq_host` variables in some
+  roles. Set to `false` if you provide an external RabbitMQ to the
   services. | true
 
 | provision_proxy | Whether to provision a Reverse Proxy to expose the
@@ -346,6 +348,22 @@ per-role basis if appropriate.
 | trento_web_admin_username | Username of the admin user in Web
  application | "admin"
 
+| trento_postgres_host | The host where Postgres database is
+  located. Used as input for calculating
+  `trento_postgres_effective_host` variable that is the default for
+  `*_postgres_host` variables in some dependent roles.  This variable
+  is ignored when `trento_postgres_host_group` is non-empty string. |
+  localhost
+
+| trento_postgres_host_group | Name of the host group where Postgres
+  database is located. If this value is not empty string, activates
+  auto-discovery of the Postgres host by searching it in the specified
+  group. Used as input for calculating
+  `trento_postgres_effective_host` variable that is the default for
+  `*_postgres_host` variables in some dependent roles. When
+  auto-discovery is active, the value of `trento_postgres_host` is
+  ignored. | ""
+
 | trento_web_postgres_username | Name of the Postgres user used by Web
   application | "web"
 
@@ -361,6 +379,22 @@ per-role basis if appropriate.
 | trento_wanda_postgres_db | Name of the Postgres database of Wanda
   application | "wandadb"
 
+| trento_rabbitmq_host | The host where RabbitMQ is located. It could
+  include the service port. Used as input for calculating
+  `trento_rabbitmq_effective_host` variable that is the default for
+  `*_rabbitmq_host` variables in some dependent roles. This variable
+  is ignored when `trento_rabbitmq_host_group` is non-empty string. |
+  localhost
+
+| trento_rabbitmq_host_group | Name of the host group where RabbitMQ
+  is located. It could include the service port. If this value is not
+  empty string, activates auto-discovery of the RabbitMQ host by
+  searching it in the specified group. Used as input for calculating
+  `trento_rabbitmq_effective_host` variable that is the default for
+  `*_rabbitmq_host` variables in some dependent roles. When
+  auto-discovery is active, the value of `trento_rabbitmq_host` is
+  ignored. | ""
+
 | trento_rabbitmq_username | Username of RabbitMQ user, this will be
   created by the RabbitMQ role | "trento"
 
@@ -368,235 +402,253 @@ per-role basis if appropriate.
   deployment | "trento"
 |===
 
-*App role*
+*Web role*
 
 [width="100%",cols="16%,57%,27%",options="header",]
 |===
 | Name | Description | Default
 
-| app_server_name | Domain name of the Trento web application | <value
+| web_server_name | Domain name of the Trento web application | <value
   of `trento_server_name`>
 
-| app_web_listen_port | Port where the Web service is exposed | <value
+| web_listen_port | Port where the Web service is exposed | <value
   of `trento_web_listen_port`>
 
-| app_web_postgres_host | The host where Postgres database for Web is
-  located. This value is ignored when `app_web_postgres_host_group` is
-  non-empty string. | localhost
+| web_admin_username | Username of the admin user for Web
+  application | <value of `trento_web_admin_username>`>
 
-| app_web_postgres_host_group | Name of the host group where Postgres
-  database for Web is located. If this value is not empty string,
-  activates auto-discovery of the Postgres host by searching it in the
-  specified group. When auto-discovery is active, the value of
-  `app_web_postgres_host` is ignored. | ""
+| web_admin_password | Password of the admin user for Web
+  application | <value of `trento_web_admin_password`>
 
-| app_web_postgres_username | Name of the postgres user used by Web
+| web_oas_server_url | Web OpenAPI server url |
+  https://<`trento_server_name`>
+
+| web_postgres_host | The host where Postgres database for Web is
+  located. | Default value depends on the value of
+  `trento_postgres_host` and `trento_postgres_host_group` variables,
+  please refer to their documentation.
+
+| web_postgres_username | Name of the postgres user used by Web
   application | <value of `trento_web_postgres_username`>
 
-| app_web_postgres_password | Password of the Postgres user used in
+| web_postgres_password | Password of the Postgres user used in
   Web application | <value of `trento_web_postgres_password`>
 
-| app_web_postgres_db | Name of the Postgres database of the Web
+| web_postgres_db | Name of the Postgres database of the Web
   application | <value of `trento_web_postgres_db`>
 
-| app_web_postgres_event_store | Name of the Postgres event store
+| web_postgres_event_store | Name of the Postgres event store
   database of Web application | <value of
   `trento_web_postgres_event_store`>
 
-| app_web_oas_server_url | Web OpenAPI server url |
-  https://<`app_server_name`>
-
-| app_wanda_listen_port | Port where the Wanda service is exposed |
-  <value of `trento_wanda_listen_port`>
-
-| app_wanda_postgres_host | The host where Postgres database for Wanda
-  is located. This value is ignored when
-  `app_wanda_postgres_host_group` is non-empty string. | localhost
-
-| app_wanda_postgres_host_group | Name of the host group where
-  Postgres database for Wanda is located. If this value is not empty
-  string, activates auto-discovery of the Postgres host by searching
-  it in the specified group. When auto-discovery is active, the value
-  of `app_wanda_postgres_host` is ignored. | ""
-
-| app_wanda_postgres_username | Name of the Postgres user used by
-  Wanda application | <value of `trento_wanda_postgres_username`>
-
-| app_wanda_postgres_password | Password of the Postgres user used in
-  Wanda application | <value of `trento_wanda_postgres_password`>
-
-| app_wanda_postgres_db | Name of the Postgres database of Wanda
-  application | <value of `trento_wanda_postgres_db`>
-
-| app_wanda_oas_server_url | Wanda OpenAPI server URL |
-  https://<`app_server_name`><`app_wanda_location`>
-
-| app_wanda_proxy_location | URL Path to Wanda behind a reverse
-  proxy | <value of `trento_wanda_proxy_location`>
-
-| app_rabbitmq_host | The host where RabbitMQ is located. It could
-  include the service port. This value is ignored when
-  `app_rabbitmq_host_group` is non-empty string. | localhost
-
-| app_rabbitmq_host_group | Name of the host group where RabbitMQ is
-  located. It could include the service port. If this value is not
-  empty string, activates auto-discovery of the RabbitMQ host by
-  searching it in the specified group. When auto-discovery is active,
-  the value of `app_rabbitmq_host` is ignored. | ""
-
-| app_rabbitmq_username | Username used to connect to RabbitMQ |
-  <value of `trento_rabbitmq_username`>
-
-| app_rabbitmq_password | Password of the RabbitMQ user | <value of
-  `trento_rabbitmq_password`>
-
-| app_rabbitmq_vhost | The RabbitMQ virtual host | <value of
-  `trento_rabbitmq_vhost`>
-
-| app_prometheus_url | Prometheus server URL | "http://localhost:9090"
-
-| app_secret_key_base | The secret for the Phoenix application |
-  <generated by the playbook>
-
-| app_access_token_secret | The secret used for access tokens JWT
-  signature | <generated by the playbook>
-
-| app_refresh_token_secret | The secret used for refresh tokens JWT
-  signature | <generated by the playbook>
-
-| app_web_admin_username | Username of the admin user for Web
-  application | <value of `trento_web_admin_username>`>
-
-| app_web_admin_password | Password of the admin user for Web
-  application | <value of `trento_web_admin_password`>
-
-| app_enable_charts | Enable charts display based on Prometheus
-  metrics | true
-
-| app_enable_alerting | Enable the alerting mechanism for Web application | null
-
-| app_smtp_server | IP address of the SMTP server | null
-
-| app_smtp_port | Port number of SMTP server | null
-
-| app_smtp_user |Username for SMTP authentication | null
-
-| app_smtp_password | Password for SMTP authentication | null
-
-| app_alert_sender | E-mail address used as the "from" address in
-  alerts | null
-
-| app_alert_recipient | E-mail address to receive alert
-  notifications | null
-
-| app_amqp_protocol | URL scheme of the AMQP protocol -- either `amqp`
+| web_amqp_protocol | URL scheme of the AMQP protocol -- either `amqp`
   or `amqps`. Used in Web and Wanda when connecting to RabbitMQ | amqp
 
-| app_enable_oidc | Enable OIDC integration, this disables the
+| web_rabbitmq_host | The host where RabbitMQ is located. It could
+  include the service port. | Default value depends on the value of
+  `trento_rabbitmq_host` and `trento_rabbitmq_host_group` variables,
+  please refer to their documentation.
+
+| web_rabbitmq_username | Username used to connect to RabbitMQ |
+  <value of `trento_rabbitmq_username`>
+
+| web_rabbitmq_password | Password of the RabbitMQ user | <value of
+  `trento_rabbitmq_password`>
+
+| web_rabbitmq_vhost | The RabbitMQ virtual host | <value of
+  `trento_rabbitmq_vhost`>
+
+| web_wanda_listen_port | Port where the Wanda service is exposed |
+  <value of `trento_wanda_listen_port`>
+
+| web_wanda_proxy_location | URL Path to Wanda behind a reverse
+  proxy | <value of `trento_wanda_proxy_location`>
+
+| web_prometheus_url | Prometheus server URL | "http://localhost:9090"
+
+| web_secret_key_base | The secret for the Phoenix application |
+  <generated by the playbook>
+
+| web_access_token_secret | The secret used for access tokens JWT
+  signature | <generated by the playbook>
+
+| web_refresh_token_secret | The secret used for refresh tokens JWT
+  signature | <generated by the playbook>
+
+| web_enable_charts | Enable charts display based on Prometheus
+  metrics | true
+
+| web_enable_alerting | Enable the alerting mechanism for Web application | null
+
+| web_smtp_server | IP address of the SMTP server | null
+
+| web_smtp_port | Port number of SMTP server | null
+
+| web_smtp_user |Username for SMTP authentication | null
+
+| web_smtp_password | Password for SMTP authentication | null
+
+| web_alert_sender | E-mail address used as the "from" address in
+  alerts | null
+
+| web_alert_recipient | E-mail address to receive alert
+  notifications | null
+
+| web_enable_oidc | Enable OIDC integration, this disables the
   username/password authentication method (self exclusive SSO
   type) | false
 
-| app_oidc_client_id | OIDC client id, required when `app_enable_oidc`
+| web_oidc_client_id | OIDC client id, required when `web_enable_oidc`
   is true | ""
 
-| app_oidc_client_secret | OIDC client secret, required when
-  `app_enable_oidc` is true | ""
+| web_oidc_client_secret | OIDC client secret, required when
+  `web_enable_oidc` is true | ""
 
-| app_oidc_server_base_url | OIDC identity provider base url, required
-  when `app_enable_oidc` is true | ""
+| web_oidc_server_base_url | OIDC identity provider base url, required
+  when `web_enable_oidc` is true | ""
 
-| app_enable_oauth2 | Enable OAUTH2 integration, this disables the
+| web_enable_oauth2 | Enable OAUTH2 integration, this disables the
   username/password authentication method (self exclusive SSO
   type) | false
 
-| app_oauth2_client_id | OAUTH2 client id, required when
-  `app_enable_oauth2` is true | ""
+| web_oauth2_client_id | OAUTH2 client id, required when
+  `web_enable_oauth2` is true | ""
 
-| app_oauth2_client_secret | OAUTH2 client secret, required when
-  `app_enable_oauth2` is true | ""
+| web_oauth2_client_secret | OAUTH2 client secret, required when
+  `web_enable_oauth2` is true | ""
 
-| app_oauth2_server_base_url | OAUTH2 identity provider base url,
-  required when `app_enable_oauth2` is true | ""
+| web_oauth2_server_base_url | OAUTH2 identity provider base url,
+  required when `web_enable_oauth2` is true | ""
 
-| app_oauth2_authorize_url | OAUTH2 authorize url, required when
-  `app_enable_oauth2` is true | ""
+| web_oauth2_authorize_url | OAUTH2 authorize url, required when
+  `web_enable_oauth2` is true | ""
 
-| app_oauth2_token_url | OAUTH2 token url, required when
-  `app_enable_oauth2` is true | ""
+| web_oauth2_token_url | OAUTH2 token url, required when
+  `web_enable_oauth2` is true | ""
 
-| app_oauth2_user_url | OAUTH2 user information url, required when
-  app_enable_oauth2` is true | ""
+| web_oauth2_user_url | OAUTH2 user information url, required when
+  web_enable_oauth2` is true | ""
 
-| app_oauth2_scopes | OAUTH2 scopes, required when `app_enable_oauth2`
+| web_oauth2_scopes | OAUTH2 scopes, required when `web_enable_oauth2`
   is true | "profile email"
 
-| app_enable_saml | Enable SAML integration, this disables the
+| web_enable_saml | Enable SAML integration, this disables the
   username/password authentication method (self exclusive SSO
   type) | false
 
-| app_saml_idp_id | SAML IDP id, required when `app_enable_saml` is
+| web_saml_idp_id | SAML IDP id, required when `web_enable_saml` is
   true | ""
 
-| app_saml_idp_nameid_format | SAML IDP name id format, used to
+| web_saml_idp_nameid_format | SAML IDP name id format, used to
   interpret the attribute name. Whole urn string must be
   used | urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
 
-| app_saml_sp_dir | SAML SP directory, where SP specific required
+| web_saml_sp_dir | SAML SP directory, where SP specific required
   files (such as certificates and metadata file) are placed |
   /etc/trento/trento-web/saml
 
-| app_saml_sp_id | SAML SP id, required when `app_enable_saml` is
+| web_saml_sp_id | SAML SP id, required when `web_enable_saml` is
   true | ""
 
-| app_saml_sp_entity_id | SAML SP entity id | ""
+| web_saml_sp_entity_id | SAML SP entity id | ""
 
-| app_saml_sp_contact_name | SAML SP contact name | "Trento SP Admin"
+| web_saml_sp_contact_name | SAML SP contact name | "Trento SP Admin"
 
-| app_saml_sp_contact_email | SAML SP contact email | "admin@trento.suse.com"
+| web_saml_sp_contact_email | SAML SP contact email | "admin@trento.suse.com"
 
-| app_saml_sp_org_name | SAML SP organization name | "Trento SP"
+| web_saml_sp_org_name | SAML SP organization name | "Trento SP"
 
-| app_saml_sp_org_displayname | SAML SP organization display name |
+| web_saml_sp_org_displayname | SAML SP organization display name |
   "SAML SP build with Trento"
 
-| app_saml_sp_org_url | SAML SP organization url |
+| web_saml_sp_org_url | SAML SP organization url |
   "https://www.trento-project.io/"
 
-| app_saml_username_attr_name | SAML user profile "username"
+| web_saml_username_attr_name | SAML user profile "username"
   attribute field name. This attribute must exist in the IDP
   user | "username"
 
-| app_saml_email_attr_name | SAML user profile "email" attribute
+| web_saml_email_attr_name | SAML user profile "email" attribute
   field name. This attribute must exist in the IDP user | "email"
 
-| app_saml_firstname_attr_name | SAML user profile "first name"
+| web_saml_firstname_attr_name | SAML user profile "first name"
   attribute field name. This attribute must exist in the IDP
   user | "firstName"
 
-| app_saml_lastname_attr_name | SAML user profile "last name"
+| web_saml_lastname_attr_name | SAML user profile "last name"
   attribute field name. This attribute must exist in the IDP user |
   "lastName"
 
-| app_saml_metadata_url | URL to retrieve the SAML metadata xml
+| web_saml_metadata_url | URL to retrieve the SAML metadata xml
   file. One of `saml_metadata_url` or `saml_metadata_content` is
   required | ""
 
-| app_saml_metadata_content | One line string containing the SAML
+| web_saml_metadata_content | One line string containing the SAML
   metadata xml file content (`saml_metadata_url` has precedence over
   this) | ""
 
-| app_saml_sign_requests | Sign SAML requests in the SP side | true
+| web_saml_sign_requests | Sign SAML requests in the SP side | true
 
-| app_saml_sign_metadata | Sign SAML metadata documents in the SP
+| web_saml_sign_metadata | Sign SAML metadata documents in the SP
   side | true
 
-| app_saml_signed_assertion | Require to receive SAML assertion signed
+| web_saml_signed_assertion | Require to receive SAML assertion signed
   from the IDP. Set to false if the IDP doesn’t sign the assertion |
   true
 
-| app_saml_signed_envelopes | Require to receive SAML envelopes signed
+| web_saml_signed_envelopes | Require to receive SAML envelopes signed
   from the IDP. Set to false if the IDP doesn’t sign the envelopes |
   true
+|===
+
+*Wanda role*
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| Name | Description | Default
+
+| wanda_listen_port | Port where the Wanda service is exposed |
+  <value of `trento_wanda_listen_port`>
+
+| wanda_proxy_location | URL Path to Wanda behind a reverse
+  proxy | <value of `trento_wanda_proxy_location`>
+
+| wanda_oas_server_url | Wanda OpenAPI server URL |
+  https://<`trento_server_name`><`trento_wanda_porxy_location`>
+
+| wanda_postgres_host | The host where Postgres database for Wanda is
+  located. | Default value depends on the value of
+  `trento_postgres_host` and `trento_postgres_host_group` variables,
+  please refer to their documentation.
+
+| wanda_postgres_username | Name of the Postgres user used by
+  Wanda application | <value of `trento_wanda_postgres_username`>
+
+| wanda_postgres_password | Password of the Postgres user used in
+  Wanda application | <value of `trento_wanda_postgres_password`>
+
+| wanda_postgres_db | Name of the Postgres database of Wanda
+  application | <value of `trento_wanda_postgres_db`>
+
+| wanda_amqp_protocol | URL scheme of the AMQP protocol -- either
+  `amqp` or `amqps`. Used when connecting to RabbitMQ | amqp
+
+| wanda_rabbitmq_host | The host where RabbitMQ is located. It could
+  include the service port. | Default value depends on the value of
+  `trento_rabbitmq_host` and `trento_rabbitmq_host_group` variables,
+  please refer to their documentation.
+
+| wanda_rabbitmq_username | Username used to connect to RabbitMQ |
+  <value of `trento_rabbitmq_username`>
+
+| wanda_rabbitmq_password | Password of the RabbitMQ user | <value of
+  `trento_rabbitmq_password`>
+
+| wanda_rabbitmq_vhost | The RabbitMQ virtual host | <value of
+  `trento_rabbitmq_vhost`>
+
+| wanda_secret_key_base | The secret for the Phoenix application |
+  <generated by the playbook>
 |===
 
 *Agent role*
@@ -611,14 +663,9 @@ per-role basis if appropriate.
   `amqp` or `amqps`. Used to connect to RabbitMQ | "amqp"
 
 | agent_rabbitmq_host | The host where RabbitMQ is located. It could
-  include the service port. This value is ignored when
-  `agent_rabbitmq_host_group` is non-empty string. | localhost
-
-| agent_rabbitmq_host_group | Name of the host group where RabbitMQ is
-  located. It could include the service port. If this value is not
-  empty string, activates auto-discovery of the RabbitMQ host by
-  searching it in the specified group. When auto-discovery is active,
-  the value of `agent_rabbitmq_host` is ignored. | ""
+  include the service port. | Default value depends on the value of
+  `trento_rabbitmq_host` and `trento_rabbitmq_host_group` variables,
+  please refer to their documentation.
 
 | agent_rabbitmq_username | Username used to connect to RabbitMQ |
   <value of `trento_rabbitmq_username`>

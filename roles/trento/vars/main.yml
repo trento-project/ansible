@@ -20,19 +20,19 @@ trento_web_container_name: trento_web
 # Postgres auto-discovery
 __trento_postgres_inventory_host: "{{ groups[trento_postgres_host_group][0] }}"
 __trento_postgres_ansible_host: "{{ hostvars[__trento_postgres_inventory_host].ansible_host }}"
-__trento_postgres_override_host: "{{ (inventory_hostname in groups[trento_postgres_host_group])
+__trento_postgres_discovery_host: "{{ (inventory_hostname in groups[trento_postgres_host_group])
                                      | ternary('localhost',
                                                __trento_postgres_ansible_host | default(__trento_postgres_inventory_host)) }}"
 trento_postgres_effective_host: "{{ trento_postgres_host_group is truthy
-                                    | ternary(__trento_postgres_override_host,
+                                    | ternary(__trento_postgres_discovery_host,
                                               trento_postgres_host) }}"
 
 # RabbitMQ auto-discovery
 __trento_rabbitmq_inventory_host: "{{ groups[trento_rabbitmq_host_group][0] }}"
 __trento_rabbitmq_ansible_host: "{{ hostvars[__trento_rabbitmq_inventory_host].ansible_host }}"
-__trento_rabbitmq_override_host: "{{ (inventory_hostname in groups[trento_rabbitmq_host_group])
+__trento_rabbitmq_discovery_host: "{{ (inventory_hostname in groups[trento_rabbitmq_host_group])
                                      | ternary('localhost',
                                                __trento_rabbitmq_ansible_host | default(__trento_rabbitmq_inventory_host)) }}"
 trento_rabbitmq_effective_host: "{{ trento_rabbitmq_host_group is truthy
-                                    | ternary(__trento_rabbitmq_override_host,
+                                    | ternary(__trento_rabbitmq_discovery_host,
                                               trento_rabbitmq_host) }}"

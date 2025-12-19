@@ -3,7 +3,7 @@
   ansible.builtin.debug:
     msg: |
       Effective Postgres host is {{ trento_postgres_effective_host }}.
-      Override host is {{ __trento_postgres_override_host | default('undefined') }}.
+      Discovery host is {{ __trento_postgres_discovery_host | default('undefined') }}.
       Inventory host is {{ __trento_postgres_inventory_host | default('undefined') }}.
       Inventory ansible host is {{ __trento_postgres_ansible_host | default('undefined') }}.
       User value is {{ trento_postgres_host }}
@@ -13,7 +13,7 @@
   ansible.builtin.debug:
     msg: |
       Effective RabbitMQ host is {{ trento_rabbitmq_effective_host }}.
-      Override host is {{ __trento_rabbitmq_override_host | default('undefined') }}.
+      Discovery host is {{ __trento_rabbitmq_discovery_host | default('undefined') }}.
       Inventory host is {{ __trento_rabbitmq_inventory_host | default('undefined') }}.
       Inventory ansible host is {{ __trento_rabbitmq_ansible_host | default('undefined') }}.
       User value is {{ trento_rabbitmq_host }}
