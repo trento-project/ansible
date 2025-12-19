@@ -15,13 +15,13 @@
     keep_volumes: false
 
 - name: Remove wanda container image
-  when: remove_wanda_container_image | bool
+  when: wanda_remove_wanda_container_image | bool
   community.docker.docker_image:
     state: absent
     name: "{{ wanda_container_image }}"
 
 - name: Remove checks container image
-  when: remove_checks_container_image | bool
+  when: wanda_remove_checks_container_image | bool
   community.docker.docker_image:
     state: absent
     name: "{{ wanda_checks_container_image }}"
