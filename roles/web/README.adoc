@@ -34,10 +34,10 @@ overriding the variables in this role.
 - hosts: servers
   roles:
     - role: suse.trento.web
-      trento_server_name: "example.com"
-      trento_web_admin_password: "examplepass"
-      trento_web_postgres_password: "examplepass"
-      trento_rabbitmq_password: "examplepass"
+      web_server_name: "example.com"
+      web_admin_password: "examplepass"
+      web_postgres_password: "examplepass"
+      web_rabbitmq_password: "examplepass"
 ----
 
 == License

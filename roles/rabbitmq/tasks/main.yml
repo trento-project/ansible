@@ -14,7 +14,7 @@
 
 - name: Create RabbitMQ Trento vhost
   community.rabbitmq.rabbitmq_vhost:
-    name: "{{ trento_rabbitmq_vhost }}"
+    name: "{{ rabbitmq_vhost }}"
     node: "{{ rabbitmq_node_name }}"
     state: present
 

@@ -1,5 +1,21 @@
 ---
+web_server_name: "{{ trento_server_name }}"
+web_listen_port: "{{ trento_web_listen_port }}"
+web_admin_username: "{{ trento_web_admin_username }}"
+web_admin_password: "{{ trento_web_admin_password }}"
 web_oas_server_url: "https://{{ trento_server_name }}"
+web_postgres_host: "{{ trento_postgres_effective_host }}"
+web_postgres_username: "{{ trento_web_postgres_username }}"
+web_postgres_password: "{{ trento_web_postgres_password }}"
+web_postgres_db: "{{ trento_web_postgres_db }}"
+web_postgres_event_store: "{{ trento_web_postgres_event_store }}"
+web_amqp_protocol: "{{ amqp_protocol | default('amqp') }}" # `amqp_protocol` is for backwards-compatibility
+web_rabbitmq_host: "{{ trento_rabbitmq_effective_host }}"
+web_rabbitmq_username: "{{ rabbitmq_username | default(trento_rabbitmq_username) }}" # `rabbimtq_username` for backwards-compatibility
+web_rabbitmq_password: "{{ rabbitmq_password | default(trento_rabbitmq_password) }}" # `rabbimtq_password` for backwards-compatibility
+web_rabbitmq_vhost: "{{ rabbitmq_vhost | default(trento_rabbitmq_vhost) }}" # `rabbimtq_vhost` for backwards-compatibility
+web_wanda_listen_port: "{{ wanda_listen_port | default(trento_wanda_listen_port) }}" # `wanda_listen_port` for backwards-compatibility
+web_wanda_proxy_location: "{{ wanda_proxy_location | default(trento_wanda_proxy_location) }}" # `wanda_proxy_location` for backwards-compatibility
 web_prometheus_url: "{{ prometheus_url }}"
 web_secret_key_base: "{{ secret_key_base }}"
 web_access_token_secret: "{{ access_token_secret }}"
@@ -12,7 +28,6 @@ web_smtp_user: "{{ smtp_user }}"
 web_smtp_password: "{{ smtp_password }}"
 web_alert_sender: "{{ alert_sender }}"
 web_alert_recipient: "{{ alert_recipient }}"
-web_amqp_protocol: "{{ amqp_protocol | default('amqp') }}" # `amqp_protocol` is for backwards-compatibility
 web_enable_oidc: "{{ enable_oidc }}"
 web_oidc_client_id: "{{ oidc_client_id }}"
 web_oidc_client_secret: "{{ oidc_client_secret }}"

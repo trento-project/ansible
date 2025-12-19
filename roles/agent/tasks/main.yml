@@ -5,16 +5,6 @@
     name: trento-agent
     state: latest
 
-- name: Show host discovery results for RabbitMQ
-  ansible.builtin.debug:
-    msg: |
-      Effective RabbitMQ host for the Agent is {{ __agent_rabbitmq_effective_host }}.
-      Override host is {{ __agent_rabbitmq_override_host | default('undefined') }}.
-      Inventory host is {{ __agent_rabbitmq_inventory_host | default('undefined') }}.
-      Inventory ansible host is {{ __agent_rabbitmq_ansible_host | default('undefined') }}.
-      User value is {{ agent_rabbitmq_host }}
-    verbosity: 1
-
 - name: Configure Trento agent
   ansible.builtin.template:
     src: "agent.conf.j2"

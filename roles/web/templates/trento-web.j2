@@ -1,6 +1,6 @@
-AMQP_URL={{ web_amqp_protocol }}://{{ trento_rabbitmq_username }}:{{ trento_rabbitmq_password }}@{{ trento_rabbitmq_effective_host }}/{{ trento_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
-DATABASE_URL=ecto://{{ trento_web_postgres_username }}:{{ trento_web_postgres_password }}@{{ trento_postgres_effective_host }}/{{ trento_web_postgres_db }}
-EVENTSTORE_URL=ecto://{{ trento_web_postgres_username }}:{{ trento_web_postgres_password }}@{{ trento_postgres_effective_host }}/{{ trento_web_postgres_event_store }}
+AMQP_URL={{ web_amqp_protocol }}://{{ web_rabbitmq_username }}:{{ web_rabbitmq_password }}@{{ web_rabbitmq_host }}/{{ web_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
+DATABASE_URL=ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}
+EVENTSTORE_URL=ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}
 {% if web_enable_alerting is not none %}
 ENABLE_ALERTING={{ web_enable_alerting | string | lower }}
 {% endif %}
@@ -26,17 +26,17 @@ PROMETHEUS_URL={{ web_prometheus_url }}
 SECRET_KEY_BASE={{ web_secret_key_base }}
 ACCESS_TOKEN_ENC_SECRET={{ web_access_token_secret }}
 REFRESH_TOKEN_ENC_SECRET={{ web_refresh_token_secret }}
-ADMIN_USER={{ trento_web_admin_username }}
-ADMIN_PASSWORD={{ trento_web_admin_password }}
+ADMIN_USER={{ web_admin_username }}
+ADMIN_PASSWORD={{ web_admin_password }}
 ENABLE_API_KEY={{ web_enable_api_key | string | lower }}
 CHARTS_ENABLED={{ web_enable_charts | string | lower }}
-PORT={{ trento_web_listen_port }}
-TRENTO_WEB_ORIGIN={{ trento_server_name }}
+PORT={{ web_listen_port }}
+TRENTO_WEB_ORIGIN={{ web_server_name }}
 {% if provision_proxy | bool %}
 OAS_SERVER_URL={{ web_oas_server_url }}
-CHECKS_SERVICE_BASE_URL={{ trento_wanda_proxy_location }}
+CHECKS_SERVICE_BASE_URL={{ web_wanda_proxy_location }}
 {% else %}
-CHECKS_SERVICE_BASE_URL=http://127.0.0.1:{{ trento_wanda_listen_port }}
+CHECKS_SERVICE_BASE_URL=http://127.0.0.1:{{ web_wanda_listen_port }}
 {% endif %}
 ENABLE_OIDC={{ web_enable_oidc | string | lower }}
 OIDC_CLIENT_ID={{ web_oidc_client_id }}

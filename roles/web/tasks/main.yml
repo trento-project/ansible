@@ -2,9 +2,9 @@
 - name: Check installation method
   ansible.builtin.assert:
     that:
-      - trento_install_method is defined
-      - trento_install_method in ['docker', 'rpm']
-    fail_msg: "trento_install_method value must be one of: docker|rpm"
+      - web_install_method is defined
+      - web_install_method in ['docker', 'rpm']
+    fail_msg: "web_install_method value must be one of: docker|rpm"
 
 - name: Create secrets
   no_log: true
@@ -18,23 +18,23 @@
 
 - name: Include Docker installation tasks
   ansible.builtin.include_tasks: docker.yml
-  when: trento_install_method == 'docker'
+  when: web_install_method == 'docker'
 
 - name: Include RPM installation tasks
   ansible.builtin.include_tasks: rpm.yml
-  when: trento_install_method == 'rpm'
+  when: web_install_method == 'rpm'
 
 - name: Extract agents API Key
   run_once: true
   block:
     - name: Login to Trento Web
       ansible.builtin.uri:
-        url: "http://localhost:{{ trento_web_listen_port }}/api/session"
+        url: "http://localhost:{{ web_listen_port }}/api/session"
         method: POST
         body_format: json
         body:
-          username: "{{ trento_web_admin_username }}"
-          password: "{{ trento_web_admin_password }}"
+          username: "{{ web_admin_username }}"
+          password: "{{ web_admin_password }}"
         status_code: [200]
       # Hide the admin password from logs
       no_log: true
@@ -42,7 +42,7 @@
 
     - name: Get the agents API key
       ansible.builtin.uri:
-        url: "http://localhost:{{ trento_web_listen_port }}/api/v1/settings/api_key"
+        url: "http://localhost:{{ web_listen_port }}/api/v1/settings/api_key"
         headers:
           Authorization: "Bearer {{ __web_login_result.json.access_token }}"
         unredirected_headers:

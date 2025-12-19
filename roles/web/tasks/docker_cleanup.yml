@@ -5,7 +5,7 @@
 
 - name: Stop web container
   community.docker.docker_container:
-    name: "{{ trento_web_container_name }}"
+    name: "{{ web_container_name }}"
     state: absent
     keep_volumes: false
 
@@ -17,6 +17,6 @@
 
 - name: Remove trento docker network
   community.docker.docker_network:
-    name: "{{ trento_docker_network_name }}"
+    name: "{{ web_docker_network_name }}"
     state: absent
     force: true

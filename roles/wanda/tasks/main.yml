@@ -2,9 +2,9 @@
 - name: Check installation method
   ansible.builtin.assert:
     that:
-      - trento_install_method is defined
-      - trento_install_method in ['docker', 'rpm']
-    fail_msg: "trento_install_method value must be one of: docker|rpm"
+      - wanda_install_method is defined
+      - wanda_install_method in ['docker', 'rpm']
+    fail_msg: "wanda_install_method value must be one of: docker|rpm"
 
 - name: Create secrets
   no_log: true
@@ -14,8 +14,8 @@
 
 - name: Include Docker installation tasks
   ansible.builtin.include_tasks: docker.yml
-  when: trento_install_method == 'docker'
+  when: wanda_install_method == 'docker'
 
 - name: Include RPM installation tasks
   ansible.builtin.include_tasks: rpm.yml
-  when: trento_install_method == 'rpm'
+  when: wanda_install_method == 'rpm'

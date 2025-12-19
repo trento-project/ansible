@@ -17,6 +17,24 @@ This role has no external dependencies.
 
 We keep all our variables documentation in the main README of the collection.
 
+
+== Dependencies
+
+This role has no dependencies.
+
+== Example Playbook
+
+[source, yaml]
+----
+- hosts: servers
+  roles:
+    - role: suse.trento.trento
+      trento_server_name: "example.com"
+      trento_web_admin_password: "examplepass"
+      trento_web_postgres_password: "examplepass"
+      trento_rabbitmq_password: "examplepass"
+----
+
 == License
 
 Apache License, Version 2.0

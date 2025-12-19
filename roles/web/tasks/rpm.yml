@@ -27,7 +27,7 @@
 
 - name: Wait for Web to be available
   ansible.builtin.uri:
-    url: "http://localhost:{{ trento_web_listen_port }}/api/healthz"
+    url: "http://localhost:{{ web_listen_port }}/api/healthz"
     status_code: [200]
   retries: 3
   delay: 5

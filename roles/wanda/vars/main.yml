@@ -1,1 +1,4 @@
 ---
+# Protected values -- The following values are not intended to be
+# specified by end-users:
+wanda_install_method: "{{ trento_install_method }}"

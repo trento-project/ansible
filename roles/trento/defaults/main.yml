@@ -14,24 +14,24 @@
 # backwards-compatibility with their deprecated names.
 
 trento_server_name: "{{ undef(hint='Domain name of the trento installation is mandatory') }}"
-trento_wanda_proxy_location: "{{ wanda_proxy_location | default('/wanda') }}"
+trento_wanda_proxy_location: "/wanda"
 
-trento_web_listen_port: "{{ web_listen_port | default(32767 | random(start=1024, seed=trento_server_name)) }}"
-trento_wanda_listen_port: "{{ wanda_listen_port | default(32767 | random(start=1024, seed=trento_server_name) + 1) }}"
+trento_web_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) }}"
+trento_wanda_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) + 1 }}"
 
-trento_web_admin_username: "{{ web_admin_username | default('admin') }}"
-trento_web_admin_password: "{{ web_admin_password | default(undef(hint='Password for Web admin interface is mandatory')) }}"
-trento_postgres_host: "{{ web_postgres_host | default(wanda_postgres_host) | default('localhost') }}"
+trento_web_admin_username: admin
+trento_web_admin_password: "{{ undef(hint='Password for Web admin interface is mandatory') }}"
+trento_postgres_host: localhost
 trento_postgres_host_group: ""
-trento_web_postgres_username: "{{ web_postgres_user | default('web') }}"
-trento_web_postgres_password: "{{ web_postgres_password | default(undef(hint='Password for Postgres Web user is mandatory')) }}"
-trento_web_postgres_db: "{{ web_postgres_db | default('webdb') }}"
-trento_web_postgres_event_store: "{{ web_postgres_event_store | default('event_store') }}"
-trento_wanda_postgres_username: "{{ wanda_postgres_user | default('wanda') }}"
-trento_wanda_postgres_password: "{{ wanda_postgres_password | default(undef(hint='Password for Postgres Wanda user is mandatory')) }}"
-trento_wanda_postgres_db: "{{ wanda_postgres_db | default('wandadb') }}"
+trento_web_postgres_username: web
+trento_web_postgres_password: "{{ undef(hint='Password for Postgres Web user is mandatory') }}"
+trento_web_postgres_db: webdb
+trento_web_postgres_event_store: event_store
+trento_wanda_postgres_username: wanda
+trento_wanda_postgres_password: "{{ undef(hint='Password for Postgres Wanda user is mandatory') }}"
+trento_wanda_postgres_db: wandadb
 trento_rabbitmq_host: "{{ rabbitmq_host | default('localhost') }}"  # `rabbitmq_host` for backwards-compatibility
 trento_rabbitmq_host_group: ""
 trento_rabbitmq_username: trento
-trento_rabbitmq_password: "{{ rabbitmq_password | default(undef(hint='Password for RabbitMQ trento user is mandatory')) }}"
+trento_rabbitmq_password: "{{ undef(hint='Password for RabbitMQ trento user is mandatory') }}"
 trento_rabbitmq_vhost: trento

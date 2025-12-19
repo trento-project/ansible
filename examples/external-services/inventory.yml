@@ -31,4 +31,3 @@ all:
     trento_rabbitmq_password: "trentoansible1"
     rproxy_ssl_cert: "-----BEGIN CERTIFICATE-----\nMIIEKTCCAxGgAwIBAgIUbIzbLpJrkKk8vs1oLzFDpPL..."
     rproxy_ssl_key: "-----BEGIN CERTIFICATE-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDNdvcVnqJAY32h..."
-    agent_rabbitmq_host: "yourexternalrabbit.com:5671"

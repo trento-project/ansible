@@ -27,8 +27,8 @@ overriding the variables in this role.
 - hosts: servers
   roles:
     - role: suse.trento.wanda
-      trento_server_name: "example.com"
-      trento_wanda_postgres_password: "examplepass"
+      wanda_server_name: "example.com"
+      wanda_postgres_password: "examplepass"
 ----
 
 == License
