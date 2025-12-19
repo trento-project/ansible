@@ -1,4 +1,4 @@
-= Filrewall Ansible Role
+= Firewall Ansible Role
 
 Helper role that allows us to concentrate our common firewall handling
 into a single re-usable component. This role is not intended to be
