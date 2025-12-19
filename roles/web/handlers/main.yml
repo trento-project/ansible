@@ -4,3 +4,9 @@
   ansible.builtin.service:
     name: trento-web
     state: restarted
+
+- name: Remove trento docker network
+  community.docker.docker_network:
+    name: "{{ web_docker_network_name }}"
+    state: absent
+    force: true

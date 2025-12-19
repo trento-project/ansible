@@ -8,15 +8,11 @@
     name: "{{ web_container_name }}"
     state: absent
     keep_volumes: false
+  notify:
+    - Remove trento docker network
 
 - name: Remove web container image
   when: web_remove_container_image | bool
   community.docker.docker_image:
     state: absent
     name: "{{ web_container_image }}"
-
-- name: Remove trento docker network
-  community.docker.docker_network:
-    name: "{{ web_docker_network_name }}"
-    state: absent
-    force: true
