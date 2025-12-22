@@ -2,7 +2,11 @@
 - name: Provision Trento agents
   hosts: agents
   roles:
+    - role: trento
+      vars:
+        # Explicitly call the trento role with the passed parameters
+        # to please the linter.
+        trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else ''}}"
+
     - role: agent
       become: true
-      vars:
-        agent_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else ''}}"

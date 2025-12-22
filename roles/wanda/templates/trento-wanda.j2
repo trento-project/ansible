@@ -1,0 +1,9 @@
+CORS_ORIGIN=http://localhost
+SECRET_KEY_BASE={{ wanda_secret_key_base }}
+AMQP_URL={{ wanda_amqp_protocol }}://{{ wanda_rabbitmq_username }}:{{ wanda_rabbitmq_password }}@{{ wanda_rabbitmq_host }}/{{ wanda_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
+DATABASE_URL=ecto://{{ wanda_postgres_username }}:{{ wanda_postgres_password }}@{{ wanda_postgres_host }}/{{ wanda_postgres_db }}
+PORT={{ wanda_listen_port }}
+{% if provision_proxy | bool %}
+OAS_SERVER_URL={{ wanda_oas_server_url }}
+{% endif %}
+AUTH_SERVER_URL=http://127.0.0.1:{{ wanda_web_listen_port }}

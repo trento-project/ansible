@@ -2,8 +2,7 @@
 agent_web_api_key: "{{ undef(hint='API key for Trento Web is mandatory') }}"
 agent_trento_server_url: "{{ trento_server_url | default('http://{}'.format(trento_server_name)) }}"
 agent_amqp_protocol: "{{ amqp_protocol | default('amqp') }}" # `amqp_protocol` is for backwards-compatibility
-agent_rabbitmq_host: "{{ rabbitmq_host | default('localhost') }}"  # `rabbitmq_host` for backwards-compatibility
-agent_rabbitmq_host_group: ""
-agent_rabbitmq_username: "{{ rabbitmq_username | default(trento_rabbitmq_username) }}"  # `rabbitmq_username` is for backwards-compatibility
-agent_rabbitmq_password: "{{ rabbitmq_password | default(trento_rabbitmq_password) }}"  # `rabbitmq_password` is for backwards-compatibility
-agent_rabbitmq_vhost: "{{ rabbitmq_vhost | default(trento_rabbitmq_vhost) }}"           # `rabbitmq_vhost` is for backwards-compatibility
+agent_rabbitmq_host: "{{ trento_rabbitmq_effective_host }}"
+agent_rabbitmq_username: "{{ rabbitmq_username | default(trento_rabbitmq_username) }}" # `rabbimtq_username` for backwards-compatibility
+agent_rabbitmq_password: "{{ rabbitmq_password | default(trento_rabbitmq_password) }}" # `rabbimtq_password` for backwards-compatibility
+agent_rabbitmq_vhost: "{{ rabbitmq_vhost | default(trento_rabbitmq_vhost) }}" # `rabbimtq_vhost` for backwards-compatibility

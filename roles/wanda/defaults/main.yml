@@ -1,0 +1,15 @@
+---
+wanda_listen_port: "{{ trento_wanda_listen_port }}"
+wanda_proxy_location: "{{ trento_wanda_proxy_location }}"
+wanda_oas_server_url: "https://{{ trento_server_name ~ wanda_proxy_location }}"
+wanda_postgres_host: "{{ trento_postgres_effective_host }}"
+wanda_postgres_username: "{{ trento_wanda_postgres_username }}"
+wanda_postgres_password: "{{ trento_wanda_postgres_password }}"
+wanda_postgres_db: "{{ trento_wanda_postgres_db }}"
+wanda_amqp_protocol: "{{ amqp_protocol | default('amqp') }}" # `amqp_protocol` is for backwards-compatibility
+wanda_rabbitmq_host: "{{ trento_rabbitmq_effective_host }}"
+wanda_rabbitmq_username: "{{ rabbitmq_username | default(trento_rabbitmq_username) }}" # `rabbimtq_username` for backwards-compatibility
+wanda_rabbitmq_password: "{{ rabbitmq_password | default(trento_rabbitmq_password) }}" # `rabbimtq_password` for backwards-compatibility
+wanda_rabbitmq_vhost: "{{ rabbitmq_vhost | default(trento_rabbitmq_vhost) }}" # `rabbimtq_vhost` for backwards-compatibility
+wanda_web_listen_port: "{{ web_listen_port | default(trento_web_listen_port) }}" # `web_listen_port` for backwards-compatibility
+wanda_secret_key_base: "{{ secret_key_base | default('') }}" # `secret_key_base` is for backwards-compatibility

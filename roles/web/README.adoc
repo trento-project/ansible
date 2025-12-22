@@ -1,0 +1,50 @@
+= Trento Web Role
+
+Installs and configures Trento Web component.
+
+== Requirements
+
+On the target:
+* `zypper` package manager
+
+== Role Variables
+
+We keep all our variables documentation in the main README of the collection.
+
+Advanced options protected by being vars:
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| web_enable_api_key | Enable API key usage. Mostly for testing
+  purposes | true
+|===
+
+== Dependencies
+
+This role is dependent on `suse.trento.trento` meta-role.
+
+== Example Playbook
+
+Some of the default values in this role come from the `trento`
+meta-role. You can configure them in your inventory instead of
+overriding the variables in this role.
+
+[source, yaml]
+----
+- hosts: servers
+  roles:
+    - role: suse.trento.web
+      web_server_name: "example.com"
+      web_admin_password: "examplepass"
+      web_postgres_password: "examplepass"
+      web_rabbitmq_password: "examplepass"
+----
+
+== License
+
+Apache License, Version 2.0
+
+== Author Information
+
+Developed and maintained by trento-developers@suse.com
+Code repository is hosted on https://github.com/trento-project/ansible

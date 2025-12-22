@@ -4,9 +4,14 @@
   hosts: trento_server
   become: true
   tasks:
-    - name: Clean up Trento services
+    - name: Clean up Trento Web
       ansible.builtin.import_role:
-        name: app
+        name: web
+        tasks_from: cleanup
+
+    - name: Clean up Trento Wanda
+      ansible.builtin.import_role:
+        name: wanda
         tasks_from: cleanup
 
     - name: Clean up Proxy

@@ -1,0 +1,6 @@
+---
+#
+# Protected values -- The following values are not intended to be
+# specified by end-users:
+web_install_method: "{{ trento_install_method }}"
+web_enable_api_key: "{{ enable_api_key | default(true) }}"  # `enable_api_key` is for backwards_compatibility

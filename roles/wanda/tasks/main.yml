@@ -1,0 +1,21 @@
+---
+- name: Check installation method
+  ansible.builtin.assert:
+    that:
+      - wanda_install_method is defined
+      - wanda_install_method in ['docker', 'rpm']
+    fail_msg: "wanda_install_method value must be one of: docker|rpm"
+
+- name: Create secrets
+  no_log: true
+  ansible.builtin.set_fact:
+    wanda_secret_key_base: "{{ lookup('community.general.random_string', base64=True, length=64) }}"
+  when: lookup('vars', 'wanda_secret_key_base') == ""
+
+- name: Include Docker installation tasks
+  ansible.builtin.include_tasks: docker.yml
+  when: wanda_install_method == 'docker'
+
+- name: Include RPM installation tasks
+  ansible.builtin.include_tasks: rpm.yml
+  when: wanda_install_method == 'rpm'
