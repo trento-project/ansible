@@ -53,7 +53,7 @@ cp %{SOURCE1} .
 sed -i '/^version:/s/".*"/"%{version}"/' ./galaxy.yml
 
 mkdir ./playbooks/
-mv site.yml server.yml agent.yml cleanup.yml group_vars ./playbooks/
+cp -r site.yml server.yml agent.yml cleanup.yml group_vars ./playbooks/
 
 # Move out developer docs, won't be packaged
 mkdir ./docs_unused/
@@ -66,7 +66,7 @@ mv ./README.adoc ./docs/README-trento.adoc
 cp %{SOURCE2} .
 
 %build
-ansible-galaxy collection build
+ansible-galaxy collection build -vvv
 
 %install
 mkdir -p %{buildroot}%{_datadir}/ansible/collections
