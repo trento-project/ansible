@@ -28,7 +28,8 @@ URL:            https://github.com/trento-project/ansible
 
 Source0:        %{name}-%{version}.tar.gz
 Source1:        galaxy.yml
-Source2:        README.adoc
+Source2:        runtime.yml
+Source3:        README.adoc
 
 BuildArch:      noarch
 
@@ -52,6 +53,11 @@ Trento.
 cp %{SOURCE1} .
 sed -i '/^version:/s/".*"/"%{version}"/' ./galaxy.yml
 
+# Create meta directory with runtime.yml
+mkdir ./meta/
+cp %{SOURCE2} ./meta/
+
+# Create playbooks directory containing the playbooks
 mkdir ./playbooks/
 cp -r site.yml server.yml agent.yml cleanup.yml group_vars ./playbooks/
 
@@ -63,7 +69,7 @@ mv ./docs/* ./docs_unused
 mv ./README.adoc ./docs/README-trento.adoc
 
 # Move in the newly written collection README
-cp %{SOURCE2} .
+cp %{SOURCE3} .
 
 %build
 ansible-galaxy collection build -vvv

@@ -2,10 +2,11 @@
 namespace: "suse"
 name: "trento"
 version: "1.0.0"
+description: Collection of Trento-related playbooks and roles
 readme: "README.adoc"
 
 authors:
-- "Kristiyan Kanchev <kristiyan.kanchev@suse.com>"
+  - "Kristiyan Kanchev <kristiyan.kanchev@suse.com>"
 
 dependencies:
   ansible.posix: ">=1.6.2"
@@ -15,21 +16,24 @@ dependencies:
   community.docker: ">=4.4.0"
 
 license:
-- Apache-2.0
+  - Apache-2.0
 
 tags:
-- SUSE
-- Trento
-- SAP
-- Deployment
+  - application
+  - infrastructure
+  - suse
+  - trento
+  - sap
+  - deployment
 
 repository: "https://github.com/trento-project/ansible"
 
 manifest:
   directives:
-  - graft playbooks
-  - graft roles
-  - graft docs
-  - graft examples
-  - include galaxy.yml README.adoc
+    - graft playbooks
+    - graft roles
+    - graft meta
+    - graft docs
+    - graft examples
+    - include galaxy.yml README.adoc
   omit_default_directives: true
