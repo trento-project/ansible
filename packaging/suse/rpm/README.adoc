@@ -8,12 +8,12 @@ After installation of the collection, you have to use FQCN to denote
 the relevant component. All components of this collection are
 namespaced with `suse.trento` prefix.
 
-To run the bundled `deploy.yml` playbook, for example, use the
+To run any of the bundled playbooks, for example, use the
 following command:
 
 [source,bash]
 ----
-$ ansible-playbook -i <path-to-inventory> suse.trento.deploy
+$ ansible-playbook -i <path-to-inventory> suse.trento.site
 ----
 
 Please note the omission of file extension.
@@ -24,9 +24,11 @@ The collections comprises of:
 
 Playbooks::
 
-Deployment Playbook::: Playbook for deploying Trento components and the
-third-party system dependencies. Refer to its
-xref:docs/README-deploy.adoc[Documentation]
+server::: Install Trento server components
+agent::: Install Trento agents
+`site::: Compound playbook that executes both `server` and `agent`
+  playbooks
+cleanup::: Clean-up playbook that uninstalls all Trento components
 
 Roles::
 
@@ -41,3 +43,6 @@ prometheus::: Installs Prometheus metrics server. Used in Deploymnet
 Playbook.
 proxy::: Installs HTTP reverse proxy and configures it for
 Trento-specific use-cases. Used in Deploymnet Playbook.
+
+Detailed documentation for the comprising playbooks and roles could be
+found xref:docs/README-trento.adoc[here].
