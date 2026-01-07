@@ -1,0 +1,136 @@
+---
+name: OBS sync
+
+on:
+  workflow_call:
+    inputs:
+      update_changelog:
+        type: boolean
+        default: false
+        description: Whether or not to update the OBS package changelog. Should only be used contextually to a release.
+      obs_project:
+        type: string
+        required: true
+        description: The OBS project to commit changes to.
+      obs_package:
+        type: string
+        required: true
+        description: The OBS package to commit change to.
+    secrets:
+      obs_user:
+        required: true
+      obs_pass:
+        required: true
+      obs_ssh_key:
+        required: true
+
+concurrency: ${{ github.workflow }}-${{ inputs.obs_project }}
+
+env:
+  AUTHOR_EMAIL: trento-developers@suse.com
+
+jobs:
+  sync-rpm:
+    name: Update RPM package definitions
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/trento-project/continuous-delivery:main
+      options: -u 0:0
+
+    steps:
+      # NOTE: SSH is only used for Git, not for legacy OSC operations.
+      - name: Setup SSH for OBS operation
+        run: |
+          # XXX: Madness: GitHub changes $HOME variable (affecting
+          # shell commands) but SSH expands `~` from /etc/passwd, which
+          # is different to $HOME.
+          real_home="$(getent passwd "$(whoami)" | cut -d':' -f6)"
+          echo Real Home: "${real_home}"
+
+          echo Adding src.opensuse.org to known hosts
+          echo "src.opensuse.org ssh-ed25519 \
+            AAAAC3NzaC1lZDI1NTE5AAAAIFKNThLRPznU5Io1KrAYHmYpaoLQEMGM9nwpKyYQCkPx" \
+            >> "${real_home}/.ssh/known_hosts"
+
+          ident_file="${real_home}/.ssh/id_ed25519_obs"
+          echo Adding IdentityFile: "${ident_file}"
+          echo "${{ secrets.obs_ssh_key }}" > "${ident_file}"
+          chmod 600 "${ident_file}"
+
+          echo Setup SSH to use the newly added IdentityFile
+          cat << EOF >> "${real_home}/.ssh/config"
+          Host src.opensuse.org
+            IdentityFile ${ident_file}
+            IdentitiesOnly yes
+          EOF
+
+      - name: Configure OSC
+        env:
+          OBS_USER: ${{ secrets.obs_user }}
+          OBS_PASS: ${{ secrets.obs_pass }}
+        run: |
+          /scripts/init_osc_creds.sh
+
+      - name: Configure Git
+        run: |
+          git config --global user.name ${{ secrets.obs_user }}
+          git config --global user.email "${AUTHOR_EMAIL}"
+
+      - name: Checkout OBS package
+        id: checkout
+        run: |
+          osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
+          cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
+
+          echo "checkout_dir=$(pwd)" >> $GITHUB_OUTPUT
+          echo "On branch: $(git branch -v)"
+          echo -e "Remote:\n$(git remote -v)"
+
+      - name: Remove old upstream tarballs
+        run: |
+          cd ${{ steps.checkout.outputs.checkout_dir }}
+          rm -vf *.tar.gz
+
+      - name: Run services
+        id: services
+        run: |
+          cd ${{ steps.checkout.outputs.checkout_dir }}
+          osc service run
+
+          # Extract version
+          version="$(sed -n 's/^Version:\s*\(.*\)/\1/p' *.spec)"
+          echo "version=${version}" >> $GITHUB_OUTPUT
+          echo New version is $version
+
+      - name: Handle .changes file
+        if: inputs.update_changelog
+        env:
+          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          release_version="$(echo '${{ steps.services.outputs.version }}' | cut -d'+' -f 1)"
+          /scripts/gh_release_to_obs_changeset.py \
+              ${{ github.repository }} \
+              -a "$AUTHOR_EMAIL" \
+              -t "${release_version}" \
+              -f ${{ steps.checkout.outputs.checkout_dir }}/${{ inputs.obs_package }}.changes
+
+      - name: Commit and push
+        run: |
+          cd ${{ steps.checkout.outputs.checkout_dir }}
+
+          echo Git changes:
+          git add -A
+          git status
+
+          if git diff-index --quiet HEAD; then
+            echo Skipping commit and push since there are no changes.
+
+          else
+            echo Commit changes and push...
+            git commit -m "GitHub Actions automated update to version ${{ steps.services.outputs.version }}"
+
+            # XXX: If stuck indefinitely here, then check if
+            # permissions to push into repo are allowed. Suspected Git
+            # LFS bug.
+            git push origin
+          fi

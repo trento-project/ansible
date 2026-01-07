@@ -6,9 +6,9 @@ on:
       - "*"
     branches:
       - "main"
+    paths-ignore:
+      - "VERSION"
   pull_request:
-  release:
-    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -41,7 +41,7 @@ jobs:
   build-and-push-container-images:
     name: Build and push container images
     runs-on: ubuntu-24.04
-    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main')
+    if: github.event_name == 'push' && github.ref_name == 'main'
     needs: [ansible-lint, deploy-test-rpm]
     permissions:
       contents: read
@@ -49,7 +49,7 @@ jobs:
     env:
       REGISTRY: ghcr.io
       IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/ansible
-      IMAGE_TAG: "${{ (github.event_name == 'release' && github.event.release.tag_name) || (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
+      IMAGE_TAG: rolling
     steps:
       - uses: actions/checkout@v3
         with:
@@ -212,49 +212,18 @@ jobs:
             install_method='${{ matrix.install_method }}'"
             --verbose
 
-  create-artifact:
-    runs-on: ubuntu-24.04
-    needs: [ansible-lint, deploy-test-rpm]
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Compress tarball
-        run: |
-          tar -zcf trento-ansible.tgz roles/ playbook.yml playbook.cleanup.yml requirements.yml README.adoc
-      - uses: actions/upload-artifact@v4
-        with:
-          name: trento-ansible
-          path: |
-            *.tgz
-
-  release-rolling:
-    runs-on: ubuntu-24.04
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
-    needs: [create-artifact]
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: trento-ansible
-      - uses: "marvinpinto/action-automatic-releases@v1.2.1"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "rolling"
-          prerelease: true
-          title: "Cutting Edge"
-          files: |
-            trento-ansible.tgz
-
-  release:
-    runs-on: ubuntu-24.04
-    if: github.event.release
-    needs: [create-artifact]
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: trento-ansible
-      - uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: trento-ansible.tgz
-          tag: ${{ github.ref }}
+  obs-sync:
+    name: Update obs packages
+    if: vars.OBS_ENABLED == 'true' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    uses: ./.github/workflows/obs.yaml
+    needs:
+      - ansible-lint
+      - deploy-test-rpm
+    with:
+      obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
+      obs_package: ${{ vars.OBS_PACKAGE }}
+    secrets:
+      obs_user: ${{ secrets.OBS_USER }}
+      obs_pass: ${{ secrets.OBS_PASS }}
+      # obs_git_pat: ${{ secrets.OBS_GIT_PAT }}
+      obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}
