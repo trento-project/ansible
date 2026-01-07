@@ -61,7 +61,7 @@ jobs:
         id: committer
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          branch: main
+          branch: new-ci
           commit_message: "Automatically update CHANGELOG.md for release ${{ steps.detect-version.outputs.current-version }}"
 
   release:
@@ -80,7 +80,7 @@ jobs:
         with:
           publish: true
           version: ${{ needs.pre-release.outputs.version }}
-          commitish: $({ needs.pre-release.outputs.commitish })
+          # commitish: $({ needs.pre-release.outputs.commitish })
           disable-autolabeler: true
           config-name: release_drafter.yaml
         env:
