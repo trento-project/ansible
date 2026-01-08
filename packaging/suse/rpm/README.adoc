@@ -1,0 +1,50 @@
+= Trento Ansible Collection
+
+Collection of Ansible playbooks and roles for Trento Project.
+
+== Usage
+
+After installation of the collection, you have to use FQCN to denote
+the relevant component. All components of this collection are
+namespaced with `suse.trento` prefix.
+
+To run any of the bundled playbooks, for example, use the
+following command:
+
+[source,bash]
+----
+$ ansible-playbook -i <path-to-inventory> suse.trento.site
+----
+
+Please note the omission of file extension.
+
+== Contents
+
+The collections comprises of:
+
+Playbooks::
+
+server::: Install Trento server components
+agent::: Install Trento agents
+site::: Compound playbook that executes both `server` and `agent`
+  playbooks
+cleanup::: Clean-up playbook that uninstalls all Trento components
+
+Roles::
+
+trento::: Meta-role containing default values for variables common to
+the rest of the roles.
+web::: Installs Trento Web component.
+wanda::: Installs Trento Wanda component.
+agent::: Installs Trento Agent for information gathering.
+postgres::: Installs PostgreSQL database server and configure it with
+needed databases, users and permissions.
+rabbitmq::: Installs RabbitMQ message broker.
+prometheus::: Installs Prometheus metrics server.
+rproxy::: Installs HTTP reverse proxy and configures it for
+Trento-specific use-cases.
+firewall::: Utility role handling firewall configuration in several of
+the other roles.
+
+Detailed documentation for the comprising playbooks and roles could be
+found xref:docs/README-trento.adoc[here].

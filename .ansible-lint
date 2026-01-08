@@ -4,3 +4,4 @@ exclude_paths:
   - devbox/
 skip_list:
   - yaml[line-length]
+  - galaxy[no-changelog]
