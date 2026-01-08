@@ -26,23 +26,25 @@ Playbooks::
 
 server::: Install Trento server components
 agent::: Install Trento agents
-`site::: Compound playbook that executes both `server` and `agent`
+site::: Compound playbook that executes both `server` and `agent`
   playbooks
 cleanup::: Clean-up playbook that uninstalls all Trento components
 
 Roles::
 
-app::: Installs Trento Server components. Used in Deploymnet Playbook.
-agent::: Installs Trento agent for information gathering. Used in Deployment Playbook.
-postgres::: Installs PostgreSQL database server and configure it
-with. Used in Deploymnet Playbook.  needed databases, users and
-permissions. Used in Deploymnet Playbook.
-rabbitmq::: Installs RabbitMQ message broker. Used in Deploymnet
-Playbook.
-prometheus::: Installs Prometheus metrics server. Used in Deploymnet
-Playbook.
-proxy::: Installs HTTP reverse proxy and configures it for
-Trento-specific use-cases. Used in Deploymnet Playbook.
+trento::: Meta-role containing default values for variables common to
+the rest of the roles.
+web::: Installs Trento Web component.
+wanda::: Installs Trento Wanda component.
+agent::: Installs Trento Agent for information gathering.
+postgres::: Installs PostgreSQL database server and configure it with
+needed databases, users and permissions.
+rabbitmq::: Installs RabbitMQ message broker.
+prometheus::: Installs Prometheus metrics server.
+rproxy::: Installs HTTP reverse proxy and configures it for
+Trento-specific use-cases.
+firewall::: Utility role handling firewall configuration in several of
+the other roles.
 
 Detailed documentation for the comprising playbooks and roles could be
 found xref:docs/README-trento.adoc[here].

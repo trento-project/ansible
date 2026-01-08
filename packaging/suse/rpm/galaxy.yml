@@ -6,7 +6,7 @@ description: Collection of Trento-related playbooks and roles
 readme: "README.adoc"
 
 authors:
-  - "Kristiyan Kanchev <kristiyan.kanchev@suse.com>"
+  - "Trento Developers <trento-developers@suse.com>"
 
 dependencies:
   ansible.posix: ">=1.6.2"
