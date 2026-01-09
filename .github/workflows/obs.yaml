@@ -110,11 +110,16 @@ jobs:
       - name: Checkout OBS package
         id: checkout
         run: |
-          # `obs-scm-bridge` is failing build currently
+          # `obs-scm-bridge` is failing build currently, so falling
+          # back to directly using `git obs`. Thus, we have to fiddle around
+          # with its meta subcommand as well.
           # osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
-          git obs repo clone SAP-trento/${{ inputs.obs_package }}
           # cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
+
+          git obs repo clone SAP-trento/${{ inputs.obs_package }}
           cd ${{ inputs.obs_package }}
+          git obs meta set --project=${{ inputs.obs_project }}
+
           echo "checkout_dir=$(pwd)" >> $GITHUB_OUTPUT
           echo "Branch: $(git branch -v)"
           echo -e "Remote:\n$(git remote -v)"
@@ -123,13 +128,13 @@ jobs:
         run: |
           cd ${{ steps.checkout.outputs.checkout_dir }}
 
-          echo Delete old upstream tarball
+          echo Delete old upstream tarball...
           rm -vf *.tar.gz
 
-          echo Run services
+          echo Run services...
           osc service run
 
-          echo Git changes
+          echo Git changes...
           git add -Av
           git status
 
