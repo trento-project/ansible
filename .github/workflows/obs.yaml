@@ -17,8 +17,8 @@ on:
         required: true
       OBS_PASS:
         required: true
-      # OBS_GIT_PAT:
-      #   required: true
+      OBS_GIT_PAT:
+        required: true
 
 concurrency: ${{ github.workflow }}-${{ inputs.obs_project }}
 
@@ -89,8 +89,9 @@ jobs:
           git obs login add srcOBS --url srcOBS \
                                    --url https://src.opensuse.org \
                                    --user ${{ secrets.OBS_USER }} \
-                                   --set-as-default \
-                                   --git-uses-http
+                                   --token ${{ secrets.OBS_GIT_PAT }} \
+                                   --set-as-default
+                                   # --git-uses-http
           git obs login list
 
       # - name: Read .tool-versions
