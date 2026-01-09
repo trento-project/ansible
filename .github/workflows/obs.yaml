@@ -120,6 +120,8 @@ jobs:
       - name: Show build results
         run: osc results $OBS_PROJECT $OBS_PACKAGE_NAME
 
+      - name: FAIL!!!
+        run: false
       # - name: Prepare _service file
       #   run: |
       #     sed -i 's~%%REVISION%%~${{ github.sha }}~' $SOURCE_DIR/_service && \
