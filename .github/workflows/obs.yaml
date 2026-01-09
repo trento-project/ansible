@@ -40,10 +40,10 @@ jobs:
 
       - name: Add openSUSE:Tools repo
         run: |
-          repo_key=${{ runner.temp }}/susetools_key.asc
-          wget -O "${repo_key}" -- https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key
+          repo_key=${{ runner.temp }}/susetools_key.gpg
+          wget -O "${repo_key}" -- https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key | gpg --dearmor -o ${repo_key}
           sudo mkdir -p /etc/apt/keyrings
-          final_key="/etc/apt/keyrings/add-apt-repository-$(sha256sum "${repo_key}" | cut -d' ' -f1).asc"
+          final_key="/etc/apt/keyrings/add-apt-repository.gpg"
           sudo mv ${repo_key} ${final_key}
           sudo add-apt-repository -d -S "deb [signed-by=${final_key}] https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ /"
         # uses: gerlero/add-apt-repository@v1
