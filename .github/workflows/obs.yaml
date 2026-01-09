@@ -40,9 +40,9 @@ jobs:
 
       - name: Add openSUSE:Tools repo
         run: |
-          repo_key=${{ runner.temp }}/repo_key.asc
-          wget -O "${repo_key}" -- https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key
-          sudo add-apt-repository -S "deb [signed-by=${repo_key}] https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ ./"
+          # repo_key=${{ runner.temp }}/repo_key.asc
+          # wget -O "${repo_key}" -- https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key
+          sudo add-apt-repository -S "deb [allow-insecure=yes] https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ ./"
         # uses: gerlero/add-apt-repository@v1
         # with:
         #   uri: "https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/"
