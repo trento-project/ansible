@@ -108,22 +108,22 @@ jobs:
       #     echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Checkout OBS package
+        id: checkout
         run: |
           # `obs-scm-bridge` is failing build currently
           # osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
           git obs repo clone SAP-trento/${{ inputs.obs_package }}
           # cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
           cd ${{ inputs.obs_package }}
+          echo "checkout_dir=$(pwd)" >> $GITHUB_OUTPUT
           echo "Branch: $(git branch -v)"
           echo -e "Remote:\n$(git remote -v)"
 
       - name: Run services and commit
         run: |
-          # Delete the old upstream tarball first
-          echo Current dir: $(pwd)
-          ls -l
+          cd ${{ steps.checkout.outputs.checkout_dir }}
 
-          echo Delete old soures
+          echo Delete old upstream tarball
           rm -vf *.tar.gz
 
           echo Run services
