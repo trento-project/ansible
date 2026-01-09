@@ -122,6 +122,8 @@ jobs:
           git obs repo clone SAP-trento/${{ inputs.obs_package }}
           cd ${{ inputs.obs_package }}
           git obs meta set --project=${{ inputs.obs_project }}
+          # TODO: Find a way to parameterize branch
+          # git switch main/stable
 
           echo "checkout_dir=$(pwd)" >> $GITHUB_OUTPUT
           echo "Branch: $(git branch -v)"
@@ -137,7 +139,7 @@ jobs:
           echo Run services...
           osc service run
 
-          echo Git changes...
+          echo Git changes:
           git add -Av
           git status
 
@@ -150,8 +152,6 @@ jobs:
       - name: Show build results
         run: osc results ${{ inputs.obs_project }} ${{ inputs.obs_package }}
 
-      - name: FAIL!!!
-        run: false
       # - name: Prepare _service file
       #   run: |
       #     sed -i 's~%%REVISION%%~${{ github.sha }}~' $SOURCE_DIR/_service && \
