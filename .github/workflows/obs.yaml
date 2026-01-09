@@ -45,7 +45,7 @@ jobs:
           sudo mkdir -p /etc/apt/keyrings
           final_key="/etc/apt/keyrings/add-apt-repository-$(sha256sum "${repo_key}" | cut -d' ' -f1).asc"
           sudo mv ${repo_key} ${final_key}
-          sudo add-apt-repository -S "deb [signed-by=${final_key}] https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ ./"
+          sudo add-apt-repository "deb [signed-by=${final_key}] https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ ./"
         # uses: gerlero/add-apt-repository@v1
         # with:
         #   uri: "https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/"
