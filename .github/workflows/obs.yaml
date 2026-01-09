@@ -52,12 +52,15 @@ jobs:
           sudo mkdir -p /etc/apt/keyrings
           repo_key="/etc/apt/keyrings/add-apt-repository.gpg"
           sudo mv ${dl_repo_key} ${repo_key}
-          echo "deb [signed-by=${repo_key}] https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ ./" | sudo tee /etc/apt/sources.list.d/opensusetools.list
+          echo "deb [signed-by=${repo_key}] https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ ./" \
+               | sudo tee /etc/apt/sources.list.d/opensusetools.list
 
       - name: Install OSC tool
         uses: gerlero/apt-install@v1
         with:
-          packages: osc
+          packages: >-
+            osc obs-service-tar-scm
+            obs-service-set-version obs-service-recompress
 
       # - name: Configure OSC
       #   env:
