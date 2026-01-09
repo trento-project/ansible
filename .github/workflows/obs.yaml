@@ -39,11 +39,13 @@ jobs:
       #     fetch-depth: 0
 
       - name: Add openSUSE:Tools repo
-        uses: gerlero/add-apt-repository@v1
-        with:
-          uri: "https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/"
-          key: "https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key"
-          suite: "./"
+        run: |
+          add-apt-repository -S 'deb https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ ./'
+        # uses: gerlero/add-apt-repository@v1
+        # with:
+        #   uri: "https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/"
+        #   key: "https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key"
+        #   suite: "./"
 
       - name: Install OSC tool
         uses: gerlero/apt-install@v1
