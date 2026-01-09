@@ -43,7 +43,7 @@ jobs:
           repo_key=${{ runner.temp }}/susetools_key.asc
           wget -O "${repo_key}" -- https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key
           staging_key=${{ runner.temp }}/susetools_key.gpg
-          gpg --dearmor -o ${staging_key}
+          gpg --dearmor -o ${staging_key} ${repo_key}
           sudo mkdir -p /etc/apt/keyrings
           final_key="/etc/apt/keyrings/add-apt-repository.gpg"
           sudo mv ${staging_key} ${final_key}
