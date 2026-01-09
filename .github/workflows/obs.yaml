@@ -57,7 +57,7 @@ jobs:
       - name: Install OSC tool
         uses: gerlero/apt-install@v1
         with:
-          packages: osc obs-scm-bridge
+          packages: osc
 
       # - name: Configure OSC
       #   env:
@@ -91,7 +91,7 @@ jobs:
                         --url https://src.opensuse.org \
                         --user ${{ secrets.OBS_USER }} \
                         --token ${{ secrets.OBS_GIT_PAT }} \
-                        --set-as-default \
+                        --set-as-default
                         # --git-uses-http
 
       # - name: Read .tool-versions
@@ -109,7 +109,9 @@ jobs:
 
       - name: Checkout OBS package
         run: |
-          osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
+          # `obs-scm-bridge` is failing build currently
+          # osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
+          git obs repo clone SAP-trento/${{ inputs.obs_package }}
           cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
           echo "Branch: $(git branch -v)"
           echo -e "Remote:\n$(git remote -v)"
