@@ -57,7 +57,7 @@ jobs:
       - name: Install OSC tool
         uses: gerlero/apt-install@v1
         with:
-          packages: osc
+          packages: osc obs-scm-bridge
 
       # - name: Configure OSC
       #   env:
@@ -92,7 +92,7 @@ jobs:
                         --user ${{ secrets.OBS_USER }} \
                         --token ${{ secrets.OBS_GIT_PAT }} \
                         --set-as-default \
-                        --git-uses-http
+                        # --git-uses-http
 
       # - name: Read .tool-versions
       #   uses: endorama/asdf-parse-tool-versions@v1.3.4
