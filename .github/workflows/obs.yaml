@@ -42,7 +42,10 @@ jobs:
         run: |
           # repo_key=${{ runner.temp }}/repo_key.asc
           # wget -O "${repo_key}" -- https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key
-          sudo add-apt-repository -S "deb [trusted=yes] https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ ./"
+          repo_keyring="${{ runner.temp }}/repo_keyring.deb"
+          wget -O "${repo_keyring}" -- https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/amd64/opensuse-tools-keyring_2010.01.07-1_amd64.deb
+          dpkg -i ${repo_keyring}
+          sudo add-apt-repository -S "deb https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ ./"
         # uses: gerlero/add-apt-repository@v1
         # with:
         #   uri: "https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/"
