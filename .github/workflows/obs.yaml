@@ -41,7 +41,7 @@ jobs:
       - name: Add openSUSE:Tools repo
         uses: gerlero/add-apt-repository@v1
         with:
-          uri: https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/
+          uri: "https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/"
 
       - name: Install OSC tool
         uses: gerlero/apt-install@v1
