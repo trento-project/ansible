@@ -91,8 +91,8 @@ jobs:
                         --url https://src.opensuse.org \
                         --user ${{ secrets.OBS_USER }} \
                         --token ${{ secrets.OBS_GIT_PAT }} \
-                        --set-as-default
-                        # --git-uses-http
+                        --set-as-default \
+                        --git-uses-http
 
       # - name: Read .tool-versionss
       #   uses: endorama/asdf-parse-tool-versions@v1.3.4
