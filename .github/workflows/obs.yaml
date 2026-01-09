@@ -112,7 +112,8 @@ jobs:
           # `obs-scm-bridge` is failing build currently
           # osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
           git obs repo clone SAP-trento/${{ inputs.obs_package }}
-          cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
+          # cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
+          cd ${{ inputs.obs_package }}
           echo "Branch: $(git branch -v)"
           echo -e "Remote:\n$(git remote -v)"
 
