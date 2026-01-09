@@ -43,6 +43,7 @@ jobs:
         with:
           uri: "https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/"
           key: "https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key"
+          suite: "./"
 
       - name: Install OSC tool
         uses: gerlero/apt-install@v1
