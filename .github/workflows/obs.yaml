@@ -120,15 +120,21 @@ jobs:
       - name: Run services and commit
         run: |
           # Delete the old upstream tarball first
+          echo Current dir: $(pwd)
+          ls -l
+
+          echo Delete old soures
           rm -vf *.tar.gz
 
+          echo Run services
           osc service run
+
+          echo Git changes
           git add -Av
           git status
 
-          # Extract version
           version="$(sed -n 's/^Version:\s*\(.*\)/\1/p' *.spec)"
-          echo version is $version
+          echo Version is $version
 
           # git commit -m "GitHub Actions automated update to version $version"
           # git push origin
