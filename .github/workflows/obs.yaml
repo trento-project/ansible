@@ -12,6 +12,10 @@ on:
         type: string
         required: true
         description: The OBS project to commit changes to.
+      obs_package:
+        type: string
+        required: true
+        description: The OBS package to commit change to.
     secrets:
       OBS_USER:
         required: true
@@ -21,10 +25,6 @@ on:
         required: true
 
 concurrency: ${{ github.workflow }}-${{ inputs.obs_project }}
-
-# TODO: Move to inputs
-env:
-  OBS_PACKAGE_NAME: trento-web-image
 
 jobs:
   sync-rpm:
@@ -86,13 +86,13 @@ jobs:
 
       - name: Login to OBS Git
         run: |
-          git obs login add srcOBS --url srcOBS \
-                                   --url https://src.opensuse.org \
-                                   --user ${{ secrets.OBS_USER }} \
-                                   --token ${{ secrets.OBS_GIT_PAT }} \
-                                   --set-as-default
-                                   # --git-uses-http
-          git obs login list
+          git obs login add srcOBS \
+                        --url srcOBS \
+                        --url https://src.opensuse.org \
+                        --user ${{ secrets.OBS_USER }} \
+                        --token ${{ secrets.OBS_GIT_PAT }} \
+                        --set-as-default \
+                        # --git-uses-http
 
       # - name: Read .tool-versions
       #   uses: endorama/asdf-parse-tool-versions@v1.3.4
@@ -109,8 +109,8 @@ jobs:
 
       - name: Checkout OBS package
         run: |
-          osc checkout ${{ inputs.obs_project }} $OBS_PACKAGE_NAME
-          cd ${{ inputs.obs_project }}/$OBS_PACKAGE_NAME
+          osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
+          cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
           echo "Branch: $(git branch -v)"
           echo -e "Remote:\n$(git remote -v)"
 
@@ -131,7 +131,7 @@ jobs:
           # git push origin
 
       - name: Show build results
-        run: osc results $OBS_PROJECT $OBS_PACKAGE_NAME
+        run: osc results ${{ inputs.obs_project }} ${{ inputs.obs_package }}
 
       - name: FAIL!!!
         run: false
