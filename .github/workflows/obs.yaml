@@ -94,7 +94,7 @@ jobs:
                         --set-as-default
                         # --git-uses-http
 
-      # - name: Read .tool-versions
+      # - name: Read .tool-versionss
       #   uses: endorama/asdf-parse-tool-versions@v1.3.4
       #   id: tool-versions
 
