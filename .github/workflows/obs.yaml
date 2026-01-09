@@ -40,7 +40,7 @@ jobs:
 
       - name: Add openSUSE:Tools repo
         run: |
-          add-apt-repository -S 'deb https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ ./'
+          sudo add-apt-repository -S 'deb https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ ./'
         # uses: gerlero/add-apt-repository@v1
         # with:
         #   uri: "https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/"
