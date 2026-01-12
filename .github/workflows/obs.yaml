@@ -160,11 +160,13 @@ jobs:
           git config user.name shapbot
           git config user.email "${AUTHOR_EMAIL}"
 
-          echo Commit...
-          git commit -m "GitHub Actions automated update to version $version"
+          if ! git diff-index --quiet HEAD; then
+            echo Commit...
+            git commit -m "GitHub Actions automated update to version $version"
 
-          echo Push...
-          git push origin
+            echo Push...
+            git push origin
+          fi
 
       - name: Show build results
         run: osc results ${{ inputs.obs_project }} ${{ inputs.obs_package }} -w --fail-on-error
