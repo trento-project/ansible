@@ -119,11 +119,18 @@ jobs:
           # osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
           # cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
 
+          prj=${{ inputs.obs_project }}
           git obs repo clone SAP-trento/${{ inputs.obs_package }}
           cd ${{ inputs.obs_package }}
-          git obs meta set --project=${{ inputs.obs_project }}
-          # TODO: Find a way to parameterize branch
-          # git switch main/stable
+          git obs meta set --project=${prj}
+          # Sloppy hack: `osc checkout` would choose the correct
+          # branch, so we need to duplicate that logic. Instead of
+          # introducing new GH input, prefer this small snippet.
+          branch="new-ci"
+          if [ "${prj%factory}" = "${prj}" ]; then
+            branch=stable
+          fi
+          git switch "${branch}"
 
           echo "checkout_dir=$(pwd)" >> $GITHUB_OUTPUT
           echo "Branch: $(git branch -v)"
@@ -146,8 +153,8 @@ jobs:
           version="$(sed -n 's/^Version:\s*\(.*\)/\1/p' *.spec)"
           echo Version is $version
 
-          # git commit -m "GitHub Actions automated update to version $version"
-          # git push origin
+          git commit -m "GitHub Actions automated update to version $version"
+          git push origin
 
       - name: Show build results
         run: osc results ${{ inputs.obs_project }} ${{ inputs.obs_package }} -w --fail-on-error
