@@ -26,6 +26,9 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ inputs.obs_project }}
 
+env:
+  AUTHOR_EMAIL: trento-developers@suse.com
+
 jobs:
   sync-rpm:
     name: Update RPM package definitions
@@ -131,6 +134,7 @@ jobs:
           if [ "${prj%factory}" = "${prj}" ]; then
             branch=stable
           fi
+          git switch "${branch}"
 
           echo "checkout_dir=$(pwd)" >> $GITHUB_OUTPUT
           echo "On branch: $(git branch -v)"
@@ -152,6 +156,9 @@ jobs:
 
           version="$(sed -n 's/^Version:\s*\(.*\)/\1/p' *.spec)"
           echo Version is $version
+
+          git config user.name shapbot
+          git config user.email "${AUTHOR_EMAIL}"
 
           git commit -m "GitHub Actions automated update to version $version"
           git push origin
