@@ -120,16 +120,17 @@ jobs:
           # cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
 
           prj=${{ inputs.obs_project }}
+          git obs repo clone SAP-trento/${{ inputs.obs_package }}
+          cd ${{ inputs.obs_package }}
+          git obs meta set --project=${prj}
+
           # Sloppy hack: `osc checkout` would choose the correct
           # branch, so we need to duplicate that logic. Instead of
           # introducing new GH input, prefer this small snippet.
-          branch="new-ci"
+          branch="main"
           if [ "${prj%factory}" = "${prj}" ]; then
             branch=stable
           fi
-          git obs repo clone SAP-trento/${{ inputs.obs_package }} -b "${branch}"
-          cd ${{ inputs.obs_package }}
-          git obs meta set --project=${prj}
 
           echo "checkout_dir=$(pwd)" >> $GITHUB_OUTPUT
           echo "On branch: $(git branch -v)"
