@@ -160,7 +160,10 @@ jobs:
           git config user.name shapbot
           git config user.email "${AUTHOR_EMAIL}"
 
+          echo Commit...
           git commit -m "GitHub Actions automated update to version $version"
+
+          echo Push...
           git push origin
 
       - name: Show build results
