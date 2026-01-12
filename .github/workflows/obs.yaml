@@ -150,7 +150,7 @@ jobs:
           # git push origin
 
       - name: Show build results
-        run: osc results ${{ inputs.obs_project }} ${{ inputs.obs_package }}
+        run: osc results ${{ inputs.obs_project }} ${{ inputs.obs_package }} -w --fail-on-error
 
       # - name: Prepare _service file
       #   run: |
