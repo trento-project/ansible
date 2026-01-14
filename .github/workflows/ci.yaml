@@ -252,4 +252,4 @@ jobs:
     secrets: inherit
     with:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
-      obs_package: ansible
+      obs_package: ansible-trento
