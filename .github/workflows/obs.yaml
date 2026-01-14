@@ -111,6 +111,7 @@ jobs:
       - name: Checkout OBS package
         id: checkout
         run: |
+          set -x
           # `obs-scm-bridge` is failing build currently, so falling
           # back to directly using `git obs`. Thus, we have to fiddle around
           # with its meta subcommand as well.
@@ -142,6 +143,8 @@ jobs:
 
       - name: Run services and commit
         run: |
+          set -x
+
           cd ${{ steps.checkout.outputs.checkout_dir }}
 
           echo Delete old upstream tarball...
