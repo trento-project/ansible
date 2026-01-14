@@ -90,6 +90,11 @@ jobs:
                         --set-as-default \
                         --git-uses-http
 
+          cat << EOF | tee --append ~/.config/git/config
+          [credential "https://src.opensuse.org"]
+              helper = "git-obs -G srcOBS login gitcredentials-helper"
+          EOF
+
       # - name: Read .tool-versionss
       #   uses: endorama/asdf-parse-tool-versions@v1.3.4
       #   id: tool-versions
