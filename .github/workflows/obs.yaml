@@ -163,8 +163,8 @@ jobs:
             git commit -m "GitHub Actions automated update to version $version"
 
             echo Push...
-            GIT_TRACE=1 git config --local credential.helper '/usr/bin/git-obs -G srcOBS login gitcredentials-helper'
-            git push origin
+            git config --local credential.helper '/usr/bin/git-obs -G srcOBS login gitcredentials-helper'
+            GIT_TRACE=1 git push origin
           fi
 
       - name: Show build results
