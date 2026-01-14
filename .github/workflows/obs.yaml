@@ -154,6 +154,7 @@ jobs:
 
           git config user.name shapbot
           git config user.email "${AUTHOR_EMAIL}"
+          git config credential.helper '/usr/bin/git-obs -G srcOBS login gitcredentials-helper'
 
           if git diff-index --quiet HEAD; then
             echo Skipping commit and push since there are no changes.
@@ -163,7 +164,6 @@ jobs:
             git commit -m "GitHub Actions automated update to version $version"
 
             echo Push...
-            git config --local credential.helper '/usr/bin/git-obs -G srcOBS login gitcredentials-helper'
             GIT_TRACE=1 git push origin
           fi
 
