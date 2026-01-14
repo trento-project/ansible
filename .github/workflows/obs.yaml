@@ -163,6 +163,7 @@ jobs:
             git commit -m "GitHub Actions automated update to version $version"
 
             echo Push...
+            git config --local credential.https://src.opensuse.org.helper '!git-obs -G srcOBS login gitcredentials-helper'
             git push origin
           fi
 
