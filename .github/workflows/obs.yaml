@@ -136,7 +136,6 @@ jobs:
           echo Setup user and credentials
           git config user.name shapbot
           git config user.email "${AUTHOR_EMAIL}"
-          git config credential."https://src.opensuse.org".helper '/usr/bin/git-obs -G srcOBS login gitcredentials-helper'
 
           echo "checkout_dir=$(pwd)" >> $GITHUB_OUTPUT
           echo "On branch: $(git branch -v)"
@@ -169,6 +168,7 @@ jobs:
             git commit -m "GitHub Actions automated update to version $version"
 
             echo Push...
+            git config credential."https://src.opensuse.org".helper '/usr/bin/git-obs -G srcOBS login gitcredentials-helper'
             git push origin
           fi
 
