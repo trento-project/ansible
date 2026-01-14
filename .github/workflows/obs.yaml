@@ -131,6 +131,11 @@ jobs:
           fi
           git switch "${branch}"
 
+          echo Setup user and credentials
+          git config user.name shapbot
+          git config user.email "${AUTHOR_EMAIL}"
+          git config credential."https://src.opensuse.org".helper '/usr/bin/git-obs -G srcOBS login gitcredentials-helper'
+
           echo "checkout_dir=$(pwd)" >> $GITHUB_OUTPUT
           echo "On branch: $(git branch -v)"
           echo -e "Remote:\n$(git remote -v)"
@@ -152,10 +157,6 @@ jobs:
           version="$(sed -n 's/^Version:\s*\(.*\)/\1/p' *.spec)"
           echo Version is $version
 
-          git config user.name shapbot
-          git config user.email "${AUTHOR_EMAIL}"
-          git config credential.helper '/usr/bin/git-obs -G srcOBS login gitcredentials-helper'
-
           if git diff-index --quiet HEAD; then
             echo Skipping commit and push since there are no changes.
 
@@ -164,7 +165,7 @@ jobs:
             git commit -m "GitHub Actions automated update to version $version"
 
             echo Push...
-            GIT_TRACE=1 git push origin
+            git push origin
           fi
 
       - name: Show build results
