@@ -67,6 +67,7 @@ jobs:
 
       - name: Configure OSC
         run: |
+          set -x
           mkdir -p $HOME/.config/osc
           cat << EOF > $HOME/.config/osc/oscrc
           [general]
