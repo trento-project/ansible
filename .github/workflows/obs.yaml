@@ -92,7 +92,7 @@ jobs:
 
           cat << EOF | tee --append ~/.gitconfig
           [credential "https://src.opensuse.org"]
-              helper = "git-obs -G srcOBS login gitcredentials-helper"
+              helper = "!git-obs -G srcOBS login gitcredentials-helper"
           EOF
 
       # - name: Read .tool-versionss
