@@ -92,7 +92,7 @@ jobs:
 
           git config -l --show-origin
 
-          git config --global credential.https://src.opensuse.org.helper = "!git-obs -G srcOBS login gitcredentials-helper"
+          git config --global credential.https://src.opensuse.org.helper "!git-obs -G srcOBS login gitcredentials-helper"
 
           git config -l --show-origin
 
