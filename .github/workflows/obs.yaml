@@ -41,23 +41,6 @@ jobs:
     #     SOURCE_DIR: packaging/suse/rpm
     #   options: -u 0:0
     steps:
-      # - uses: actions/checkout@v6
-      #   with:
-      #     fetch-depth: 0
-
-      # - name: Add openSUSE:Tools repo
-      #   run: |
-      #     dl_repo_key=${{ runner.temp }}/susetools_key.gpg
-      #     wget -O - \
-      #       -- https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key \
-      #       | gpg --dearmor -o ${dl_repo_key}
-
-      #     sudo mkdir -p /etc/apt/keyrings
-      #     repo_key="/etc/apt/keyrings/add-apt-repository.gpg"
-      #     sudo mv ${dl_repo_key} ${repo_key}
-      #     echo "deb [signed-by=${repo_key}] https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/ ./" \
-      #          | sudo tee /etc/apt/sources.list.d/opensusetools.list
-
       - uses: gerlero/add-apt-repository@v1
         with:
           uri: https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/
@@ -168,7 +151,7 @@ jobs:
           git config user.email "${AUTHOR_EMAIL}"
 
           if git diff-index --quiet HEAD; then
-            echo Nothing to commit, skipping.
+            echo There is nothing to commit, skipping.
 
           else
             echo Commit...
