@@ -90,9 +90,11 @@ jobs:
                         --set-as-default \
                         --git-uses-http
 
+          git config -l --show-origin
+
           cat << EOF | tee --append ~/.gitconfig
           [credential "https://src.opensuse.org"]
-              helper = "!git-obs -G srcOBS login gitcredentials-helper get"
+              helper = "!git-obs -G srcOBS login gitcredentials-helper"
           EOF
 
       # - name: Read .tool-versionss
