@@ -34,7 +34,9 @@ jobs:
     name: Update RPM package definitions
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/trento-project/continuous-delivery:main
+      # TODO: REVERT THAT
+      # image: ghcr.io/trento-project/continuous-delivery:main
+      image: ghcr.io/trento-project/continuous-delivery:add-obs-scm-bridge-package
       # env:
       #   OBS_PACKAGE_NAME: ${{ inputs.obs_package }}
       #   CHECKOUT_DIR: /tmp/trento-web
