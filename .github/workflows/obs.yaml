@@ -33,115 +33,108 @@ jobs:
   sync-rpm:
     name: Update RPM package definitions
     runs-on: ubuntu-24.04
-    # container:
-    #   image: ghcr.io/trento-project/continuous-delivery:main
-    #   env:
-    #     OBS_PACKAGE_NAME: trento-web
-    #     CHECKOUT_DIR: /tmp/trento-web
-    #     SOURCE_DIR: packaging/suse/rpm
-    #   options: -u 0:0
-    steps:
-      - uses: gerlero/add-apt-repository@v1
-        with:
-          uri: https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/
-          key: https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key
-          suite: "./"
-          component: ""
+    container:
+      image: ghcr.io/trento-project/continuous-delivery:main
+      # env:
+      #   OBS_PACKAGE_NAME: ${{ inputs.obs_package }}
+      #   CHECKOUT_DIR: /tmp/trento-web
+      #   SOURCE_DIR: packaging/suse/rpm
+      options: -u 0:0
 
-      - name: Install OSC tool
-        uses: gerlero/apt-install@v1
-        with:
-          packages: >-
-            osc obs-service-tar-scm
-            obs-service-set-version obs-service-recompress
+
+    steps:
+      # - uses: gerlero/add-apt-repository@v1
+      #   with:
+      #     uri: https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/
+      #     key: https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key
+      #     suite: "./"
+      #     component: ""
+
+      # - name: Install OSC tool
+      #   uses: gerlero/apt-install@v1
+      #   with:
+      #     packages: >-
+      #       osc obs-service-tar-scm
+      #       obs-service-set-version obs-service-recompress
+
+      # - name: Configure git for in-container operations
+      #   run: git config --global --add safe.directory $GITHUB_WORKSPACE
 
       # - name: Configure OSC
-      #   env:
-      #     OBS_USER: ${{ secrets.OBS_USER }}
-      #     OBS_PASS: ${{ secrets.OBS_PASS }}
       #   run: |
-      #     # hack needed because the HOME variable is set to '/github/home' and cannot be changed
+      #     set -x
       #     mkdir -p $HOME/.config/osc
-      #     cp /home/osc/.config/osc/oscrc $HOME/.config/osc
-      #     /scripts/init_osc_creds.sh
+      #     cat << EOF > $HOME/.config/osc/oscrc
+      #     [general]
+      #     apiurl = https://api.opensuse.org
+
+      #     [https://api.opensuse.org]
+      #     # trusted_prj=openSUSE:Factory
+      #     user = ${{ secrets.OBS_USER }}
+      #     pass = ${{ secrets.OBS_PASS }}
+      #     # sshkey=id_rsa
+      #     # credentials_mgr_class=osc.credentials.TransientCredentialsManager
+      #     EOF
 
       - name: Configure OSC
+        env:
+          OBS_USER: ${{ secrets.OBS_USER }}
+          OBS_PASS: ${{ secrets.OBS_PASS }}
         run: |
-          set -x
-          mkdir -p $HOME/.config/osc
-          cat << EOF > $HOME/.config/osc/oscrc
-          [general]
-          apiurl = https://api.opensuse.org
+          # XXX: Madness, HOME variable is set to '/github/home' and cannot be changed:
+          # https://github.com/actions/runner/issues/863
+          # mkdir -p $HOME/.config/osc
+          # cp /home/osc/.config/osc/oscrc $HOME/.config/osc
+          /scripts/init_osc_creds.sh
 
-          [https://api.opensuse.org]
-          # trusted_prj=openSUSE:Factory
-          user = ${{ secrets.OBS_USER }}
-          pass = ${{ secrets.OBS_PASS }}
-          # sshkey=id_rsa
-          # credentials_mgr_class=osc.credentials.TransientCredentialsManager
-          EOF
-
+      # TODO: Move this into the CD container
       - name: Login to OBS Git
         run: |
           git obs login add srcOBS \
-                        --url srcOBS \
                         --url https://src.opensuse.org \
                         --user ${{ secrets.OBS_USER }} \
                         --token ${{ secrets.OBS_GIT_PAT }} \
                         --set-as-default \
                         --git-uses-http
 
+          git config --global user.name ${{ secrets.OBS_USER }}
+          git config --global user.email "${AUTHOR_EMAIL}"
+          git config --global credential."https://src.opensuse.org".helper '/usr/bin/git-obs -G srcOBS login gitcredentials-helper'
           # cat << EOF | tee --append ~/.gitconfig
           # [credential "https://src.opensuse.org"]
           #     helper = "!git-obs -G srcOBS login gitcredentials-helper"
           # EOF
 
-      # - name: Read .tool-versionss
-      #   uses: endorama/asdf-parse-tool-versions@v1.3.4
-      #   id: tool-versions
-
-      # - name: Configure git for in-container operations
-      #   run: git config --global --add safe.directory $GITHUB_WORKSPACE
-
-      # - name: Get version from git history
-      #   id: get_version_from_git
-      #   run: |
-      #     VERSION=$(/scripts/get_version_from_git.sh)
-      #     echo "version=$VERSION" >> $GITHUB_OUTPUT
-
       - name: Checkout OBS package
         id: checkout
         run: |
           set -x
+          # TODO: REMOVE THIS COMMENT IF USING CD CONTAINER
           # `obs-scm-bridge` is failing build currently, so falling
           # back to directly using `git obs`. Thus, we have to fiddle around
           # with its meta subcommand as well.
-          # osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
-          # cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
+          osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
+          cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
 
-          prj=${{ inputs.obs_project }}
-          git obs repo clone kkanchev/${{ inputs.obs_package }}
-          cd ${{ inputs.obs_package }}
-          git obs meta set --project=${prj}
+          # prj=${{ inputs.obs_project }}
+          # git obs repo clone kkanchev/${{ inputs.obs_package }}
+          # cd ${{ inputs.obs_package }}
+          # git obs meta set --project=${prj}
 
           # Sloppy hack: `osc checkout` would choose the correct
           # branch, so we need to duplicate that logic. Instead of
           # introducing new GH input, prefer this small snippet.
-          branch="main"
-          if [ "${prj%factory}" = "${prj}" ]; then
-            branch=stable
-          fi
-          git switch "${branch}"
-
-          echo Setup user and credentials
-          git config user.name shapbot
-          git config user.email "${AUTHOR_EMAIL}"
-          git config credential."https://src.opensuse.org".helper '/usr/bin/git-obs -G srcOBS login gitcredentials-helper'
+          # branch="main"
+          # if [ "${prj%factory}" = "${prj}" ]; then
+          #   branch=stable
+          # fi
+          # git switch "${branch}"
 
           echo "checkout_dir=$(pwd)" >> $GITHUB_OUTPUT
           echo "On branch: $(git branch -v)"
           echo -e "Remote:\n$(git remote -v)"
 
+      # TODO: Move this into CD container scripts
       - name: Run services and commit
         run: |
           set -x
@@ -165,45 +158,15 @@ jobs:
             echo Skipping commit and push since there are no changes.
 
           else
-            echo Commit...
+            echo Commit changes and push...
             git commit -m "GitHub Actions automated update to version $version"
 
-            echo Push...
+            # XXX: If stuck indefinitely here, then check if
+            # permissions to push into repo are allowed. Suspected Git
+            # LFS bug.
             git push origin
           fi
 
-      - name: Show build results
-        run: osc results ${{ inputs.obs_project }} ${{ inputs.obs_package }} -w --fail-on-error
-
-      # - name: Prepare _service file
-      #   run: |
-      #     sed -i 's~%%REVISION%%~${{ github.sha }}~' $SOURCE_DIR/_service && \
-      #     sed -i 's~%%REPOSITORY%%~${{ github.repository }}~' $SOURCE_DIR/_service && \
-      #     sed -i 's~%%VERSION%%~${{ steps.get_version_from_git.outputs.version }}~' $SOURCE_DIR/_service
-
-      # - name: Prepare .changes file
-      #   if: inputs.update_changelog
-      #   env:
-      #     GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #     VERSION=${{ steps.get_version_from_git.outputs.version }}
-      #     REPOSITORY=${{ github.repository }}
-      #     CHANGES_FILE=${OBS_PACKAGE_NAME}.changes
-      #     /scripts/gh_release_to_obs_changeset.py $REPOSITORY -a $AUTHOR_EMAIL -t $VERSION -f $CHECKOUT_DIR/$CHANGES_FILE
-
-      # - name: Update sources
-      #   run: |
-      #     cp $SOURCE_DIR/_service $CHECKOUT_DIR
-      #     cp $SOURCE_DIR/${OBS_PACKAGE_NAME}.spec $CHECKOUT_DIR
-      #     pushd $CHECKOUT_DIR
-      #     rm -vf *.tar.gz
-      #     osc service manualrun
-      #     rm -vf *.tgz
-      #     popd
-      #     cp deps.tar.gz $CHECKOUT_DIR
-
-      # - name: Commit to OBS
-      #   run: |
-      #     pushd $CHECKOUT_DIR
-      #     osc ar
-      #     osc commit -m "GitHub Actions automated update to reference ${{ github.sha }}"
+      # `osc results -w` command can't be used to wait for build complete, according to BuildOps.
+      # - name: Show build results
+      #   run: osc results ${{ inputs.obs_project }} ${{ inputs.obs_package }} -w --fail-on-error
