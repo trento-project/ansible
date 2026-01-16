@@ -47,7 +47,7 @@ jobs:
           /scripts/init_osc_creds.sh
 
       # TODO: Move this into the CD container
-      - name: Login to OBS Git
+      - name: Configure OBS Git
         run: |
           git obs login add srcOBS \
                         --url https://src.opensuse.org \
@@ -79,37 +79,51 @@ jobs:
           echo "On branch: $(git branch -v)"
           echo -e "Remote:\n$(git remote -v)"
 
-      # TODO: Move this into CD container scripts
-      - name: Run services and commit
+      - name: Remove old upstream tarballs
         run: |
           cd ${{ steps.checkout.outputs.checkout_dir }}
-
-          echo Delete old upstream tarball...
           rm -vf *.tar.gz
 
-          echo Run services...
+      - name: Run services
+        id: services
+        run: |
+          cd ${{ steps.checkout.outputs.checkout_dir }}
           osc service run
+
+          # Extract version
+          version="$(sed -n 's/^Version:\s*\(.*\)/\1/p' *.spec)"
+          echo "version=${version}" >> $GITHUB_OUTPUT
+          echo New version is $version
+
+      - name: Handle .changes file
+        # TODO: revert this
+        # if: inputs.update_changelog
+        env:
+          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          /scripts/gh_release_to_obs_changeset.py \
+              ${{ github.repository }} \
+              -a $AUTHOR_EMAIL \
+              -t "${{ steps.services.outputs.version }}" \
+              -f ${{ steps.checkout.outputs.checkout_dir }/${{ inputs.obs_package }}.changes
+
+      - name: Commit and push
+        run: |
+          cd ${{ steps.checkout.outputs.checkout_dir }}
 
           echo Git changes:
           git add -Av
           git status
-
-          version="$(sed -n 's/^Version:\s*\(.*\)/\1/p' *.spec)"
-          echo Version is $version
 
           if git diff-index --quiet HEAD; then
             echo Skipping commit and push since there are no changes.
 
           else
             echo Commit changes and push...
-            git commit -m "GitHub Actions automated update to version $version"
+            git commit -m "GitHub Actions automated update to version ${{ steps.services.outputs.version }}"
 
             # XXX: If stuck indefinitely here, then check if
             # permissions to push into repo are allowed. Suspected Git
             # LFS bug.
             git push origin
           fi
-
-      # `osc results -w` command can't be used to wait for build complete, according to BuildOps.
-      # - name: Show build results
-      #   run: osc results ${{ inputs.obs_project }} ${{ inputs.obs_package }} -w --fail-on-error
