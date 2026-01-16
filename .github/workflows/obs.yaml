@@ -46,7 +46,6 @@ jobs:
           # XXX: Madness, HOME variable is set to '/github/home' and cannot be changed:
           /scripts/init_osc_creds.sh
 
-      # TODO: Move this into the CD container
       - name: Configure OBS Git
         run: |
           git obs login add srcOBS \
@@ -96,8 +95,7 @@ jobs:
           echo New version is $version
 
       - name: Handle .changes file
-        # TODO: revert this
-        # if: inputs.update_changelog
+        if: inputs.update_changelog
         env:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -112,7 +110,7 @@ jobs:
           cd ${{ steps.checkout.outputs.checkout_dir }}
 
           echo Git changes:
-          git add -Av
+          git add -A
           git status
 
           if git diff-index --quiet HEAD; then
