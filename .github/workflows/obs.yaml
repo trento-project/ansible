@@ -34,59 +34,16 @@ jobs:
     name: Update RPM package definitions
     runs-on: ubuntu-24.04
     container:
-      # TODO: REVERT THAT
-      # image: ghcr.io/trento-project/continuous-delivery:main
-      image: ghcr.io/trento-project/continuous-delivery:add-obs-scm-bridge-package
-      # env:
-      #   OBS_PACKAGE_NAME: ${{ inputs.obs_package }}
-      #   CHECKOUT_DIR: /tmp/trento-web
-      #   SOURCE_DIR: packaging/suse/rpm
+      image: ghcr.io/trento-project/continuous-delivery:main
       options: -u 0:0
 
-
     steps:
-      # - uses: gerlero/add-apt-repository@v1
-      #   with:
-      #     uri: https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/
-      #     key: https://download.opensuse.org/repositories/openSUSE:/Tools/xUbuntu_24.04/Release.key
-      #     suite: "./"
-      #     component: ""
-
-      # - name: Install OSC tool
-      #   uses: gerlero/apt-install@v1
-      #   with:
-      #     packages: >-
-      #       osc obs-service-tar-scm
-      #       obs-service-set-version obs-service-recompress
-
-      # - name: Configure git for in-container operations
-      #   run: git config --global --add safe.directory $GITHUB_WORKSPACE
-
-      # - name: Configure OSC
-      #   run: |
-      #     set -x
-      #     mkdir -p $HOME/.config/osc
-      #     cat << EOF > $HOME/.config/osc/oscrc
-      #     [general]
-      #     apiurl = https://api.opensuse.org
-
-      #     [https://api.opensuse.org]
-      #     # trusted_prj=openSUSE:Factory
-      #     user = ${{ secrets.OBS_USER }}
-      #     pass = ${{ secrets.OBS_PASS }}
-      #     # sshkey=id_rsa
-      #     # credentials_mgr_class=osc.credentials.TransientCredentialsManager
-      #     EOF
-
       - name: Configure OSC
         env:
           OBS_USER: ${{ secrets.OBS_USER }}
           OBS_PASS: ${{ secrets.OBS_PASS }}
         run: |
           # XXX: Madness, HOME variable is set to '/github/home' and cannot be changed:
-          # https://github.com/actions/runner/issues/863
-          # mkdir -p $HOME/.config/osc
-          # cp /home/osc/.config/osc/oscrc $HOME/.config/osc
           /scripts/init_osc_creds.sh
 
       # TODO: Move this into the CD container
@@ -115,27 +72,8 @@ jobs:
       - name: Checkout OBS package
         id: checkout
         run: |
-          set -x
-          # TODO: REMOVE THIS COMMENT IF USING CD CONTAINER
-          # `obs-scm-bridge` is failing build currently, so falling
-          # back to directly using `git obs`. Thus, we have to fiddle around
-          # with its meta subcommand as well.
           osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
           cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
-
-          # prj=${{ inputs.obs_project }}
-          # git obs repo clone kkanchev/${{ inputs.obs_package }}
-          # cd ${{ inputs.obs_package }}
-          # git obs meta set --project=${prj}
-
-          # Sloppy hack: `osc checkout` would choose the correct
-          # branch, so we need to duplicate that logic. Instead of
-          # introducing new GH input, prefer this small snippet.
-          # branch="main"
-          # if [ "${prj%factory}" = "${prj}" ]; then
-          #   branch=stable
-          # fi
-          # git switch "${branch}"
 
           echo "checkout_dir=$(pwd)" >> $GITHUB_OUTPUT
           echo "On branch: $(git branch -v)"
@@ -144,8 +82,6 @@ jobs:
       # TODO: Move this into CD container scripts
       - name: Run services and commit
         run: |
-          set -x
-
           cd ${{ steps.checkout.outputs.checkout_dir }}
 
           echo Delete old upstream tarball...
