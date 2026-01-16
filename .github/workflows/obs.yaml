@@ -105,7 +105,7 @@ jobs:
               ${{ github.repository }} \
               -a $AUTHOR_EMAIL \
               -t "${{ steps.services.outputs.version }}" \
-              -f ${{ steps.checkout.outputs.checkout_dir }/${{ inputs.obs_package }}.changes
+              -f ${{ steps.checkout.outputs.checkout_dir }}/${{ inputs.obs_package }}.changes
 
       - name: Commit and push
         run: |
