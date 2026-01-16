@@ -102,6 +102,15 @@ jobs:
           git config --global user.name ${{ secrets.OBS_USER }}
           git config --global user.email "${AUTHOR_EMAIL}"
           git config --global credential."https://src.opensuse.org".helper '/usr/bin/git-obs -G srcOBS login gitcredentials-helper'
+
+          # HACK: Force usage of HTTP clone URL, instead of SSH
+          # ones. We need that to be able to use single PAT for API
+          # and repo interactions.
+          # Explanatation: osb-scm-bridge used in `osc clone`
+          # re-writes URL into SSH variant. Until fixed we'll use this
+          # hack.
+          git config --global url."https://src.opensuse.org/".insteadOf: "ssh://gitea@src.opensuse.org:"
+
           # cat << EOF | tee --append ~/.gitconfig
           # [credential "https://src.opensuse.org"]
           #     helper = "!git-obs -G srcOBS login gitcredentials-helper"
