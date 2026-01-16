@@ -109,7 +109,7 @@ jobs:
           # Explanatation: osb-scm-bridge used in `osc clone`
           # re-writes URL into SSH variant. Until fixed we'll use this
           # hack.
-          git config --global url."https://src.opensuse.org/".insteadOf: "ssh://gitea@src.opensuse.org:"
+          git config --global url."https://src.opensuse.org/".insteadOf "ssh://gitea@src.opensuse.org:"
 
           # cat << EOF | tee --append ~/.gitconfig
           # [credential "https://src.opensuse.org"]
