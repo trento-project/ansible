@@ -21,7 +21,9 @@ on:
         required: true
       obs_pass:
         required: true
-      obs_git_pat:
+      # obs_git_pat:
+      #   required: true
+      obs_ssh_key:
         required: true
 
 concurrency: ${{ github.workflow }}-${{ inputs.obs_project }}
@@ -42,31 +44,35 @@ jobs:
         env:
           OBS_USER: ${{ secrets.obs_user }}
           OBS_PASS: ${{ secrets.obs_pass }}
+          OBS_SSH_KEY: ${{ secrets.obs_ssh_key }}
         run: |
-          # XXX: Madness, HOME variable is set to '/github/home' and cannot be changed:
+          # XXX: Madness, HOME variable is set to '/github/home' and cannot be changed.
           /scripts/init_osc_creds.sh
 
-      - name: Configure OBS Git
-        run: |
-          git obs login add srcOBS \
-                        --url https://src.opensuse.org \
-                        --user ${{ secrets.obs_user }} \
-                        --token ${{ secrets.obs_git_pat }} \
-                        --set-as-default \
-                        --git-uses-http
+      # - name: Configure OBS Git
+      #   run: |
+      #     git obs login add srcOBS \
+      #                   --url https://src.opensuse.org \
+      #                   --user ${{ secrets.obs_user }} \
+      #                   --token ${{ secrets.obs_git_pat }} \
+      #                   --set-as-default \
+      #                   --git-uses-http
 
-          git config --global user.name ${{ secrets.obs_user }}
-          git config --global user.email "${AUTHOR_EMAIL}"
-          git config --global credential."https://src.opensuse.org".helper '!git-obs -G srcOBS login gitcredentials-helper'
+      #     git config --global user.name ${{ secrets.obs_user }}
+      #     git config --global user.email "${AUTHOR_EMAIL}"
+      #     git config --global credential."https://src.opensuse.org".helper '!git-obs -G srcOBS login gitcredentials-helper'
 
-          # HACK: Force usage of HTTP when cloning URL, as opposed to
-          # SSH. We need that to be able to use single PAT for API and
-          # repo interactions.
-          # Explanatation: osb-scm-bridge used in
-          # `osc clone` re-writes URL into SSH variant. Until fixed
-          # we'll use this hack.
-          # https://github.com/openSUSE/obs-scm-bridge/issues/29
-          git config --global url."https://src.opensuse.org".insteadOf "ssh://gitea@src.opensuse.org"
+      #     # HACK: Force usage of HTTP when cloning URL, as opposed to
+      #     # SSH. We need that to be able to use single PAT for API and
+      #     # repo interactions.
+      #     # Explanatation: osb-scm-bridge used in
+      #     # `osc clone` re-writes URL into SSH variant. Until fixed
+      #     # we'll use this hack.
+      #     # https://github.com/openSUSE/obs-scm-bridge/issues/29
+      #     git config --global url."https://src.opensuse.org".insteadOf "ssh://gitea@src.opensuse.org"
+
+      # - name: Setup host key
+      #   run: echo "src.opensuse.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFKNThLRPznU5Io1KrAYHmYpaoLQEMGM9nwpKyYQCkPx" >> ~/.ssh/known_hosts
 
       - name: Checkout OBS package
         id: checkout
