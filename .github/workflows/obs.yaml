@@ -17,7 +17,7 @@ on:
         required: true
         description: The OBS package to commit change to.
     secrets:
-      github_token:
+      gh_token:
         required: true
       obs_user:
         required: true
@@ -99,7 +99,7 @@ jobs:
       - name: Handle .changes file
         if: inputs.update_changelog
         env:
-          GITHUB_OAUTH_TOKEN: ${{ secrets.github_token }}
+          GITHUB_OAUTH_TOKEN: ${{ secrets.gh_token }}
         run: |
           /scripts/gh_release_to_obs_changeset.py \
               ${{ github.repository }} \

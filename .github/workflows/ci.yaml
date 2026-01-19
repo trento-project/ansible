@@ -223,7 +223,7 @@ jobs:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
       obs_package: ${{ vars.OBS_PACKAGE }}
     secrets:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
       obs_user: ${{ secrets.OBS_USER }}
       obs_pass: ${{ secrets.OBS_PASS }}
       obs_git_pat: ${{ secrets.OBS_GIT_PAT }}
