@@ -35,6 +35,7 @@ on:
           both API (Gitea) and repository access when OBS sources are
           kept in git.
 
+jobs:
   pre-release:
     name: Detect new version, draft release, update changelog
     permissions:
