@@ -50,7 +50,7 @@ jobs:
           /scripts/init_osc_creds.sh
 
           # TODO -- fix this
-          sed -i "s/credentials_mgr_class=/# credentials_mgr_class=/g" "$OSCRC_FILE"
+          sed -i "s/credentials_mgr_class=/# credentials_mgr_class=/g" "${OSCRC_FILE:=$HOME/.config/osc/oscrc}"
 
 
       # - name: Configure OBS Git
