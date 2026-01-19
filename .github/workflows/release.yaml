@@ -20,7 +20,6 @@ jobs:
       obs_package: ${{ vars.OBS_PACKAGE }}
     secrets:
       release_key: ${{ secrets.RELEASE_KEY }}
-      gh_token: ${{ secrets.GITHUB_TOKEN }}
       obs_user: ${{ secrets.OBS_USER }}
       obs_pass: ${{ secrets.OBS_PASS }}
       obs_git_pat: ${{ secrets.OBS_GIT_PAT }}

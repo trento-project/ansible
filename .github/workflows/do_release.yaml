@@ -22,9 +22,6 @@ on:
           GitHub deploy key to be used for repository access. The
           deploy key needs write permissions to the repository.
         required: true
-      gh_token:
-        description: Token for accessing the GitHub API.
-        required: true
       obs_user:
         description: OBS username for API (OBS and git) and repository access.
       obs_pass:
@@ -73,7 +70,7 @@ jobs:
           disable-autolabeler: true
           config-name: release_drafter.yaml
         env:
-          GITHUB_TOKEN: ${{ secrets.gh_token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update CHANGELOG.md
         uses: stefanzweifel/changelog-updater-action@v1
@@ -108,7 +105,7 @@ jobs:
           disable-autolabeler: true
           config-name: release_drafter.yaml
         env:
-          GITHUB_TOKEN: ${{ secrets.gh_token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-and-push-container-images:
     name: Build and push container images
@@ -132,7 +129,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.gh_token }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@507c2f2dc502c992ad446e3d7a5dfbe311567a96

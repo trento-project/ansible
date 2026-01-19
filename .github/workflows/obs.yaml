@@ -17,8 +17,6 @@ on:
         required: true
         description: The OBS package to commit change to.
     secrets:
-      gh_token:
-        required: true
       obs_user:
         required: true
       obs_pass:
@@ -97,7 +95,7 @@ jobs:
           echo New version is $version
 
       - name: Handle .changes file
-        # if: inputs.update_changelog
+        if: inputs.update_changelog
         env:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
