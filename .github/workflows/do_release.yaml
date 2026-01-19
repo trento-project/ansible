@@ -35,8 +35,6 @@ on:
 jobs:
   pre-release:
     name: Detect new version, draft release, update changelog
-    permissions:
-      contents: write
     runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.detect-version.outputs.current-version }}
@@ -88,8 +86,6 @@ jobs:
 
   release:
     name: Tag and publish release
-    permissions:
-      contents: write
     runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.publish-release.outputs.tag_name }}
@@ -113,7 +109,6 @@ jobs:
     needs:
       - release
     permissions:
-      contents: read
       packages: write
     env:
       REGISTRY: ghcr.io

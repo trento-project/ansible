@@ -12,6 +12,8 @@ concurrency: ${{ github.workflow }}
 jobs:
   release:
     name: Do a release
+    permissions:
+      contents: write
     uses: ./.github/workflows/do_release.yaml
     with:
       obs_enabled: ${{ vars.OBS_ENABLED }}
