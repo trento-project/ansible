@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.10](https://github.com/trento-project/ansible/tree/1.0.1/compare/1.0.9...1.0.10) - 2026-01-19
+
+### What's Changed
+
+* No changes
+
+**Full Changelog**: https://github.com/skrech/ansible/compare/1.0.9...1.0.10
+
 ## [1.0.9](https://github.com/trento-project/ansible/tree/1.0.1/compare/1.0.8...1.0.9) - 2026-01-19
 
 ### What's Changed
