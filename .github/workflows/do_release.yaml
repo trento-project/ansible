@@ -108,8 +108,6 @@ jobs:
     runs-on: ubuntu-24.04
     needs:
       - release
-    permissions:
-      packages: write
     env:
       REGISTRY: ghcr.io
       IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/ansible
