@@ -71,8 +71,13 @@ jobs:
       #     # https://github.com/openSUSE/obs-scm-bridge/issues/29
       #     git config --global url."https://src.opensuse.org".insteadOf "ssh://gitea@src.opensuse.org"
 
-      # - name: Setup host key
-      #   run: echo "src.opensuse.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFKNThLRPznU5Io1KrAYHmYpaoLQEMGM9nwpKyYQCkPx" >> ~/.ssh/known_hosts
+      - name: Setup host key
+        run: echo "src.opensuse.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFKNThLRPznU5Io1KrAYHmYpaoLQEMGM9nwpKyYQCkPx" >> ~/.ssh/known_hosts
+
+      - name: Setup Git
+        run: |
+          git config --global user.name ${{ secrets.obs_user }}
+          git config --global user.email "${AUTHOR_EMAIL}"
 
       - name: Checkout OBS package
         id: checkout
