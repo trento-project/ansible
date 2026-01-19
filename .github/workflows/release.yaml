@@ -10,130 +10,17 @@ on:
 concurrency: ${{ github.workflow }}
 
 jobs:
-  pre-release:
-    name: Detect new version, draft release, update changelog
-    permissions:
-      contents: write
-    runs-on: ubuntu-24.04
-    outputs:
-      version: ${{ steps.detect-version.outputs.current-version }}
-    steps:
-      - name: Check out the repository
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 2
-          ssh-key: ${{ secrets.RELEASE_KEY }}
-
-      - name: Check if there is a parent commit
-        id: check-parent-commit
-        run: |
-          echo "sha=$(git rev-parse --verify --quiet HEAD^)" >> $GITHUB_OUTPUT
-
-      - name: Detect new version
-        id: detect-version
-        if: steps.check-parent-commit.outputs.sha
-        uses: salsify/action-detect-and-tag-new-version@v2
-        with:
-          create-tag: false
-          version-command: |
-            cat VERSION
-
-      - name: Draft release
-        id: draft-release
-        uses: release-drafter/release-drafter@v6
-        with:
-          publish: false
-          version: ${{ steps.detect-version.outputs.current-version }}
-          disable-autolabeler: true
-          config-name: release_drafter.yaml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update CHANGELOG.md
-        uses: stefanzweifel/changelog-updater-action@v1
-        with:
-          latest-version: ${{ steps.detect-version.outputs.current-version }}
-          release-notes: ${{ steps.draft-release.outputs.body }}
-
-      - name: Commit new changelog
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          branch: main
-          commit_message: "Automatically update CHANGELOG.md for release ${{ steps.detect-version.outputs.current-version }}"
-
   release:
-    name: Tag and publish release
-    permissions:
-      contents: write
-    runs-on: ubuntu-24.04
-    outputs:
-      version: ${{ steps.publish-release.outputs.tag_name }}
-    needs:
-      - pre-release
-    steps:
-      - name: Publish release
-        id: publish-release
-        uses: release-drafter/release-drafter@v6
-        with:
-          publish: true
-          version: ${{ needs.pre-release.outputs.version }}
-          disable-autolabeler: true
-          config-name: release_drafter.yaml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build-and-push-container-images:
-    name: Build and push container images
-    runs-on: ubuntu-24.04
-    needs:
-      - release
-    permissions:
-      contents: read
-      packages: write
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/ansible
-      IMAGE_TAG: ${{ needs.release.outputs.version }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: docker/setup-buildx-action@v2
-      - name: Log in to the Container registry
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@507c2f2dc502c992ad446e3d7a5dfbe311567a96
-        with:
-          images: ${{ env.IMAGE_REPOSITORY }}
-      - name: Build and push container image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: "docker/Dockerfile"
-          push: true
-          tags: ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: "linux/amd64,linux/arm64"
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  obs-sync:
-    name: Update OBS package
-    if: vars.OBS_ENABLED == 'true'
-    uses: ./.github/workflows/obs.yaml
-    strategy:
-      matrix:
-        include:
-          - obs_project: ${{ vars.OBS_PROJECT_STABLE }}
-          - obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
-    needs:
-      - release
-    secrets: inherit
+    name: Do a release
+    uses: ./.github/workflows/do_release.yaml
     with:
-      update_changelog: true
-      obs_project: ${{ matrix.obs_project }}
+      obs_enabled: ${{ vars.OBS_ENABLED }}
+      obs_project_stable: ${{ vars.OBS_PROJECT_STABLE }}
+      obs_project_rolling: ${{ vars.OBS_PROJECT_ROLLING }}
+      obs_package: ${{ vars.OBS_PACKAGE }}
+    secrets:
+      release_key: ${{ secrets.RELEASE_KEY }}
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
+      obs_user: ${{ secrets.OBS_USER }}
+      obs_pass: ${{ secrets.OBS_PASS }}
+      obs_git_pat: ${{ secrets.OBS_GIT_PAT }}
