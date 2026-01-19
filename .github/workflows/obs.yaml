@@ -99,10 +99,11 @@ jobs:
         env:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          release_version="$(echo '${{ steps.services.outputs.version }}' | cut -d'+' -f 1)"
           /scripts/gh_release_to_obs_changeset.py \
               ${{ github.repository }} \
-              -a $AUTHOR_EMAIL \
-              -t "${{ steps.services.outputs.version }}" \
+              -a "$AUTHOR_EMAIL" \
+              -t "${release_version}" \
               -f ${{ steps.checkout.outputs.checkout_dir }}/${{ inputs.obs_package }}.changes
 
       - name: Commit and push
