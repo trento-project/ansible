@@ -49,6 +49,10 @@ jobs:
           # XXX: Madness, HOME variable is set to '/github/home' and cannot be changed.
           /scripts/init_osc_creds.sh
 
+          # TODO -- fix this
+          sed -i "s/credentials_mgr_class=/# credentials_mgr_class=/g" "$OSCRC_FILE"
+
+
       # - name: Configure OBS Git
       #   run: |
       #     git obs login add srcOBS \
