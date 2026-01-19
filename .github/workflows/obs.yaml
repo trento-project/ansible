@@ -17,11 +17,13 @@ on:
         required: true
         description: The OBS package to commit change to.
     secrets:
-      OBS_USER:
+      github_token:
         required: true
-      OBS_PASS:
+      obs_user:
         required: true
-      OBS_GIT_PAT:
+      obs_pass:
+        required: true
+      obs_git_pat:
         required: true
 
 concurrency: ${{ github.workflow }}-${{ inputs.obs_project }}
@@ -40,8 +42,8 @@ jobs:
     steps:
       - name: Configure OSC
         env:
-          OBS_USER: ${{ secrets.OBS_USER }}
-          OBS_PASS: ${{ secrets.OBS_PASS }}
+          OBS_USER: ${{ secrets.obs_user }}
+          OBS_PASS: ${{ secrets.obs_pass }}
         run: |
           # XXX: Madness, HOME variable is set to '/github/home' and cannot be changed:
           /scripts/init_osc_creds.sh
@@ -50,12 +52,12 @@ jobs:
         run: |
           git obs login add srcOBS \
                         --url https://src.opensuse.org \
-                        --user ${{ secrets.OBS_USER }} \
-                        --token ${{ secrets.OBS_GIT_PAT }} \
+                        --user ${{ secrets.obs_user }} \
+                        --token ${{ secrets.obs_git_pat }} \
                         --set-as-default \
                         --git-uses-http
 
-          git config --global user.name ${{ secrets.OBS_USER }}
+          git config --global user.name ${{ secrets.obs_user }}
           git config --global user.email "${AUTHOR_EMAIL}"
           git config --global credential."https://src.opensuse.org".helper '!git-obs -G srcOBS login gitcredentials-helper'
 
@@ -97,7 +99,7 @@ jobs:
       - name: Handle .changes file
         if: inputs.update_changelog
         env:
-          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OAUTH_TOKEN: ${{ secrets.github_token }}
         run: |
           /scripts/gh_release_to_obs_changeset.py \
               ${{ github.repository }} \
