@@ -18,7 +18,7 @@ on:
         description: "The OBS package to commit change to."
     secrets:
       release_key:
-        description: |
+        description: >-
           GitHub deploy key to be used for repository access. The
           deploy key needs write permissions to the repository.
         required: true
@@ -26,12 +26,10 @@ on:
         description: OBS username for API (OBS and git) and repository access.
       obs_pass:
         description: OBS password for API (OBS-only) access.
-      obs_git_pat:
-        description: |
-          Personal access token for the `obs_user` that would allow
-          both API (Gitea) and repository access when OBS sources are
-          kept in git.
-
+      obs_ssh_key:
+        description: >-
+          SSH Key for the `obs_user` that would allow repository
+          access when OBS sources are kept in git.
 jobs:
   pre-release:
     name: Detect new version, draft release, update changelog
@@ -168,4 +166,4 @@ jobs:
     secrets:
       obs_user: ${{ secrets.obs_user }}
       obs_pass: ${{ secrets.obs_pass }}
-      obs_git_pat: ${{ secrets.obs_git_pat }}
+      obs_ssh_key: ${{ secrets.obs_ssh_key }}
