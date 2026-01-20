@@ -47,7 +47,6 @@ jobs:
 
       - name: Detect new version
         id: detect-version
-        if: steps.check-parent-commit.outputs.sha
         uses: salsify/action-detect-and-tag-new-version@v2
         with:
           create-tag: false
