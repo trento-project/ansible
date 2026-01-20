@@ -76,11 +76,20 @@ jobs:
       #     git config --global url."https://src.opensuse.org".insteadOf "ssh://gitea@src.opensuse.org"
 
       - name: Setup host key
-        # XXX: ssh resolves `~` from /etc/passwd, not from $HOME
-        # env-var. And they are different because GitHub...
+        # XXX: Madness again: GitHub changes $HOME variable (affecting
+        # shell commands) but SSH expands `~` from /etc/passwd, which
+        # is different to $HOME.
         run: |
           real_home="$(grep "$(whoami)" /etc/passwd | cut -d':' -f6)"
           echo "src.opensuse.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFKNThLRPznU5Io1KrAYHmYpaoLQEMGM9nwpKyYQCkPx" >> "${real_home}/.ssh/known_hosts"
+
+      - name: Setup SSH identity
+        run: |
+          cat << EOF >> ~/.ssh/config
+          Host src.opensuse.org
+            IdentityFile ~/.ssh/id_rsa_obs
+            IdentitiesOnly yes
+          EOF
 
       - name: Setup Git
         run: |
@@ -90,6 +99,7 @@ jobs:
       - name: Checkout OBS package
         id: checkout
         run: |
+          ssh -T -vvv gitea@src.opensuse.org
           osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
           cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
 
