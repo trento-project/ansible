@@ -40,13 +40,7 @@ jobs:
       options: -u 0:0
 
     steps:
-      - name: Configure OSC
-        env:
-          OBS_USER: ${{ secrets.obs_user }}
-          OBS_PASS: ${{ secrets.obs_pass }}
-        run: |
-          /scripts/init_osc_creds.sh
-
+      # NOTE: SSH is only used for Git, not for legacy OSC operations.
       - name: Setup SSH for OBS operation
         run: |
           # XXX: Madness: GitHub changes $HOME variable (affecting
@@ -72,7 +66,14 @@ jobs:
             IdentitiesOnly yes
           EOF
 
-      - name: Setup Git for OBS operation
+      - name: Configure OSC
+        env:
+          OBS_USER: ${{ secrets.obs_user }}
+          OBS_PASS: ${{ secrets.obs_pass }}
+        run: |
+          /scripts/init_osc_creds.sh
+
+      - name: Configure Git
         run: |
           git config --global user.name ${{ secrets.obs_user }}
           git config --global user.email "${AUTHOR_EMAIL}"
