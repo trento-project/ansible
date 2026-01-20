@@ -21,8 +21,6 @@ on:
         required: true
       obs_pass:
         required: true
-      # obs_git_pat:
-      #   required: true
       obs_ssh_key:
         required: true
 
