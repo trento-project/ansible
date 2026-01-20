@@ -90,8 +90,7 @@ jobs:
       - name: Checkout OBS package
         id: checkout
         run: |
-          ssh -T -vvv gitea@src.opensuse.org
-          GIT_TRACE=1 osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
+          osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
           cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
 
           echo "checkout_dir=$(pwd)" >> $GITHUB_OUTPUT
