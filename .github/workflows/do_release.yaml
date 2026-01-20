@@ -54,7 +54,7 @@ jobs:
           # VERSION file is just added to the repository (initial
           # release).
           version-command: |
-            [ -r VERSION ] && cat VERSION
+            [ -r VERSION ] && cat VERSION || true
 
       - name: Draft release
         id: draft-release
