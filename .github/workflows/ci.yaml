@@ -12,215 +12,213 @@ on:
   workflow_dispatch:
 
 jobs:
-  # TODO: Re-enable ansible-lint, build containers and test-deploy
-  # ansible-lint:
-  #   name: Playbook linting
-  #   runs-on: ubuntu-24.04
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
+  ansible-lint:
+    name: Playbook linting
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-  #     - name: Run ansible-lint on main playbook
-  #       uses: ansible/ansible-lint@v25
+      - name: Run ansible-lint on main playbook
+        uses: ansible/ansible-lint@v25
 
-  #     - name: List available collections
-  #       run: |
-  #         ansible-galaxy collection list
+      - name: List available collections
+        run: |
+          ansible-galaxy collection list
 
-  #     - name: Run ansible-lint on devbox playbook
-  #       uses: ansible/ansible-lint@v25
-  #       with:
-  #         setup_python: false
-  #         working_directory: "./devbox/ansible"
-  #         requirements_file: "./requirements.yml"
+      - name: Run ansible-lint on devbox playbook
+        uses: ansible/ansible-lint@v25
+        with:
+          setup_python: false
+          working_directory: "./devbox/ansible"
+          requirements_file: "./requirements.yml"
 
-  #     - name: List available collections
-  #       run: |
-  #         ansible-galaxy collection list
+      - name: List available collections
+        run: |
+          ansible-galaxy collection list
 
-  # build-and-push-container-images:
-  #   name: Build and push container images
-  #   runs-on: ubuntu-24.04
-  #   if: github.event_name == 'push' && github.ref_name == 'main'
-  #   needs: [ansible-lint, deploy-test-rpm]
-  #   permissions:
-  #     contents: read
-  #     packages: write
-  #   env:
-  #     REGISTRY: ghcr.io
-  #     IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/ansible
-  #     IMAGE_TAG: rolling
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
-  #     - uses: docker/setup-buildx-action@v2
-  #     - name: Log in to the Container registry
-  #       uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-  #       with:
-  #         registry: ${{ env.REGISTRY }}
-  #         username: ${{ github.actor }}
-  #         password: ${{ secrets.GITHUB_TOKEN }}
-  #     - name: Extract metadata (tags, labels) for Docker
-  #       id: meta
-  #       uses: docker/metadata-action@507c2f2dc502c992ad446e3d7a5dfbe311567a96
-  #       with:
-  #         images: ${{ env.IMAGE_REPOSITORY }}
-  #     - name: Build and push container image
-  #       uses: docker/build-push-action@v4
-  #       with:
-  #         context: .
-  #         file: "docker/Dockerfile"
-  #         push: true
-  #         tags: ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
-  #         labels: ${{ steps.meta.outputs.labels }}
-  #         platforms: "linux/amd64,linux/arm64"
-  #         cache-from: type=gha
-  #         cache-to: type=gha,mode=max
+  build-and-push-container-images:
+    name: Build and push container images
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'push' && github.ref_name == 'main'
+    needs: [ansible-lint, deploy-test-rpm]
+    permissions:
+      contents: read
+      packages: write
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/ansible
+      IMAGE_TAG: rolling
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: docker/setup-buildx-action@v2
+      - name: Log in to the Container registry
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@507c2f2dc502c992ad446e3d7a5dfbe311567a96
+        with:
+          images: ${{ env.IMAGE_REPOSITORY }}
+      - name: Build and push container image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: "docker/Dockerfile"
+          push: true
+          tags: ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: "linux/amd64,linux/arm64"
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-  # deploy-test-rpm:
-  #   name: Run ansible${{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/SLES15-${{ matrix.sp_version }}
-  #   needs: [ansible-lint]
-  #   runs-on: ubuntu-24.04
-  #   strategy:
-  #     fail-fast: false
-  #     max-parallel: 2
-  #     matrix:
-  #       control_node:
-  #         - ansible_version: "11"
-  #           target_python: python3.11
-  #         - ansible_version: "9"
-  #           target_python: python3
-  #       install_method: ["rpm", "docker"]
-  #       sp_version: ['SP7', 'SP6', 'SP5', 'SP4', 'SP3']
+  deploy-test-rpm:
+    name: Run ansible${{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/SLES15-${{ matrix.sp_version }}
+    needs: [ansible-lint]
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        control_node:
+          - ansible_version: "11"
+            target_python: python3.11
+          - ansible_version: "9"
+            target_python: python3
+        install_method: ["rpm", "docker"]
+        sp_version: ['SP7', 'SP6', 'SP5', 'SP4', 'SP3']
 
-  #       exclude:
-  #         - sp_version: "SP3"
-  #           control_node:
-  #             ansible_version: "11"
-  #             target_python: python3.11
+        exclude:
+          - sp_version: "SP3"
+            control_node:
+              ansible_version: "11"
+              target_python: python3.11
 
-  #         - sp_version: "SP4"
-  #           control_node:
-  #             ansible_version: "11"
-  #             target_python: python3.11
+          - sp_version: "SP4"
+            control_node:
+              ansible_version: "11"
+              target_python: python3.11
 
-  #         - sp_version: "SP5"
-  #           control_node:
-  #             ansible_version: "11"
-  #             target_python: python3.11
+          - sp_version: "SP5"
+            control_node:
+              ansible_version: "11"
+              target_python: python3.11
 
-  #   env:
-  #     TEST_HOST_IP: ${{ vars[format('TEST_{0}_HOST_IP', matrix.sp_version)] }}
+    env:
+      TEST_HOST_IP: ${{ vars[format('TEST_{0}_HOST_IP', matrix.sp_version)] }}
 
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-  #     - name: Install Ansible
-  #       run: sudo pipx install --force --include-deps "ansible~=${{ matrix.control_node.ansible_version }}.0"
+      - name: Install Ansible
+        run: sudo pipx install --force --include-deps "ansible~=${{ matrix.control_node.ansible_version }}.0"
 
-  #     - name: Install galaxy deps
-  #       run: ansible-galaxy install -r requirements.yml
+      - name: Install galaxy deps
+        run: ansible-galaxy install -r requirements.yml
 
-  #     - name: Run playbook
-  #       id: runplaybook
-  #       uses: dawidd6/action-ansible-playbook@v2
-  #       with:
-  #         playbook: playbook.yml
-  #         key: ${{ secrets.SSH_MACHINE_KEY }}
-  #         inventory: |
-  #           all:
-  #             vars:
-  #               ansible_user: ${{ secrets.TEST_HOST_USER }}
-  #               ansible_python_interpreter: /usr/bin/${{ matrix.control_node.target_python }}
-  #             children:
-  #               trento_server:
-  #                 hosts:
-  #                   server:
-  #                     ansible_host: ${{ env.TEST_HOST_IP }}
-  #               postgres_hosts:
-  #                 hosts:
-  #                   server:
-  #                     ansible_host: ${{ env.TEST_HOST_IP }}
-  #               rabbitmq_hosts:
-  #                 hosts:
-  #                   server:
-  #                     ansible_host: ${{ env.TEST_HOST_IP }}
-  #               agents:
-  #                 hosts:
-  #                   agent:
-  #                     ansible_host: ${{ env.TEST_HOST_IP }}
-  #         options: |
-  #           --extra-vars "web_postgres_password='trento' \
-  #           wanda_postgres_password='wanda' \
-  #           rabbitmq_password='trento' \
-  #           prometheus_url='http://localhost' \
-  #           trento_server_name='trento-deployment.example.com' \
-  #           web_admin_password='adminpassword' \
-  #           enable_api_key='false' \
-  #           nginx_vhost_listen_port='443' \
-  #           nginx_ssl_cert_as_base64='true' \
-  #           nginx_ssl_key_as_base64='true' \
-  #           nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
-  #           nginx_ssl_key='${{ secrets.SSL_KEY }}' \
-  #           install_method='${{ matrix.install_method }}'"
-  #           --verbose
+      - name: Run playbook
+        id: runplaybook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: playbook.yml
+          key: ${{ secrets.SSH_MACHINE_KEY }}
+          inventory: |
+            all:
+              vars:
+                ansible_user: ${{ secrets.TEST_HOST_USER }}
+                ansible_python_interpreter: /usr/bin/${{ matrix.control_node.target_python }}
+              children:
+                trento_server:
+                  hosts:
+                    server:
+                      ansible_host: ${{ env.TEST_HOST_IP }}
+                postgres_hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ env.TEST_HOST_IP }}
+                rabbitmq_hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ env.TEST_HOST_IP }}
+                agents:
+                  hosts:
+                    agent:
+                      ansible_host: ${{ env.TEST_HOST_IP }}
+          options: |
+            --extra-vars "web_postgres_password='trento' \
+            wanda_postgres_password='wanda' \
+            rabbitmq_password='trento' \
+            prometheus_url='http://localhost' \
+            trento_server_name='trento-deployment.example.com' \
+            web_admin_password='adminpassword' \
+            enable_api_key='false' \
+            nginx_vhost_listen_port='443' \
+            nginx_ssl_cert_as_base64='true' \
+            nginx_ssl_key_as_base64='true' \
+            nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
+            nginx_ssl_key='${{ secrets.SSL_KEY }}' \
+            install_method='${{ matrix.install_method }}'"
+            --verbose
 
-  #     - name: Test readiness
-  #       run: curl -k "https://${{ env.TEST_HOST_IP }}/api/readyz"
+      - name: Test readiness
+        run: curl -k "https://${{ env.TEST_HOST_IP }}/api/readyz"
 
-  #     - name: Run playbook cleanup
-  #       uses: dawidd6/action-ansible-playbook@v2
-  #       if: success() || steps.runplaybook.conclusion == 'failure'
-  #       with:
-  #         playbook: playbook.cleanup.yml
-  #         key: ${{ secrets.SSH_MACHINE_KEY }}
-  #         inventory: |
-  #           all:
-  #             vars:
-  #               ansible_user: ${{ secrets.TEST_HOST_USER }}
-  #               ansible_python_interpreter: /usr/bin/${{ matrix.control_node.target_python }}
-  #             children:
-  #               trento_server:
-  #                 hosts:
-  #                   server:
-  #                     ansible_host: ${{ env.TEST_HOST_IP }}
-  #               postgres_hosts:
-  #                 hosts:
-  #                   server:
-  #                     ansible_host: ${{ env.TEST_HOST_IP }}
-  #               rabbitmq_hosts:
-  #                 hosts:
-  #                   server:
-  #                     ansible_host: ${{ env.TEST_HOST_IP }}
-  #         options: |
-  #           --extra-vars "web_postgres_password='trento' \
-  #           wanda_postgres_password='wanda' \
-  #           rabbitmq_password='trento' \
-  #           prometheus_url='http://localhost' \
-  #           trento_server_name='trento-deployment.example.com' \
-  #           web_admin_password='adminpassword' \
-  #           enable_api_key='false' \
-  #           nginx_vhost_listen_port='443' \
-  #           nginx_ssl_cert_as_base64='true' \
-  #           nginx_ssl_key_as_base64='true' \
-  #           nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
-  #           nginx_ssl_key='${{ secrets.SSL_KEY }}' \
-  #           install_method='${{ matrix.install_method }}'"
-  #           --verbose
+      - name: Run playbook cleanup
+        uses: dawidd6/action-ansible-playbook@v2
+        if: success() || steps.runplaybook.conclusion == 'failure'
+        with:
+          playbook: playbook.cleanup.yml
+          key: ${{ secrets.SSH_MACHINE_KEY }}
+          inventory: |
+            all:
+              vars:
+                ansible_user: ${{ secrets.TEST_HOST_USER }}
+                ansible_python_interpreter: /usr/bin/${{ matrix.control_node.target_python }}
+              children:
+                trento_server:
+                  hosts:
+                    server:
+                      ansible_host: ${{ env.TEST_HOST_IP }}
+                postgres_hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ env.TEST_HOST_IP }}
+                rabbitmq_hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ env.TEST_HOST_IP }}
+          options: |
+            --extra-vars "web_postgres_password='trento' \
+            wanda_postgres_password='wanda' \
+            rabbitmq_password='trento' \
+            prometheus_url='http://localhost' \
+            trento_server_name='trento-deployment.example.com' \
+            web_admin_password='adminpassword' \
+            enable_api_key='false' \
+            nginx_vhost_listen_port='443' \
+            nginx_ssl_cert_as_base64='true' \
+            nginx_ssl_key_as_base64='true' \
+            nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
+            nginx_ssl_key='${{ secrets.SSL_KEY }}' \
+            install_method='${{ matrix.install_method }}'"
+            --verbose
 
-  # TODO: Enable deps
   obs-sync:
     name: Update obs packages
     if: vars.OBS_ENABLED == 'true' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     uses: ./.github/workflows/obs.yaml
-    # needs:
-    #   - ansible-lint
-    #   - deploy-test-rpm
+    needs:
+      - ansible-lint
+      - deploy-test-rpm
     with:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
       obs_package: ${{ vars.OBS_PACKAGE }}
