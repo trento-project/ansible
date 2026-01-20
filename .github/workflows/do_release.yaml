@@ -42,13 +42,8 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v6
         with:
-          fetch-depth: 2
+          fetch-depth: 2        # required by detect-version step
           ssh-key: ${{ secrets.release_key }}
-
-      - name: Check if there is a parent commit
-        id: check-parent-commit
-        run: |
-          echo "sha=$(git rev-parse --verify --quiet HEAD^)" >> $GITHUB_OUTPUT
 
       - name: Detect new version
         id: detect-version
@@ -56,8 +51,11 @@ jobs:
         uses: salsify/action-detect-and-tag-new-version@v2
         with:
           create-tag: false
+          # Test for file existence protects against failing when
+          # VERSION file is just added to the repository (initial
+          # release).
           version-command: |
-            cat VERSION
+            [ -r VERSION ] && cat VERSION
 
       - name: Draft release
         id: draft-release
