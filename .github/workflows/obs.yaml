@@ -86,6 +86,7 @@ jobs:
       - name: Checkout OBS package
         id: checkout
         run: |
+          ssh -T gitea@src.opensuse.org
           GIT_TRACE=1 osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
           cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
 
