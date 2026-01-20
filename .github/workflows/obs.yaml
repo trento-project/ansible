@@ -44,57 +44,28 @@ jobs:
         env:
           OBS_USER: ${{ secrets.obs_user }}
           OBS_PASS: ${{ secrets.obs_pass }}
-          # OBS_SSH_KEY: ${{ secrets.obs_ssh_key }}
         run: |
-          # XXX: Madness, HOME variable is set to '/github/home' and cannot be changed.
           /scripts/init_osc_creds.sh
-
-          # TODO -- fix this
-          # sed -i "s/credentials_mgr_class=/# credentials_mgr_class=/g" "${OSCRC_FILE:=$HOME/.config/osc/oscrc}"
-
-
-      # - name: Configure OBS Git
-      #   run: |
-      #     git obs login add srcOBS \
-      #                   --url https://src.opensuse.org \
-      #                   --user ${{ secrets.obs_user }} \
-      #                   --token ${{ secrets.obs_git_pat }} \
-      #                   --set-as-default \
-      #                   --git-uses-http
-
-      #     git config --global user.name ${{ secrets.obs_user }}
-      #     git config --global user.email "${AUTHOR_EMAIL}"
-      #     git config --global credential."https://src.opensuse.org".helper '!git-obs -G srcOBS login gitcredentials-helper'
-
-      #     # HACK: Force usage of HTTP when cloning URL, as opposed to
-      #     # SSH. We need that to be able to use single PAT for API and
-      #     # repo interactions.
-      #     # Explanatation: osb-scm-bridge used in
-      #     # `osc clone` re-writes URL into SSH variant. Until fixed
-      #     # we'll use this hack.
-      #     # https://github.com/openSUSE/obs-scm-bridge/issues/29
-      #     git config --global url."https://src.opensuse.org".insteadOf "ssh://gitea@src.opensuse.org"
 
       - name: Setup SSH for OBS operation
         run: |
-          set -x
-          # XXX: Madness again: GitHub changes $HOME variable (affecting
+          # XXX: Madness: GitHub changes $HOME variable (affecting
           # shell commands) but SSH expands `~` from /etc/passwd, which
           # is different to $HOME.
           real_home="$(getent passwd "$(whoami)" | cut -d':' -f6)"
+          echo Real Home: "${real_home}"
 
-          # Set SSH Host Key
+          echo Adding src.opensuse.org to known hosts
           echo "src.opensuse.org ssh-ed25519 \
             AAAAC3NzaC1lZDI1NTE5AAAAIFKNThLRPznU5Io1KrAYHmYpaoLQEMGM9nwpKyYQCkPx" \
             >> "${real_home}/.ssh/known_hosts"
 
-          # Save SSH IdentityFile
           ident_file="${real_home}/.ssh/id_ed25519_obs"
+          echo Adding IdentityFile: "${ident_file}"
           echo "${{ secrets.obs_ssh_key }}" > "${ident_file}"
-          ls -la "${ident_file}"
           chmod 600 "${ident_file}"
 
-          # Set SSH identity file
+          echo Setup SSH to use the newly added IdentityFile
           cat << EOF >> "${real_home}/.ssh/config"
           Host src.opensuse.org
             IdentityFile ${ident_file}
@@ -109,7 +80,6 @@ jobs:
       - name: Checkout OBS package
         id: checkout
         run: |
-          ssh -T -vvv gitea@src.opensuse.org
           osc checkout ${{ inputs.obs_project }} ${{ inputs.obs_package }}
           cd ${{ inputs.obs_project }}/${{ inputs.obs_package }}
 
