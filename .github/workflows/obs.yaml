@@ -44,13 +44,13 @@ jobs:
         env:
           OBS_USER: ${{ secrets.obs_user }}
           OBS_PASS: ${{ secrets.obs_pass }}
-          OBS_SSH_KEY: ${{ secrets.obs_ssh_key }}
+          # OBS_SSH_KEY: ${{ secrets.obs_ssh_key }}
         run: |
           # XXX: Madness, HOME variable is set to '/github/home' and cannot be changed.
           /scripts/init_osc_creds.sh
 
           # TODO -- fix this
-          sed -i "s/credentials_mgr_class=/# credentials_mgr_class=/g" "${OSCRC_FILE:=$HOME/.config/osc/oscrc}"
+          # sed -i "s/credentials_mgr_class=/# credentials_mgr_class=/g" "${OSCRC_FILE:=$HOME/.config/osc/oscrc}"
 
 
       # - name: Configure OBS Git
@@ -75,24 +75,37 @@ jobs:
       #     # https://github.com/openSUSE/obs-scm-bridge/issues/29
       #     git config --global url."https://src.opensuse.org".insteadOf "ssh://gitea@src.opensuse.org"
 
-      - name: Setup host key
-        # XXX: Madness again: GitHub changes $HOME variable (affecting
-        # shell commands) but SSH expands `~` from /etc/passwd, which
-        # is different to $HOME.
+      - name: Setup SSH for OBS operation
         run: |
-          real_home="$(grep "$(whoami)" /etc/passwd | cut -d':' -f6)"
-          echo "src.opensuse.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFKNThLRPznU5Io1KrAYHmYpaoLQEMGM9nwpKyYQCkPx" >> "${real_home}/.ssh/known_hosts"
+          set -x
+          # XXX: Madness again: GitHub changes $HOME variable (affecting
+          # shell commands) but SSH expands `~` from /etc/passwd, which
+          # is different to $HOME.
+          real_home="$(getent passwd "$(whoami)" | cut -d':' -f6)"
 
-      - name: Setup SSH identity
-        run: |
-          real_home="$(grep "$(whoami)" /etc/passwd | cut -d':' -f6)"
+          # TODO: delete these lines
+          ls -la ${real_home}
+          ls -la ${real_home}/.ssh
+
+          # Set SSH Host Key
+          echo "src.opensuse.org ssh-ed25519 \
+            AAAAC3NzaC1lZDI1NTE5AAAAIFKNThLRPznU5Io1KrAYHmYpaoLQEMGM9nwpKyYQCkPx" \
+            >> "${real_home}/.ssh/known_hosts"
+
+          # Save SSH IdentityFile
+          ident_file=${real_home}/.ssh/id_ed25519_obs"
+          echo "${{ secrets.obs_ssh_key }}" > "${ident_file}"
+          ls -la "${ident_file}"
+          chmod 600 "${ident_file}"
+
+          # Set SSH identity file
           cat << EOF >> "${real_home}/.ssh/config"
           Host src.opensuse.org
-            IdentityFile ~/.ssh/id_rsa_obs
+            IdentityFile ${ident_file}
             IdentitiesOnly yes
           EOF
 
-      - name: Setup Git
+      - name: Setup Git for OBS operation
         run: |
           git config --global user.name ${{ secrets.obs_user }}
           git config --global user.email "${AUTHOR_EMAIL}"
