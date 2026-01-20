@@ -85,7 +85,8 @@ jobs:
 
       - name: Setup SSH identity
         run: |
-          cat << EOF >> ~/.ssh/config
+          real_home="$(grep "$(whoami)" /etc/passwd | cut -d':' -f6)"
+          cat << EOF >> "${real_home}/.ssh/config"
           Host src.opensuse.org
             IdentityFile ~/.ssh/id_rsa_obs
             IdentitiesOnly yes
