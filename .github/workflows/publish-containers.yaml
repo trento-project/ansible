@@ -1,4 +1,4 @@
-name: Release Containers
+name: Publish Containers
 
 on:
   workflow_call:
@@ -16,10 +16,6 @@ on:
         required: true
         type: string
         description: "The container image tag. Note that this might be either a fixed version string, or a moving tag like 'rolling'"
-      version:
-        required: true
-        type: string
-        description: "Version of the packaged application."
       dockerfile:
         required: false
         type: string
@@ -31,8 +27,24 @@ on:
         description: "The MIX_ENV build environment variable. This is mainly used to build a bespoke image variant for the demo deployment, and should be left to default value in most cases."
 
 jobs:
+  detect-version:
+    name: Detect version
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/trento-project/continuous-delivery:main
+      options: -u 0:0
+    outputs:
+      version: ${{ steps.extract-version.outputs.version }}
+    steps:
+      - name: Get version from git
+        id: extract-version
+        run: |
+          VERSION=$(/scripts/get_version_from_git.sh)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
   build-and-push:
     name: Build and push
+    needs: [detect-version]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -68,7 +80,7 @@ jobs:
           tags: ${{ env.IMAGE_REPOSITORY }}:${{ inputs.tag }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            VERSION=${{ inputs.version }}
+            VERSION=${{ needs.detect-version.outputs.version }}
             MIX_ENV=${{ inputs.MIX_ENV }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

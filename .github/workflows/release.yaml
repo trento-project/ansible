@@ -24,9 +24,9 @@ jobs:
       obs_pass: ${{ secrets.OBS_PASS }}
       obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}
 
-  release-containers:
-    name: Release GHCR Containers
-    uses: ./.github/workflows/release-containers.yaml
+  publish-containers:
+    name: Publish GHCR Containers
+    uses: ./.github/workflows/publish-containers.yaml
     needs:
       - release
     strategy:
@@ -37,5 +37,4 @@ jobs:
     with:
       image_name: ansible
       tag: ${{ matrix.tag }}
-      version: ${{ needs.release.outputs.version }}
       dockerfile: "docker/Dockerfile"
