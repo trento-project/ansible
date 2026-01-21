@@ -11,8 +11,8 @@ concurrency: ${{ github.workflow }}
 
 jobs:
   release:
-    name: Do a release
-    uses: ./.github/workflows/do_release.yaml
+    name: Git Release
+    uses: ./.github/workflows/git-release.yaml
     with:
       obs_enabled: ${{ vars.OBS_ENABLED }}
       obs_project_stable: ${{ vars.OBS_PROJECT_STABLE }}
@@ -23,3 +23,19 @@ jobs:
       obs_user: ${{ secrets.OBS_USER }}
       obs_pass: ${{ secrets.OBS_PASS }}
       obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}
+
+  release-containers:
+    name: Release GHCR Containers
+    uses: ./.github/workflows/release-containers.yaml
+    needs:
+      - release
+    strategy:
+      matrix:
+        tag:
+          - ${{ needs.release.outputs.version }}
+          - rolling
+    with:
+      image_name: ansible
+      tag: ${{ matrix.tag }}
+      version: ${{ needs.release.outputs.version }}
+      dockerfile: "docker/Dockerfile"
