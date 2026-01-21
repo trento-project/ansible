@@ -38,47 +38,7 @@ jobs:
         run: |
           ansible-galaxy collection list
 
-  build-and-push-container-images:
-    name: Build and push container images
-    runs-on: ubuntu-24.04
-    if: github.event_name == 'push' && github.ref_name == 'main'
-    needs: [ansible-lint, deploy-test-rpm]
-    permissions:
-      contents: read
-      packages: write
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/ansible
-      IMAGE_TAG: rolling
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: docker/setup-buildx-action@v2
-      - name: Log in to the Container registry
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@507c2f2dc502c992ad446e3d7a5dfbe311567a96
-        with:
-          images: ${{ env.IMAGE_REPOSITORY }}
-      - name: Build and push container image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: "docker/Dockerfile"
-          push: true
-          tags: ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: "linux/amd64,linux/arm64"
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  deploy-test-rpm:
+  test-deploy:
     name: Run ansible${{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/SLES15-${{ matrix.sp_version }}
     needs: [ansible-lint]
     runs-on: ubuntu-24.04
@@ -212,13 +172,21 @@ jobs:
             install_method='${{ matrix.install_method }}'"
             --verbose
 
+  publish-containers:
+    name: Build and push container images
+    if: github.event_name == 'push' && github.ref_name == 'main'
+    needs: [ansible-lint, test-deploy]
+    uses: ./.github/workflows/publish-containers.yaml
+    with:
+      image_name: ansible
+      tag: rolling
+      dockerfile: "docker/Dockerfile"
+
   obs-sync:
     name: Update obs packages
     if: vars.OBS_ENABLED == 'true' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    needs: [ansible-lint, test-deploy]
     uses: ./.github/workflows/obs.yaml
-    needs:
-      - ansible-lint
-      - deploy-test-rpm
     with:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
       obs_package: ${{ vars.OBS_PACKAGE }}
