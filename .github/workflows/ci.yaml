@@ -186,7 +186,7 @@ jobs:
 
   obs-sync:
     name: Update obs packages
-    if: vars.OBS_ENABLED && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: fromJSON(vars.OBS_ENABLED) && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     # TODO: Enable this after tests
     # needs: [ansible-lint, test-deploy]
     uses: ./.github/workflows/obs.yaml
