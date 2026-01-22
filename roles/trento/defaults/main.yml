@@ -23,11 +23,11 @@ trento_web_admin_username: admin
 trento_web_admin_password: "{{ undef(hint='Password for Web admin interface is mandatory') }}"
 trento_postgres_host: localhost
 trento_postgres_host_group: ""
-trento_web_postgres_username: web
+trento_web_postgres_username: "{{ web_postgres_user | default('web') }}"
 trento_web_postgres_password: "{{ undef(hint='Password for Postgres Web user is mandatory') }}"
 trento_web_postgres_db: webdb
 trento_web_postgres_event_store: event_store
-trento_wanda_postgres_username: wanda
+trento_wanda_postgres_username: "{{ wanda_postgres_user | default('wanda') }}"
 trento_wanda_postgres_password: "{{ undef(hint='Password for Postgres Wanda user is mandatory') }}"
 trento_wanda_postgres_db: wandadb
 trento_rabbitmq_host: "{{ rabbitmq_host | default('localhost') }}"  # `rabbitmq_host` for backwards-compatibility
