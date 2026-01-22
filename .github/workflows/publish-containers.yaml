@@ -27,20 +27,27 @@ on:
         description: "The MIX_ENV build environment variable. This is mainly used to build a bespoke image variant for the demo deployment, and should be left to default value in most cases."
 
 jobs:
-  # detect-version:
-  #   name: Detect version
-  #   runs-on: ubuntu-24.04
-  #   container:
-  #     image: ghcr.io/trento-project/continuous-delivery:main
-  #     options: -u 0:0
-  #   outputs:
-  #     version: ${{ steps.extract-version.outputs.version }}
-  #   steps:
-  #     - name: Get version from git
-  #       id: extract-version
-  #       run: |
-  #         VERSION=$(/scripts/get_version_from_git.sh)
-  #         echo "version=$VERSION" >> $GITHUB_OUTPUT
+  detect-version:
+    name: Detect version
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/trento-project/continuous-delivery:main
+      options: -u 0:0
+    outputs:
+      version: ${{ steps.extract-version.outputs.version }}
+    steps:
+      - name: Configure git for in-container operations
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Get version from git
+        id: extract-version
+        run: |
+          VERSION=$(/scripts/get_version_from_git.sh)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
   build-and-push:
     name: Build and push
@@ -52,17 +59,6 @@ jobs:
     env:
       IMAGE_REPOSITORY: ${{ inputs.registry }}/${{ github.repository_owner }}/${{ inputs.image_name }}
     steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Detect version
-        id: detect-version
-        uses: docker://ghcr.io/trento-project/continuous-delivery:main
-        run: |
-          VERSION=$(/scripts/get_version_from_git.sh)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
       - uses: docker/setup-buildx-action@v3
 
       - name: Log into the Container registry
@@ -86,9 +82,8 @@ jobs:
           push: true
           tags: ${{ env.IMAGE_REPOSITORY }}:${{ inputs.tag }}
           labels: ${{ steps.meta.outputs.labels }}
-            # VERSION=${{ needs.detect-version.outputs.version }}
           build-args: |
-            VERSION==${{ steps.detect-version.outputs.version }}
+            VERSION=${{ needs.detect-version.outputs.version }}
             MIX_ENV=${{ inputs.MIX_ENV }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
