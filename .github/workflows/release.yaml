@@ -35,7 +35,7 @@ jobs:
     name: Update OBS package (${{ matrix.name }})
     needs:
       - release
-    if: vars.OBS_ENABLED
+    if: fromJSON(vars.OBS_ENABLED)
     strategy:
       matrix:
         include:
