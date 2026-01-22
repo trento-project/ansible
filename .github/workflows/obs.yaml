@@ -18,10 +18,15 @@ on:
         description: The OBS package to commit change to.
     secrets:
       obs_user:
+        description: OBS username for API (OBS and git) and repository access.
         required: true
       obs_pass:
+        description: OBS password for API (OBS-only) access.
         required: true
       obs_ssh_key:
+        description: >-
+          SSH Key for the `obs_user` that would allow repository
+          access when OBS sources are kept in git.
         required: true
 
 concurrency: ${{ github.workflow }}-${{ inputs.obs_project }}

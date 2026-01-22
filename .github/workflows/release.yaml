@@ -13,16 +13,8 @@ jobs:
   release:
     name: Git Release
     uses: ./.github/workflows/git-release.yaml
-    with:
-      obs_enabled: ${{ vars.OBS_ENABLED }}
-      obs_project_stable: ${{ vars.OBS_PROJECT_STABLE }}
-      obs_project_rolling: ${{ vars.OBS_PROJECT_ROLLING }}
-      obs_package: ${{ vars.OBS_PACKAGE }}
     secrets:
       release_key: ${{ secrets.RELEASE_KEY }}
-      obs_user: ${{ secrets.OBS_USER }}
-      obs_pass: ${{ secrets.OBS_PASS }}
-      obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}
 
   publish-containers:
     name: Publish GHCR Containers
@@ -38,3 +30,25 @@ jobs:
       image_name: ansible
       tag: ${{ matrix.tag }}
       dockerfile: "docker/Dockerfile"
+
+  obs-sync:
+    name: Update OBS package (${{ matrix.name }})
+    needs:
+      - release
+    if: vars.OBS_ENABLED
+    strategy:
+      matrix:
+        include:
+          - obs_project: ${{ vars.OBS_PROJECT_STABLE }}
+            name: stable
+          - obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
+            name: rolling
+    uses: ./.github/workflows/obs.yaml
+    with:
+      update_changelog: true
+      obs_project: ${{ matrix.obs_project }}
+      obs_package: ${{ vars.OBS_PACKAGE }}
+    secrets:
+      obs_user: ${{ secrets.OBS_USER }}
+      obs_pass: ${{ secrets.OBS_PASS }}
+      obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}

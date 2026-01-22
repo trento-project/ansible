@@ -3,20 +3,6 @@ name: Do release
 
 on:
   workflow_call:
-    inputs:
-      obs_enabled:
-        type: boolean
-        default: false
-      obs_project_stable:
-        type: string
-        description: "The OBS project, tracking stable branch, to commit changes to."
-      obs_project_rolling:
-        type: string
-        description: "The OBS project, tracking rolling branch, to commit changes to."
-      obs_package:
-        type: string
-        description: "The OBS package to commit change to."
-
     secrets:
       release_key:
         description: >-
@@ -107,25 +93,3 @@ jobs:
           config-name: release_drafter.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  obs-sync:
-    name: Update OBS package (${{ matrix.name }})
-    needs:
-      - release
-    if: inputs.obs_enabled
-    strategy:
-      matrix:
-        include:
-          - obs_project: ${{ inputs.obs_project_stable }}
-            name: stable
-          - obs_project: ${{ inputs.obs_project_rolling }}
-            name: rolling
-    uses: ./.github/workflows/obs.yaml
-    with:
-      update_changelog: true
-      obs_project: ${{ matrix.obs_project }}
-      obs_package: ${{ inputs.obs_package }}
-    secrets:
-      obs_user: ${{ secrets.obs_user }}
-      obs_pass: ${{ secrets.obs_pass }}
-      obs_ssh_key: ${{ secrets.obs_ssh_key }}
