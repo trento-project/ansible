@@ -184,7 +184,7 @@ jobs:
 
   obs-sync:
     name: Update obs packages
-    if: vars.OBS_ENABLED == 'true' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: fromJSON(vars.OBS_ENABLED) && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: [ansible-lint, test-deploy]
     uses: ./.github/workflows/obs.yaml
     with:
@@ -193,5 +193,4 @@ jobs:
     secrets:
       obs_user: ${{ secrets.OBS_USER }}
       obs_pass: ${{ secrets.OBS_PASS }}
-      # obs_git_pat: ${{ secrets.OBS_GIT_PAT }}
       obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}

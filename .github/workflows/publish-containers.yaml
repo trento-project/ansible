@@ -36,11 +36,18 @@ jobs:
     outputs:
       version: ${{ steps.extract-version.outputs.version }}
     steps:
+      - name: Configure git for in-container operations
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
       - name: Get version from git
         id: extract-version
         run: |
           VERSION=$(/scripts/get_version_from_git.sh)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" | tee -a "$GITHUB_OUTPUT"
 
   build-and-push:
     name: Build and push
