@@ -24,11 +24,23 @@ jobs:
     outputs:
       version: ${{ steps.detect-version.outputs.current-version }}
     steps:
+      # TODO: remove
+      - name: What is there PRE
+        run: |
+          pwd
+          ls -la
+
       - name: Check out the repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 2        # required by detect-version step
           ssh-key: ${{ secrets.release_key }}
+
+      # TODO: remove
+      - name: What is there POST
+        run: |
+          pwd
+          ls -la
 
       - name: Detect new version
         id: detect-version
@@ -75,6 +87,12 @@ jobs:
     needs:
       - pre-release
     steps:
+      # TODO: remove
+      - name: What is there
+        run: |
+          pwd
+          ls -la
+
       - name: Publish release
         id: publish-release
         uses: release-drafter/release-drafter@v6
