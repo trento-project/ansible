@@ -11,6 +11,8 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency: ${{ github.workflow }}
+
 jobs:
   ansible-lint:
     name: Playbook linting
