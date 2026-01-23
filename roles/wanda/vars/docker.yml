@@ -3,13 +3,13 @@ wanda_docker_network_name: "{{ trento_docker_network_name }}"
 wanda_force_pull_images: "{{ trento_force_pull_images }}"
 wanda_container_image: ghcr.io/trento-project/trento-wanda:rolling
 wanda_container_name: trento_wanda
-wanda_force_recreate_wanda_container: "{{ force_recreate_wanda_container | default(false) }}"
-wanda_remove_wanda_container_image: "{{ remove_wanda_container_image | default(true) }}"
+wanda_force_recreate_wanda_container: false
+wanda_remove_wanda_container_image: true
 wanda_checks_container_image: ghcr.io/trento-project/checks:rolling
 wanda_checks_container_name: trento_checks
-wanda_force_recreate_checks_container: "{{ force_recreate_wanda_checks_container | default(false) }}"
-wanda_remove_checks_container_image: "{{ remove_wanda_checks_container_image | default(true) }}"
-wanda_web_container_name: "{{ web_container_name | default(trento_web_container_name) }}"
+wanda_force_recreate_checks_container: false
+wanda_remove_checks_container_image: true
+wanda_web_container_name: "{{ trento_web_container_name }}"
 
 # Overrides
 wanda_postgres_host: "host.docker.internal"
