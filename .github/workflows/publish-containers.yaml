@@ -15,17 +15,20 @@ on:
       tag:
         required: true
         type: string
-        description: "The container image tag. Note that this might be either a fixed version string, or a moving tag like 'rolling'"
+        description: >-
+          The container image tag. Note that this might be either a
+          fixed version string, or a moving tag like 'rolling'
       dockerfile:
         required: false
         type: string
         description: "Path to Dockerfile."
-      MIX_ENV:
+      extra_build_args:
         required: false
         type: string
-        default: prod
-        description: "The MIX_ENV build environment variable. This is mainly used to build a bespoke image variant for the demo deployment, and should be left to default value in most cases."
-
+        description: >-
+          Additional build arguments that would be passed when
+          building the container. Value should be new-line delimited
+          string.
 jobs:
   detect-version:
     name: Detect version
@@ -88,6 +91,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VERSION=${{ needs.detect-version.outputs.version }}
-            MIX_ENV=${{ inputs.MIX_ENV }}
+            ${{ inputs.extra_build_args }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
