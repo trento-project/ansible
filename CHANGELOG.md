@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.4 - 2026-01-23
+
+### What's Changed
+
+* No changes
+
+**Full Changelog**: https://github.com/skrech/ansible/compare/1.0.3...1.0.4
+
 ## 1.0.3 - 2026-01-23
 
 ### What's Changed
