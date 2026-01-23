@@ -3,7 +3,7 @@ web_docker_network_name: "{{ trento_docker_network_name }}"
 web_force_pull_images: "{{ trento_force_pull_images }}"
 web_container_image: ghcr.io/trento-project/trento-web:rolling
 web_container_name: "{{ trento_web_container_name }}"
-web_force_recreate_web_container: false
+web_force_recreate_container: false
 web_remove_container_image: true
 
 # Overrides
