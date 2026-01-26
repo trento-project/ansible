@@ -96,7 +96,9 @@ jobs:
         run: git switch release 2>/dev/null || git switch -c release main
 
       - name: Merge `main` into `release`
-        run: git merge main -X theirs --no-ff
+        run: |
+          git merge main -X theirs --no-ff \
+                         -m "Release ${{ needs.pre-release.outputs.version }}"
 
       - name: Switch back to `main` branch
         run: git switch main
@@ -112,9 +114,12 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-24.04
-    needs:
-      - pre-release
-      - merge-branches
+    needs: [pre-release, merge-branches]
+    # Hack: Implement poor man's "either or" logic for `needs`.
+    if: >-
+      always()
+      && contains(needs.*.result, 'success')
+      && !contains(needs.*.results, 'failure')
     steps:
       - name: Publish release
         id: publish-release
