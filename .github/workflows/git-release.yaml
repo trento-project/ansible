@@ -68,7 +68,7 @@ jobs:
           branch: main
           commit_user_name: ${{ env.GIT_USER }}
           commit_user_email: ${{ env.GIT_EMAIL }}
-          commit_author: "${{ env.GIT_USER }} ${{ env.GIT_EMAIL }}"
+          commit_author: "${{ env.GIT_USER }} <${{ env.GIT_EMAIL }}>"
           commit_message: |
             Automatically update CHANGELOG.md for release ${{ steps.detect-version.outputs.current-version }}
 
