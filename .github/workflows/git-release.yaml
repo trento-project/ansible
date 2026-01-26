@@ -1,0 +1,87 @@
+---
+name: Do release
+
+on:
+  workflow_call:
+    secrets:
+      release_key:
+        description: >-
+          GitHub deploy key to be used for repository access. The
+          deploy key needs write permissions to the repository.
+        required: true
+
+    outputs:
+      version:
+        value: ${{ jobs.pre-release.outputs.version }}
+        description: "The determined version of the release"
+
+jobs:
+  pre-release:
+    name: Detect new version, draft release, update changelog
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.detect-version.outputs.current-version }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2        # required by detect-version step
+          ssh-key: ${{ secrets.release_key }}
+
+      - name: Detect new version
+        id: detect-version
+        uses: salsify/action-detect-and-tag-new-version@v2
+        with:
+          create-tag: false
+          # Test for file existence protects against failing when
+          # VERSION file is just added to the repository (initial
+          # release).
+          version-command: |
+            [ -r VERSION ] && cat VERSION || true
+
+      - name: Draft release
+        id: draft-release
+        uses: release-drafter/release-drafter@v6
+        with:
+          publish: false
+          version: ${{ steps.detect-version.outputs.current-version }}
+          disable-autolabeler: true
+          config-name: release_drafter.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update CHANGELOG.md
+        uses: stefanzweifel/changelog-updater-action@v1
+        with:
+          latest-version: ${{ steps.detect-version.outputs.current-version }}
+          release-notes: ${{ steps.draft-release.outputs.body }}
+
+      - name: Commit new changelog
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          branch: main
+          commit_message: |
+            Automatically update CHANGELOG.md for release ${{ steps.detect-version.outputs.current-version }}
+
+            [skip ci]
+
+  release:
+    name: Tag and publish release
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    needs:
+      - pre-release
+    steps:
+      - name: Publish release
+        id: publish-release
+        uses: release-drafter/release-drafter@v6
+        with:
+          publish: true
+          version: ${{ needs.pre-release.outputs.version }}
+          disable-autolabeler: true
+          config-name: release_drafter.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
