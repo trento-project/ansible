@@ -113,6 +113,7 @@ jobs:
       contents: write
     runs-on: ubuntu-24.04
     needs:
+      - pre-release
       - merge-branches
     steps:
       - name: Publish release
