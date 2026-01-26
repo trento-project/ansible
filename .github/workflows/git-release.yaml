@@ -24,23 +24,11 @@ jobs:
     outputs:
       version: ${{ steps.detect-version.outputs.current-version }}
     steps:
-      # TODO: remove
-      - name: What is there PRE
-        run: |
-          pwd
-          ls -la
-
       - name: Check out the repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 2        # required by detect-version step
           ssh-key: ${{ secrets.release_key }}
-
-      # TODO: remove
-      - name: What is there POST
-        run: |
-          pwd
-          ls -la
 
       - name: Detect new version
         id: detect-version
@@ -79,6 +67,33 @@ jobs:
 
             [skip ci]
 
+  merge-branches:
+    name: Merge branches
+    runs-on: ubuntu-24.04
+    needs:
+      - pre-release
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ssh-key: ${{ secrets.release_key }}
+
+      - name: Switch to 'release' branch
+        run: git switch release 2>/dev/null || git switch -c release main
+
+      - name: Merge `main` into `release`
+        run: git merge main -X theirs --no-ff
+
+      - name: Switch back to `main` branch
+        run: git switch main
+
+      - name: Merge `release` into main
+        run: git merge release --ff-only
+
+      - name: Push branches `main` and `release`
+        run: git push origin main release
+
   release:
     name: Tag and publish release
     permissions:
@@ -87,18 +102,13 @@ jobs:
     needs:
       - pre-release
     steps:
-      # TODO: remove
-      - name: What is there
-        run: |
-          pwd
-          ls -la
-
       - name: Publish release
         id: publish-release
         uses: release-drafter/release-drafter@v6
         with:
           publish: true
           version: ${{ needs.pre-release.outputs.version }}
+          commitish: main
           disable-autolabeler: true
           config-name: release_drafter.yaml
         env:
