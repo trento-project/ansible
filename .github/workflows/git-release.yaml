@@ -15,6 +15,10 @@ on:
         value: ${{ jobs.pre-release.outputs.version }}
         description: "The determined version of the release"
 
+env:
+  GIT_USER: shapbot
+  GIT_EMAIL: trento-developers@suse.com
+
 jobs:
   pre-release:
     name: Detect new version, draft release, update changelog
@@ -62,6 +66,9 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           branch: main
+          commit_user_name: ${{ env.GIT_USER }}
+          commit_user_email: ${{ env.GIT_EMAIL }}
+          commit_author: "${{ env.GIT_USER }} <${{ env.GIT_EMAIL }}>"
           commit_message: |
             Automatically update CHANGELOG.md for release ${{ steps.detect-version.outputs.current-version }}
 
@@ -77,7 +84,13 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: main
           ssh-key: ${{ secrets.release_key }}
+
+      - name: Setup git
+        run: |
+          git config --global user.name "${GIT_USER}"
+          git config --global user.email "${GIT_AUTHOR_EMAIL}"
 
       - name: Switch to 'release' branch
         run: git switch release 2>/dev/null || git switch -c release main
