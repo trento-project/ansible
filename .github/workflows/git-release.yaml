@@ -148,7 +148,7 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-24.04
-    needs: [pre-release, merge-branches]
+    needs: [pre-release, cross-merge-branches, hotfix-merge-branches]
     # Hack: Implement poor man's "either or" logic for `needs`.
     if: >-
       always()
