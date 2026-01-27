@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - release
     paths:
       - "VERSION"
 
@@ -13,9 +14,12 @@ jobs:
   release:
     name: Git Release
     uses: ./.github/workflows/git-release.yaml
+    with:
+      triggering_branch: ${{ github.ref }}
     secrets:
       release_key: ${{ secrets.RELEASE_KEY }}
 
+  # TODO, handle also release branch, if needed
   publish-containers:
     name: Publish GHCR Containers
     uses: ./.github/workflows/publish-containers.yaml
