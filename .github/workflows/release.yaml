@@ -15,7 +15,7 @@ jobs:
     name: Git Release
     uses: ./.github/workflows/git-release.yaml
     with:
-      triggering_branch: ${{ github.ref }}
+      triggering_branch: ${{ github.ref_name }}
     secrets:
       release_key: ${{ secrets.RELEASE_KEY }}
 
