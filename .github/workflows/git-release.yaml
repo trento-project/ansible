@@ -117,7 +117,7 @@ jobs:
       - name: Push branches `main` and `release`
         run: git push origin main release
 
-  hofix-merge-brachnes:
+  hotfix-merge-branches:
     name: Merge branches for hotfix release
     needs: [pre-release]
     if: inputs.triggering_branch == 'release'
