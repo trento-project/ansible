@@ -1,5 +1,6 @@
 ---
 provision_postgres: true
 provision_prometheus: true
+enable_prometheus_remote_write_receiver: true
 provision_rabbitmq: true
 provision_proxy: true
