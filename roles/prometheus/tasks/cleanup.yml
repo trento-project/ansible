@@ -2,3 +2,9 @@
 ---
 # It's intentionally empty. Used in cleanup to load the variables for
 # later use in firewall cleanup.
+
+- name: Stop and disable prometheus
+  ansible.builtin.service:
+    name: prometheus
+    state: stopped
+    enabled: false
