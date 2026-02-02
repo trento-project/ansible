@@ -30,14 +30,13 @@
   notify:
     - Restart Prometheus
 
-- name: Enable prometheus remote write receiver
+- name: Configure prometheus remote write receiver
   ansible.builtin.template:
     src: prometheus-sysconfig.j2
     dest: /etc/sysconfig/prometheus
     owner: prometheus
     group: prometheus
     mode: "0644"
-  when: provision_prometheus | bool and enable_prometheus_remote_write_receiver | bool
   notify:
     - Restart Prometheus
 
