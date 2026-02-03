@@ -6,4 +6,4 @@
 #
 # Command line options for prometheus
 #
-ARGS="{{ (enable_prometheus_remote_write_receiver | bool) | ternary('--web.enable-remote-write-receiver', '') }}"
+ARGS="{{ (prometheus_enable_remote_write_receiver | bool) | ternary('--web.enable-remote-write-receiver', '') }}"

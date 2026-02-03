@@ -323,9 +323,6 @@ population of some variables.
   metrics send by agents. 
   
   Note that the provisioned Prometheus is only intended for use by Trento and not for general monitoring purposes. | true
-
-| enable_prometheus_remote_write_receiver | Whether to start Prometheus with remote write receiver enabled.
-  Adds support for hosts with Grafana Alloy | true
 |===
 
 *Trento meta-role*
@@ -726,6 +723,9 @@ per-role basis if appropriate.
 
 | prometheus_web_listen_port | Port on which Web is exposed, to be
   scraped by Prometheus | <value of `trento_web_listen_port`>
+
+| prometheus_enable_remote_write_receiver | Whether to start Prometheus with remote write receiver enabled.
+  Adds support for hosts with Grafana Alloy | true
 |===
 
 *RabbitMQ role*

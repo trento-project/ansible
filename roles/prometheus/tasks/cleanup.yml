@@ -1,6 +1,6 @@
 # code: language=ansible
 ---
-# Cleanup tasks for Prometheus: stop and disable the service. 
+# Cleanup tasks for Prometheus: stop and disable the service.
 
 - name: Stop and disable prometheus
   ansible.builtin.service:
