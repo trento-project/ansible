@@ -34,8 +34,8 @@
   ansible.builtin.template:
     src: prometheus-sysconfig.j2
     dest: /etc/sysconfig/prometheus
-    owner: prometheus
-    group: prometheus
+    owner: root
+    group: root
     mode: "0644"
   notify:
     - Restart Prometheus
