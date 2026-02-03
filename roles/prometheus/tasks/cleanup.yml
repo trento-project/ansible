@@ -1,7 +1,6 @@
 # code: language=ansible
 ---
-# It's intentionally empty. Used in cleanup to load the variables for
-# later use in firewall cleanup.
+# Cleanup tasks for Prometheus: stop and disable the service. 
 
 - name: Stop and disable prometheus
   ansible.builtin.service:
