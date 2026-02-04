@@ -27,6 +27,18 @@
     owner: prometheus
     group: prometheus
     mode: "0644"
+    backup: true
+  notify:
+    - Restart Prometheus
+
+- name: Configure prometheus remote write receiver
+  ansible.builtin.template:
+    src: prometheus-sysconfig.j2
+    dest: /etc/sysconfig/prometheus
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
   notify:
     - Restart Prometheus
 

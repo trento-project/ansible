@@ -1,0 +1,9 @@
+## Path:
+## Description: Prometheus monitoring server settings
+## Type:        string
+## Default:     ""
+## ServiceRestart: prometheus
+#
+# Command line options for prometheus
+#
+ARGS="{{ (prometheus_enable_remote_write_receiver | bool) | ternary('--web.enable-remote-write-receiver', '') }}"
