@@ -1,1 +1,4 @@
 ---
+agent_conf_destination: "{{ (ansible_distribution_version is version('16.0', '>=') | bool) | ternary('/usr/etc/trento/agent.yaml', '/etc/trento/agent.yaml') }}"
+agent_host_pre_16: "{{ ansible_distribution_version is version('15.7', '<=') | bool }}"
+agent_host_post_16: "{{ ansible_distribution_version is version('16.0', '>=') | bool }}"

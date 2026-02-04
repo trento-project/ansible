@@ -4,3 +4,17 @@
   ansible.builtin.service:
     name: trento-agent
     state: restarted
+
+- name: Start Prometheus node_exporter service
+  ansible.builtin.service:
+    name: prometheus-node_exporter
+    state: restarted
+    enabled: true
+  when: agent_host_pre_16
+
+- name: Start Alloy service
+  ansible.builtin.service:
+    name: alloy
+    state: restarted
+    enabled: true
+  when: agent_host_post_16

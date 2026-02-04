@@ -8,8 +8,9 @@
 - name: Configure Trento agent
   ansible.builtin.template:
     src: "agent.conf.j2"
-    dest: "/etc/trento/agent.yaml"
+    dest: "{{ agent_conf_destination }}"
     mode: "0600"
+    backup: true
   notify:
     - Restart Trento agent
 
@@ -18,3 +19,19 @@
     name: trento-agent
     state: started
     enabled: true
+
+- name: Install 'node_exporter' on SLES 15.7 and earlier
+  community.general.zypper:
+    name: golang-github-prometheus-node_exporter
+    state: latest
+  when: agent_host_pre_16
+  notify:
+    - Start Prometheus node_exporter service
+
+- name: Install 'alloy' on SLES 16 and later
+  community.general.zypper:
+    name: alloy
+    state: latest
+  when: agent_host_post_16
+  notify:
+    - Start Alloy service
