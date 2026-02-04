@@ -320,9 +320,7 @@ population of some variables.
   deployment | true
 
 | provision_prometheus | Whether to provision Prometheus used by Trento to store
-  metrics send by agents. 
-  
-  Note that the provisioned Prometheus is only intended for use by Trento and not for general monitoring purposes. | true
+  metrics send by agents | true
 |===
 
 *Trento meta-role*
