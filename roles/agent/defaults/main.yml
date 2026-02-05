@@ -7,3 +7,5 @@ agent_rabbitmq_username: "{{ rabbitmq_username | default(trento_rabbitmq_usernam
 agent_rabbitmq_password: "{{ rabbitmq_password | default(trento_rabbitmq_password) }}" # `rabbimtq_password` for backwards-compatibility
 agent_rabbitmq_vhost: "{{ rabbitmq_vhost | default(trento_rabbitmq_vhost) }}" # `rabbimtq_vhost` for backwards-compatibility
 agent_install_monitoring_dep: true
+agent_server_ca_cert: "{{ undef() }}"
+agent_server_ca_cert_as_base64: false
