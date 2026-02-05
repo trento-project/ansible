@@ -20,12 +20,6 @@
   notify:
     - Restart Trento agent
 
-- name: Ensure agent_server_ca_cert is provided when provision_proxy is enabled
-  ansible.builtin.assert:
-    that: agent_server_ca_cert is defined
-    fail_msg: "agent_server_ca_cert is required when provision_proxy is true"
-  when: provision_proxy | bool
-
 - name: Add Server CA certificate PEM if provided
   no_log: false
   ansible.builtin.copy:

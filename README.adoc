@@ -678,6 +678,13 @@ per-role basis if appropriate.
   `trento_rabbitmq_vhost`>
 
 | agent_install_monitoring_dep | Whether to install monitoring dependencies like node_exporter or alloy | true
+
+| agent_server_ca_cert | CA certificate of the Trento server, used to verify the
+  server TLS certificate when connecting to it. This is required when ssl termination
+  is enabled on the server side and the TLS is signed by a non-public CA. | undefined
+
+| agent_server_ca_cert_as_base64 | Whether the `agent_server_ca_cert` variable is provided as a
+  base64 string | false
 |===
 
 *Postgres role*
