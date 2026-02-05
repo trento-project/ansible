@@ -24,7 +24,7 @@
   community.general.zypper:
     name: golang-github-prometheus-node_exporter
     state: latest
-  when: agent_host_pre_16
+  when: agent_install_monitoring_dep and agent_host_pre_16
   notify:
     - Start Prometheus node_exporter service
 
@@ -32,6 +32,6 @@
   community.general.zypper:
     name: alloy
     state: latest
-  when: agent_host_post_16
+  when: agent_install_monitoring_dep and agent_host_post_16
   notify:
     - Start Alloy service
