@@ -20,6 +20,25 @@
   notify:
     - Restart Trento agent
 
+- name: Ensure agent_server_ca_cert is provided when provision_proxy is enabled
+  ansible.builtin.assert:
+    that: agent_server_ca_cert is defined
+    fail_msg: "agent_server_ca_cert is required when provision_proxy is true"
+  when: provision_proxy | bool
+
+- name: Add Server CA certificate PEM if provided
+  no_log: false
+  ansible.builtin.copy:
+    content: "{{ (agent_server_ca_cert | b64decode) if agent_server_ca_cert_as_base64 | bool else agent_server_ca_cert }}"
+    dest: "/etc/pki/trust/anchors/trento-server-ca.pem"
+    mode: "0644"
+  when: agent_server_ca_cert is defined
+
+- name: Update CA trust store
+  ansible.builtin.command: update-ca-certificates
+  when: agent_server_ca_cert is defined
+  changed_when: false
+
 - name: Start Trento agent service
   ansible.builtin.service:
     name: trento-agent

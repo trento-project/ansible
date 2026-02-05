@@ -128,6 +128,8 @@ jobs:
             nginx_ssl_key_as_base64='true' \
             nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
             nginx_ssl_key='${{ secrets.SSL_KEY }}' \
+            agent_server_ca_cert='${{ secrets.SERVER_CA_CERT }}' \
+            agent_server_ca_cert_as_base64='true' \
             install_method='${{ matrix.install_method }}'"
             --verbose
 
