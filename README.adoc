@@ -675,6 +675,8 @@ per-role basis if appropriate.
 
 | agent_rabbitmq_vhost | The RabbitMQ virtual host | <value of
   `trento_rabbitmq_vhost`>
+
+| agent_install_monitoring_dep | Whether to install monitoring dependencies like node_exporter or alloy | true
 |===
 
 *Postgres role*
