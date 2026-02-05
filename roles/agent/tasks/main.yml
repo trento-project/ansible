@@ -9,6 +9,7 @@
   ansible.builtin.file:
     path: "/etc/trento"
     state: directory
+    mode: "0755"
 
 - name: Configure Trento agent
   ansible.builtin.template:
