@@ -74,6 +74,7 @@ current version):
 * Basesystem Module 15 x86_64 -
 `SUSEConnect -p sle-module-basesystem/15.x/x86_64`
 * SUSE Package Hub 15 x86_64 - `SUSEConnect -p PackageHub/15.x/x86_64`
+* Python 3 module - `SUSEConnect -p sle-module-python3/15.x/x86_64`
 * (15.6 only) Legacy Module 15 x86_64 -
 `SUSEConnect -p sle-module-legacy/15.6/x86_64`
 
