@@ -5,10 +5,15 @@
     name: trento-agent
     state: latest
 
+- name: Create Trento agent configuration directory
+  ansible.builtin.file:
+    path: "/etc/trento"
+    state: directory
+
 - name: Configure Trento agent
   ansible.builtin.template:
     src: "agent.conf.j2"
-    dest: "{{ agent_conf_destination }}"
+    dest: "/etc/trento/agent.yaml"
     mode: "0600"
     backup: true
   notify:
