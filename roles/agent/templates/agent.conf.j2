@@ -3,3 +3,38 @@
 server-url: {{ agent_trento_server_url }}
 api-key: {{ agent_web_api_key }}
 facts-service-url: {{ agent_amqp_protocol }}://{{ agent_rabbitmq_username }}:{{ agent_rabbitmq_password }}@{{ agent_rabbitmq_host }}/{{ agent_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
+
+prometheus-mode: {{ agent_resolved_prometheus_mode }}
+{% if agent_prometheus_exporter_name is truthy %}
+prometheus-exporter-name: {{ agent_prometheus_exporter_name }}
+{% endif %}
+{% if agent_resolved_prometheus_node_exporter_target is truthy %}
+prometheus-node-exporter-target: {{ agent_resolved_prometheus_node_exporter_target }}
+{% endif %}
+{% if agent_resolved_prometheus_scrape_interval is truthy %}
+prometheus-scrape-interval: {{ agent_resolved_prometheus_scrape_interval }}
+{% endif %}
+{% if agent_resolved_prometheus_remote_write_url is truthy %}
+prometheus-url: {{ agent_resolved_prometheus_remote_write_url }}
+{% endif %}
+{% if agent_resolved_prometheus_auth is truthy %}
+prometheus-auth: {{ agent_resolved_prometheus_auth }}
+{% endif %}
+{% if agent_resolved_prometheus_auth_bearer_token is truthy %}
+prometheus-auth-bearer-token: {{ agent_resolved_prometheus_auth_bearer_token }}
+{% endif %}
+{% if agent_resolved_prometheus_auth_username is truthy %}
+prometheus-auth-username: {{ agent_resolved_prometheus_auth_username }}
+{% endif %}
+{% if agent_resolved_prometheus_auth_password is truthy %}
+prometheus-auth-password: {{ agent_resolved_prometheus_auth_password }}
+{% endif %}
+{% if agent_resolved_prometheus_tls_ca_cert is truthy %}
+prometheus-tls-ca-cert: {{ agent_resolved_prometheus_tls_ca_cert }}
+{% endif %}
+{% if agent_resolved_prometheus_tls_client_cert is truthy %}
+prometheus-tls-client-cert: {{ agent_resolved_prometheus_tls_client_cert }}
+{% endif %}
+{% if agent_resolved_prometheus_tls_client_key is truthy %}
+prometheus-tls-client-key: {{ agent_resolved_prometheus_tls_client_key }}
+{% endif %}

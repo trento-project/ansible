@@ -687,6 +687,40 @@ per-role basis if appropriate.
   base64 string | false
 |===
 
+The following variables drive the monitoring tooling on an agent host.
+
+More detailed info about usage and defaults available link:https://github.com/trento-project/agent/blob/main/packaging/config/agent.yaml[here].
+
+[width="100%",cols="10%,47%,43%",options="header",]
+|===
+|Name | Description | Default
+
+| agent_prometheus_mode | Whether to use Prometheus in "pull" mode with prometheus node exporters or in "push" mode with grafana alloy. | If unspecified it resolves to "pull" for SLES \<= 15.7 and "pull" for SLES 16 and above.
+
+| agent_prometheus_exporter_name | Exporter name used in host discovery. | ""
+
+| agent_prometheus_node_exporter_target | The target address of the node exporter to scrape metrics from, in case `agent_prometheus_mode` is set to "pull". | ""
+
+| agent_prometheus_remote_write_url | The remote write URL of the Prometheus server, in case `agent_prometheus_mode` is set to "push". | currently undefined. Needs to be improved for autodiscovery
+
+| agent_prometheus_scrape_interval | Scrape interval for Prometheus to scrape the node exporter, in case `agent_prometheus_mode` is set to "push". | ""
+
+| agent_prometheus_auth | Authentication method when pushing metrics to Prometheus, in case `agent_prometheus_mode` is set to "push". | ""
+
+| agent_prometheus_auth_bearer_token | Bearer token used when `agent_prometheus_auth` is set to "bearer". | ""
+
+| agent_prometheus_auth_username | Username used when `agent_prometheus_auth` is set to "basic". | ""
+
+| agent_prometheus_auth_password | Password used when `agent_prometheus_auth` is set to "basic". | ""
+
+| agent_prometheus_tls_ca_cert | CA certificate used to verify the TLS certificate of the Prometheus server, in case `agent_prometheus_mode` is set to "push" and the Prometheus server uses TLS. This is required when the Prometheus server TLS certificate is signed by a non-public CA. | ""
+
+| agent_prometheus_tls_client_cert | Client certificate used for mTLS authentication when `agent_prometheus_auth` is set to "mtls". | ""
+
+| agent_prometheus_tls_client_key | Client key used for mTLS authentication when `agent_prometheus_auth` is set to "mtls". | ""
+
+|===
+
 *Postgres role*
 
 [width="100%",cols="16%,57%,27%",options="header",]
