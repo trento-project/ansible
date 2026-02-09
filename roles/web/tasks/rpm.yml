@@ -22,7 +22,7 @@
 - name: Start trento-web service
   ansible.builtin.service:
     name: trento-web
-    state: started
+    state: restarted
     enabled: true
 
 - name: Wait for Web to be available
