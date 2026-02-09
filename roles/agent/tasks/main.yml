@@ -48,6 +48,9 @@
     - Restart Prometheus node_exporter service
 
 - name: Install and configure alloy on SLES 16 and later
+  when: agent_install_monitoring_dep and agent_prometheus_mode_push
+  notify:
+    - Restart Alloy service
   block:
     - name: Install 'alloy'
       community.general.zypper:
@@ -64,16 +67,13 @@
         path: "/etc/alloy/trento.alloy"
         block: "{{ __agent_alloy_config_result.stdout }}"
         marker: "// {mark} TRENTO CONFIGURATION - ANSIBLE MANAGED"
+        mode: "0644"
         create: true
         backup: true
-    
+
     - name: Append trento alloy configuration
       ansible.builtin.replace:
         path: "/etc/sysconfig/alloy"
         regexp: '^CONFIG_FILE=".*"$'
         replace: 'CONFIG_FILE="/etc/alloy/"'
         backup: true
-
-  when: agent_install_monitoring_dep and agent_prometheus_mode_push
-  notify:
-    - Restart Alloy service

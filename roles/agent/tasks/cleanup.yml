@@ -12,4 +12,4 @@
     state: absent
   when: agent_prometheus_mode_push
   notify:
-      - Restart Alloy service
+    - Restart Alloy service

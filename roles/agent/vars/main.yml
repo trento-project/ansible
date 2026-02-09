@@ -7,8 +7,8 @@ agent_prometheus_mode_push: "{{ agent_resolved_prometheus_mode == 'push' }}"
 agent_resolved_prometheus_node_exporter_target: "{{ agent_prometheus_mode_pull | ternary(agent_prometheus_node_exporter_target, '') }}"
 agent_resolved_prometheus_scrape_interval: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_scrape_interval, '') }}"
 
-__discovered_agent_prometheus_remote_write_url: "{{ agent_prometheus_remote_write_url | default('http://{}:{}{}'.format(trento_server_name, 9090, '/api/v1/write'), true) }}"
-agent_resolved_prometheus_remote_write_url: "{{ agent_prometheus_mode_push | ternary(__discovered_agent_prometheus_remote_write_url, '') }}"
+__agent_discovered_prometheus_remote_write_url: "{{ agent_prometheus_remote_write_url | default('http://{}:{}{}'.format(trento_server_name, 9090, '/api/v1/write'), true) }}"
+agent_resolved_prometheus_remote_write_url: "{{ agent_prometheus_mode_push | ternary(__agent_discovered_prometheus_remote_write_url, '') }}"
 
 agent_resolved_prometheus_auth: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_auth, '') }}"
 agent_resolved_prometheus_auth_bearer_token: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_auth_bearer_token, '') }}"
