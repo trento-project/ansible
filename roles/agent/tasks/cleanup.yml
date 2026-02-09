@@ -1,0 +1,15 @@
+# code: language=ansible
+---
+- name: Stop and disable trento-agent service
+  ansible.builtin.service:
+    name: trento-agent
+    state: stopped
+    enabled: false
+
+- name: Remove trento alloy configuration
+  ansible.builtin.file:
+    path: "/etc/alloy/trento.alloy"
+    state: absent
+  when: agent_prometheus_mode_push
+  notify:
+      - Restart Alloy service
