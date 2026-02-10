@@ -11,6 +11,12 @@ upstream {{ wanda_upstream }} {
   server 127.0.0.1:{{ wanda_port }} max_fails=5 fail_timeout=60s;
 }
 
+{% if rproxy_provision_prometheus -%}
+upstream prometheus {
+  server {{ trento_prometheus_effective_host }}:{{ rproxy_prometheus_port }} max_fails=5 fail_timeout=60s;
+}
+{% endif -%}
+
 server {
     # Redirect HTTP to HTTPS
     listen {{ http_listen_port }};
@@ -29,6 +35,23 @@ server {
   ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384';
   ssl_prefer_server_ciphers on;
   ssl_session_cache shared:SSL:10m;
+
+{% if rproxy_provision_prometheus -%}
+  # Prometheus rule
+  location /prometheus/  {
+    allow all;
+
+    # Proxy Headers
+    proxy_http_version 1.1;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Cluster-Client-Ip $remote_addr;
+
+    # Add final slash to replace the prometheus_location value by the value in proxy_pass
+    # https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
+    proxy_pass http://prometheus/;
+  }
+{% endif -%}
 
   # Wanda rule
   location {{ wanda_location }}/  {
