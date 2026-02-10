@@ -136,7 +136,7 @@ jobs:
           git config --global user.name "${GIT_USER}"
           git config --global user.email "${GIT_AUTHOR_EMAIL}"
 
-      - name: Merge `release` into main
+      - name: Merge `release` into `main`
         run: |
           git merge origin/release -X ours --no-ff \
                     -m "Release ${{ needs.pre-release.outputs.version }}" \
