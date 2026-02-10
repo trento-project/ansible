@@ -1,0 +1,10 @@
+# code: language=ansible
+---
+- name: Clean up trento components
+  hosts: agents
+  become: true
+  tasks:
+    - name: Clean up Trento Agents
+      ansible.builtin.import_role:
+        name: agent
+        tasks_from: cleanup

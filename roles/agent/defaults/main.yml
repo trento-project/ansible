@@ -9,3 +9,21 @@ agent_rabbitmq_vhost: "{{ rabbitmq_vhost | default(trento_rabbitmq_vhost) }}" # 
 agent_install_monitoring_dep: true
 agent_server_ca_cert: "{{ undef() }}"
 agent_server_ca_cert_as_base64: false
+# See https://github.com/trento-project/agent/blob/main/packaging/config/agent.yaml for more details about the following variables
+agent_prometheus_mode: ""
+agent_prometheus_exporter_name: ""
+# pull mode specific variables
+agent_prometheus_node_exporter_target: ""
+# push mode specific variables
+agent_prometheus_scrape_interval: ""
+agent_prometheus_remote_write_url: ""
+agent_prometheus_auth: ""
+# when auth is bearer - default
+agent_prometheus_auth_bearer_token: ""
+# when auth is basic
+agent_prometheus_auth_username: ""
+agent_prometheus_auth_password: ""
+# TLS/mTLS related variables
+agent_prometheus_tls_ca_cert: ""
+agent_prometheus_tls_client_cert: ""
+agent_prometheus_tls_client_key: ""

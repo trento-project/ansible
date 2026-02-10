@@ -43,14 +43,37 @@
   community.general.zypper:
     name: golang-github-prometheus-node_exporter
     state: latest
-  when: agent_install_monitoring_dep and agent_host_pre_16
+  when: agent_install_monitoring_dep and agent_prometheus_mode_pull
   notify:
-    - Start Prometheus node_exporter service
+    - Restart Prometheus node_exporter service
 
-- name: Install 'alloy' on SLES 16 and later
-  community.general.zypper:
-    name: alloy
-    state: latest
-  when: agent_install_monitoring_dep and agent_host_post_16
+- name: Install and configure alloy on SLES 16 and later
+  when: agent_install_monitoring_dep and agent_prometheus_mode_push
   notify:
-    - Start Alloy service
+    - Restart Alloy service
+  block:
+    - name: Install 'alloy'
+      community.general.zypper:
+        name: alloy
+        state: latest
+
+    - name: Get alloy configuration output from the agent
+      ansible.builtin.command: trento-agent generate alloy
+      register: __agent_alloy_config_result
+      changed_when: false
+
+    - name: Generate trento alloy configuration
+      ansible.builtin.blockinfile:
+        path: "/etc/alloy/trento.alloy"
+        block: "{{ __agent_alloy_config_result.stdout }}"
+        marker: "// {mark} TRENTO CONFIGURATION - ANSIBLE MANAGED"
+        mode: "0644"
+        create: true
+        backup: true
+
+    - name: Append trento alloy configuration
+      ansible.builtin.replace:
+        path: "/etc/sysconfig/alloy"
+        regexp: '^CONFIG_FILE=".*"$'
+        replace: 'CONFIG_FILE="/etc/alloy/"'
+        backup: true

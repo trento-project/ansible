@@ -1,3 +1,19 @@
 ---
 agent_host_pre_16: "{{ ansible_distribution_version is version('15.7', '<=') | bool }}"
 agent_host_post_16: "{{ ansible_distribution_version is version('16.0', '>=') | bool }}"
+agent_resolved_prometheus_mode: "{{ agent_prometheus_mode | default(agent_host_pre_16 | ternary('pull', 'push'), true) }}"
+agent_prometheus_mode_pull: "{{ agent_resolved_prometheus_mode == 'pull' }}"
+agent_prometheus_mode_push: "{{ agent_resolved_prometheus_mode == 'push' }}"
+agent_resolved_prometheus_node_exporter_target: "{{ agent_prometheus_mode_pull | ternary(agent_prometheus_node_exporter_target, '') }}"
+agent_resolved_prometheus_scrape_interval: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_scrape_interval, '') }}"
+
+__agent_discovered_prometheus_remote_write_url: "{{ agent_prometheus_remote_write_url | default('http://{}:{}{}'.format(trento_server_name, 9090, '/api/v1/write'), true) }}"
+agent_resolved_prometheus_remote_write_url: "{{ agent_prometheus_mode_push | ternary(__agent_discovered_prometheus_remote_write_url, '') }}"
+
+agent_resolved_prometheus_auth: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_auth, '') }}"
+agent_resolved_prometheus_auth_bearer_token: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_auth_bearer_token, '') }}"
+agent_resolved_prometheus_auth_username: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_auth_username, '') }}"
+agent_resolved_prometheus_auth_password: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_auth_password, '') }}"
+agent_resolved_prometheus_tls_ca_cert: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_tls_ca_cert, '') }}"
+agent_resolved_prometheus_tls_client_cert: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_tls_client_cert, '') }}"
+agent_resolved_prometheus_tls_client_key: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_tls_client_key, '') }}"
