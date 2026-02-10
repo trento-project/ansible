@@ -18,3 +18,13 @@
       Inventory ansible host is {{ __trento_rabbitmq_ansible_host | default('undefined') }}.
       User value is {{ trento_rabbitmq_host }}
     verbosity: 1
+
+- name: Show host discovery results for Prometheus
+  ansible.builtin.debug:
+    msg: |
+      Effective Prometheus host is {{ trento_prometheus_effective_host }}.
+      Discovery host is {{ __trento_prometheus_discovery_host | default('undefined') }}.
+      Inventory host is {{ __trento_prometheus_inventory_host | default('undefined') }}.
+      Inventory ansible host is {{ __trento_prometheus_ansible_host | default('undefined') }}.
+      User value is {{ trento_prometheus_host }}
+    verbosity: 1

@@ -401,6 +401,24 @@ per-role basis if appropriate.
 
 | trento_rabbitmq_vhost | The rabbitmq vhost used for the current
   deployment | "trento"
+
+| trento_prometheus_host | The host where Prometheus is
+  located. Used as input for calculating
+  `trento_prometheus_effective_host` variable that is the default for
+  `*_prometheus_host` variables in some dependent roles.  This variable
+  is ignored when `trento_prometheus_host_group` is non-empty string. |
+  127.0.0.1
+
+| trento_prometheus_port | The port where Prometheus is exposed. | 9090
+
+| trento_prometheus_host_group | Name of the host group where Prometheus
+  is located. If this value is not empty string, activates
+  auto-discovery of the Prometheus host by searching it in the specified
+  group. Used as input for calculating
+  `trento_prometheus_effective_host` variable that is the default for
+  `*_prometheus_host` variables in some dependent roles. When
+  auto-discovery is active, the value of `trento_prometheus_host` is
+  ignored. | ""
 |===
 
 *Web role*
@@ -707,7 +725,7 @@ More detailed info about usage and defaults available link:https://github.com/tr
   The target address of the node exporter to scrape metrics from, in case `agent_prometheus_mode` is set to "pull". | 
   Defaults to the lowest discovered IP address with a default port number (9100).
 
-| agent_prometheus_remote_write_url | The remote write URL of the Prometheus server, in case `agent_prometheus_mode` is set to "push". | currently undefined. Needs to be improved for autodiscovery
+| agent_prometheus_remote_write_url | The remote write URL of the Prometheus server, in case `agent_prometheus_mode` is set to "push". | "https://<value of `trento_server_name`>/prometheus/api/v1/write"
 
 | agent_prometheus_scrape_interval | Scrape interval for Prometheus to scrape the node exporter, in case `agent_prometheus_mode` is set to "push". | "15s"
 
@@ -836,6 +854,14 @@ More detailed info about usage and defaults available link:https://github.com/tr
 
 | rproxy_ssl_key_as_base64 | Whether SSL key is provided as base64
   string | false
+
+| rproxy_provision_prometheus | Whether to provision Prometheus
+  proxy configuration in the reverse proxy | <value of `provision_prometheus`>
+
+| rproxy_prometheus_host | The host where Prometheus is located. | <value of `trento_prometheus_effective_host`>
+
+| rproxy_prometheus_port | The port where Prometheus is exposed. | <value of `trento_prometheus_port`>
+
 |===
 
 == Clean up

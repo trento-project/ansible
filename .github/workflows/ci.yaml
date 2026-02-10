@@ -111,6 +111,10 @@ jobs:
                   hosts:
                     server:
                       ansible_host: ${{ env.TEST_HOST_IP }}
+                prometheus_hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ env.TEST_HOST_IP }}
                 agents:
                   hosts:
                     agent:
@@ -157,6 +161,10 @@ jobs:
                     server:
                       ansible_host: ${{ env.TEST_HOST_IP }}
                 rabbitmq_hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ env.TEST_HOST_IP }}
+                prometheus_hosts:
                   hosts:
                     server:
                       ansible_host: ${{ env.TEST_HOST_IP }}
