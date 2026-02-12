@@ -3,6 +3,12 @@ name: Do release
 
 on:
   workflow_call:
+    inputs:
+      triggering_branch:
+        type: string
+        required: true
+        description: The branch on which we received a release request.
+
     secrets:
       release_key:
         description: >-
@@ -15,9 +21,13 @@ on:
         value: ${{ jobs.pre-release.outputs.version }}
         description: "The determined version of the release"
 
+env:
+  GIT_USER: shapbot
+  GIT_EMAIL: trento-developers@suse.com
+
 jobs:
   pre-release:
-    name: Detect new version, draft release, update changelog
+    name: Prepare a release
     permissions:
       contents: write
     runs-on: ubuntu-24.04
@@ -28,6 +38,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 2        # required by detect-version step
+          ref: ${{ inputs.triggering_branch }}
           ssh-key: ${{ secrets.release_key }}
 
       - name: Detect new version
@@ -47,6 +58,7 @@ jobs:
         with:
           publish: false
           version: ${{ steps.detect-version.outputs.current-version }}
+          commitish: ${{ inputs.triggering_branch }}
           disable-autolabeler: true
           config-name: release_drafter.yaml
         env:
@@ -61,19 +73,93 @@ jobs:
       - name: Commit new changelog
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          branch: main
+          # We need to checkout `branch` explicitly because
+          # `detect-version` messes with the HEAD ref.
+          branch: ${{ inputs.triggering_branch }}
+          skip_fetch: true
+          create_branch: false
+          commit_user_name: ${{ env.GIT_USER }}
+          commit_user_email: ${{ env.GIT_EMAIL }}
+          commit_author: "${{ env.GIT_USER }} <${{ env.GIT_EMAIL }}>"
           commit_message: |
             Automatically update CHANGELOG.md for release ${{ steps.detect-version.outputs.current-version }}
 
             [skip ci]
+
+  cross-merge-branches:
+    name: Merge branches for full release
+    needs: [pre-release]
+    if: inputs.triggering_branch == 'main'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: main
+          ssh-key: ${{ secrets.release_key }}
+
+      - name: Setup git
+        run: |
+          git config --global user.name "${GIT_USER}"
+          git config --global user.email "${GIT_AUTHOR_EMAIL}"
+
+      - name: Switch to 'release' branch
+        run: git switch release 2>/dev/null || git switch -c release main
+
+      - name: Merge `main` into `release`
+        run: |
+          git merge main -X theirs --no-ff \
+                         -m "Release ${{ needs.pre-release.outputs.version }}" \
+                         -m "[skip ci]"
+
+      - name: Switch back to `main` branch
+        run: git switch main
+
+      - name: Merge `release` into main
+        run: git merge release --ff-only
+
+      - name: Push branches `main` and `release`
+        run: git push origin main release
+
+  hotfix-merge-branches:
+    name: Merge branches for hotfix release
+    needs: [pre-release]
+    if: inputs.triggering_branch == 'release'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: main
+          ssh-key: ${{ secrets.release_key }}
+
+      - name: Setup git
+        run: |
+          git config --global user.name "${GIT_USER}"
+          git config --global user.email "${GIT_AUTHOR_EMAIL}"
+
+      - name: Merge `release` into `main`
+        run: |
+          git merge origin/release -X ours --no-ff \
+                    -m "Merge Release ${{ needs.pre-release.outputs.version }} into main" \
+                    -m "[skip ci]"
+
+      - name: Push branch `main`
+        run: git push origin main
 
   release:
     name: Tag and publish release
     permissions:
       contents: write
     runs-on: ubuntu-24.04
-    needs:
-      - pre-release
+    needs: [pre-release, cross-merge-branches, hotfix-merge-branches]
+    # Hack: Implement poor man's "either or" logic for `needs`.
+    if: >-
+      always()
+      && contains(needs.*.result, 'success')
+      && !contains(needs.*.results, 'failure')
     steps:
       - name: Publish release
         id: publish-release
@@ -81,6 +167,7 @@ jobs:
         with:
           publish: true
           version: ${{ needs.pre-release.outputs.version }}
+          commitish: release
           disable-autolabeler: true
           config-name: release_drafter.yaml
         env:

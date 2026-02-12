@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - release
     paths:
       - "VERSION"
 
@@ -13,6 +14,8 @@ jobs:
   release:
     name: Git Release
     uses: ./.github/workflows/git-release.yaml
+    with:
+      triggering_branch: ${{ github.ref_name }}
     secrets:
       release_key: ${{ secrets.RELEASE_KEY }}
 
@@ -27,6 +30,7 @@ jobs:
           - ${{ needs.release.outputs.version }}
           - rolling
     with:
+      branch: ${{ github.ref_name }}
       image_name: ansible
       tag: ${{ matrix.tag }}
       dockerfile: "docker/Dockerfile"
