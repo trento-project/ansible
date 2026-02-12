@@ -3,6 +3,10 @@ name: Publish Containers
 on:
   workflow_call:
     inputs:
+      branch:
+        type: string
+        required: true
+        description: The branch we want to build and publish.
       registry:
         required: false
         type: string
@@ -29,6 +33,7 @@ on:
           Additional build arguments that would be passed when
           building the container. Value should be new-line delimited
           string.
+
 jobs:
   detect-version:
     name: Detect version
@@ -45,6 +50,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ inputs.branch }}
 
       - name: Get version from git
         id: extract-version
@@ -65,6 +71,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ inputs.branch }}
 
       - uses: docker/setup-buildx-action@v3
 

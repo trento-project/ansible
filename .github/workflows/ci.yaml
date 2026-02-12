@@ -182,6 +182,7 @@ jobs:
     needs: [ansible-lint, test-deploy]
     uses: ./.github/workflows/publish-containers.yaml
     with:
+      branch: main
       image_name: ansible
       tag: rolling
       dockerfile: "docker/Dockerfile"
