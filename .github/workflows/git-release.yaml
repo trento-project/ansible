@@ -56,11 +56,11 @@ jobs:
         id: draft-release
         uses: release-drafter/release-drafter@v6
         with:
+          config-name: release_drafter_${{ inputs.triggering_branch }}.yaml
           publish: false
-          version: ${{ steps.detect-version.outputs.current-version }}
           commitish: ${{ inputs.triggering_branch }}
+          version: ${{ steps.detect-version.outputs.current-version }}
           disable-autolabeler: true
-          config-name: release_drafter.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -165,10 +165,10 @@ jobs:
         id: publish-release
         uses: release-drafter/release-drafter@v6
         with:
+          config-name: release_drafter_${{ inputs.triggering_branch }}.yaml
           publish: true
+          commitish: ${{ inputs.triggering_branch }}
           version: ${{ needs.pre-release.outputs.version }}
-          commitish: release
           disable-autolabeler: true
-          config-name: release_drafter.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
