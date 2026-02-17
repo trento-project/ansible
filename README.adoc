@@ -408,7 +408,7 @@ per-role basis if appropriate.
   `trento_prometheus_effective_host` variable that is the default for
   `*_prometheus_host` variables in some dependent roles.  This variable
   is ignored when `trento_prometheus_host_group` is non-empty string. |
-  127.0.0.1
+  localhost
 
 | trento_prometheus_port | The port where Prometheus is exposed. | 9090
 
@@ -857,7 +857,7 @@ More detailed info about usage and defaults available link:https://github.com/tr
   string | false
 
 | rproxy_provision_prometheus | Whether to provision Prometheus
-  proxy configuration in the reverse proxy | <value of `provision_prometheus`>
+  proxy configuration in the reverse proxy | false
 
 | rproxy_prometheus_host | The host where Prometheus is located. | <value of `trento_prometheus_effective_host`>
 
