@@ -56,11 +56,12 @@ The nginx configuration acts as a reverse proxy for all the components.
 `server.yml` playbook installs Trento server components (Web and
 Wanda) along with the supporting third-party application dependencies.
 
-This playbook supports auto-discovery of the hosts for RabbitMQ and
-Postgres in Web and Wanda. This feature is enabled when
-`provision_postgres` and `provision_rabbitmq` flags are true. When
-auto-discovery is active, `*_host` variables in `app` role are
-ignored. If you want to use external services for these dependencies,
+This playbook supports auto-discovery of the hosts for RabbitMQ, Postgres and Prometheus
+in Web and Wanda. This feature is enabled when `provision_postgres`,
+`provision_rabbitmq` and `provision_prometheus` flags are true. When
+auto-discovery is active, `*_host` variables (in `trento` role
+and any other role using them) are ignored.
+If you want to use external services for these dependencies,
 turn off the respective flag and specify the `*_host` variable in your
 inventory.
 
