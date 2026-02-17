@@ -60,7 +60,7 @@
       become: true
       when: provision_proxy | bool
       vars:
-        rproxy_provision_prometheus: "{{ provision_prometheus | bool }"
+        rproxy_provision_prometheus: "{{ provision_prometheus | bool }}"
 
     - role: firewall
       become: true
