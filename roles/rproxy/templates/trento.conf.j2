@@ -13,7 +13,7 @@ upstream {{ wanda_upstream }} {
 
 {% if rproxy_provision_prometheus -%}
 upstream prometheus {
-  server {{ trento_prometheus_effective_host }}:{{ rproxy_prometheus_port }} max_fails=5 fail_timeout=60s;
+  server {{ rproxy_prometheus_host }}:{{ rproxy_prometheus_port }} max_fails=5 fail_timeout=60s;
 }
 {% endif -%}
 
