@@ -15,7 +15,7 @@ upstream {{ wanda_upstream }} {
 upstream prometheus {
   server {{ rproxy_prometheus_host }}:{{ rproxy_prometheus_port }} max_fails=5 fail_timeout=60s;
 }
-{% endif -%}
+{% endif %}
 
 server {
     # Redirect HTTP to HTTPS
@@ -36,7 +36,7 @@ server {
   ssl_prefer_server_ciphers on;
   ssl_session_cache shared:SSL:10m;
 
-{% if rproxy_provision_prometheus -%}
+{% if rproxy_provision_prometheus %}
   # Prometheus rule
   location /prometheus/  {
     allow all;
@@ -51,7 +51,7 @@ server {
     # https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
     proxy_pass http://prometheus/;
   }
-{% endif -%}
+{% endif %}
 
   # Wanda rule
   location {{ wanda_location }}/  {
