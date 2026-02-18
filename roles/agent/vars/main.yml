@@ -7,7 +7,7 @@ agent_prometheus_mode_push: "{{ agent_resolved_prometheus_mode == 'push' }}"
 agent_resolved_prometheus_node_exporter_target: "{{ agent_prometheus_mode_pull | ternary(agent_prometheus_node_exporter_target, '') }}"
 agent_resolved_prometheus_scrape_interval: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_scrape_interval, '') }}"
 
-__agent_discovered_prometheus_remote_write_url: "{{ agent_prometheus_remote_write_url | default('http://{}:{}{}'.format(trento_server_name, 9090, '/api/v1/write'), true) }}"
+__agent_discovered_prometheus_remote_write_url: "{{ agent_prometheus_remote_write_url | default('https://{}{}'.format(trento_server_name, '/prometheus/api/v1/write'), true) }}"
 agent_resolved_prometheus_remote_write_url: "{{ agent_prometheus_mode_push | ternary(__agent_discovered_prometheus_remote_write_url, '') }}"
 
 agent_resolved_prometheus_auth: "{{ agent_prometheus_mode_push | ternary(agent_prometheus_auth, '') }}"

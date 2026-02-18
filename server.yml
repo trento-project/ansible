@@ -44,9 +44,11 @@
     # Explicitly call the trento role with the passed parameters to
     # please the linter.
     - role: trento
+      run_once: true
       vars:
         trento_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
         trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else '' }}"
+        trento_prometheus_host_group: "{{ 'prometheus_hosts' if (provision_prometheus | bool) else '' }}"
 
     - role: web
       become: true
@@ -57,6 +59,8 @@
     - role: rproxy
       become: true
       when: provision_proxy | bool
+      vars:
+        rproxy_provision_prometheus: "{{ provision_prometheus | bool }}"
 
     - role: firewall
       become: true

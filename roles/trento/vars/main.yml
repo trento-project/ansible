@@ -36,3 +36,13 @@ __trento_rabbitmq_discovery_host: "{{ (inventory_hostname in groups[trento_rabbi
 trento_rabbitmq_effective_host: "{{ trento_rabbitmq_host_group is truthy
                                     | ternary(__trento_rabbitmq_discovery_host,
                                               trento_rabbitmq_host) }}"
+
+# Prometheus auto-discovery
+__trento_prometheus_inventory_host: "{{ groups[trento_prometheus_host_group][0] }}"
+__trento_prometheus_ansible_host: "{{ hostvars[__trento_prometheus_inventory_host].ansible_host }}"
+__trento_prometheus_discovery_host: "{{ (inventory_hostname in groups[trento_prometheus_host_group])
+                                     | ternary('127.0.0.1',
+                                               __trento_prometheus_ansible_host | default(__trento_prometheus_inventory_host)) }}"
+trento_prometheus_effective_host: "{{ trento_prometheus_host_group is truthy
+                                    | ternary(__trento_prometheus_discovery_host,
+                                              trento_prometheus_host) }}"
