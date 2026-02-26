@@ -54,6 +54,7 @@
     web_upstream: "{{ rproxy_web_upstream_name }}"
     wanda_upstream: "{{ rproxy_wanda_upstream_name }}"
     wanda_location: "{{ rproxy_wanda_location }}"
+    prometheus_upstream: "{{ rproxy_prometheus_upstream_name }}"
   notify:
     - Restart nginx
 

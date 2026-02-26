@@ -12,7 +12,7 @@ upstream {{ wanda_upstream }} {
 }
 
 {% if rproxy_provision_prometheus -%}
-upstream prometheus {
+upstream {{ prometheus_upstream }} {
   server {{ rproxy_prometheus_host }}:{{ rproxy_prometheus_port }} max_fails=5 fail_timeout=60s;
 }
 {% endif %}
@@ -49,7 +49,7 @@ server {
 
     # Add final slash to replace the prometheus_location value by the value in proxy_pass
     # https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
-    proxy_pass http://prometheus/;
+    proxy_pass http://{{ prometheus_upstream }}/;
   }
 {% endif %}
 
