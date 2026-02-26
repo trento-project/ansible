@@ -412,6 +412,16 @@ per-role basis if appropriate.
 
 | trento_prometheus_port | The port where Prometheus is exposed. | 9090
 
+| trento_prometheus_auth | Authentication method for the Prometheus endpoint.
+  Must be "basic" or "none". Shared default for both `rproxy_prometheus_auth`
+  and `agent_prometheus_auth`. | ""
+
+| trento_prometheus_auth_username | Username for Prometheus basic auth.
+  Required when `trento_prometheus_auth` is "basic". | ""
+
+| trento_prometheus_auth_password | Password for Prometheus basic auth.
+  Required when `trento_prometheus_auth` is "basic". | ""
+
 | trento_prometheus_host_group | Name of the host group where Prometheus
   is located. If this value is not empty string, activates
   auto-discovery of the Prometheus host by searching it in the specified
@@ -730,13 +740,13 @@ More detailed info about usage and defaults available link:https://github.com/tr
 
 | agent_prometheus_scrape_interval | Scrape interval for Prometheus to scrape the node exporter, in case `agent_prometheus_mode` is set to "push". | "15s"
 
-| agent_prometheus_auth | Authentication method when pushing metrics to Prometheus, in case `agent_prometheus_mode` is set to "push". One of: "none", "basic", "bearer", "mtls" | "bearer"
+| agent_prometheus_auth | Authentication method when pushing metrics to Prometheus, in case `agent_prometheus_mode` is set to "push". One of: "none", "basic", "bearer", "mtls" | <value of `trento_prometheus_auth`>
 
 | agent_prometheus_auth_bearer_token | Bearer token used when `agent_prometheus_auth` is set to "bearer". Required if `agent_prometheus_auth` is set to "bearer" | ""
 
-| agent_prometheus_auth_username | Username used when `agent_prometheus_auth` is set to "basic". Required if `agent_prometheus_auth` is set to "basic". | ""
+| agent_prometheus_auth_username | Username used when `agent_prometheus_auth` is set to "basic". Required if `agent_prometheus_auth` is set to "basic". | <value of `trento_prometheus_auth_username`>
 
-| agent_prometheus_auth_password | Password used when `agent_prometheus_auth` is set to "basic". Required if `agent_prometheus_auth` is set to "basic". | ""
+| agent_prometheus_auth_password | Password used when `agent_prometheus_auth` is set to "basic". Required if `agent_prometheus_auth` is set to "basic". | <value of `trento_prometheus_auth_password`>
 
 | agent_prometheus_tls_ca_cert | CA certificate used to verify the TLS certificate of the Prometheus server, in case `agent_prometheus_mode` is set to "push" and the Prometheus server uses TLS. This is required when the Prometheus server TLS certificate is signed by a non-public CA. | ""
 
@@ -858,6 +868,15 @@ More detailed info about usage and defaults available link:https://github.com/tr
 
 | rproxy_provision_prometheus | Whether to provision Prometheus
   proxy configuration in the reverse proxy | false
+
+| rproxy_prometheus_auth | Authentication method for the Prometheus reverse proxy endpoint.
+  Must be set to "basic" or "none" when `rproxy_provision_prometheus` is true. | <value of `trento_prometheus_auth`>
+
+| rproxy_prometheus_auth_username | Username for Prometheus basic auth.
+  Required when `rproxy_prometheus_auth` is "basic". | <value of `trento_prometheus_auth_username`>
+
+| rproxy_prometheus_auth_password | Password for Prometheus basic auth.
+  Required when `rproxy_prometheus_auth` is "basic". | <value of `trento_prometheus_auth_password`>
 
 | rproxy_prometheus_host | The host where Prometheus is located. | <value of `trento_prometheus_effective_host`>
 

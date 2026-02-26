@@ -34,6 +34,12 @@ all:
     trento_wanda_postgres_password: "wanda"
     trento_rabbitmq_password: "trento"
 
+    # Prometheus authentication, required when provision_prometheus is true.
+    # Must be "basic" or "none".
+    trento_prometheus_auth: "basic"
+    trento_prometheus_auth_username: "prometheus"
+    trento_prometheus_auth_password: "your-prometheus-password"
+
     # Alerting configuration, optional
     web_enable_alerting: true
     web_alert_sender: "alert-sender-mail"
