@@ -190,6 +190,11 @@ all:
     trento_rabbitmq_password: "guest",
     rproxy_ssl_cert: "<paste your SSL certificate here in base64>",
     rproxy_ssl_key: "<paste your SSL certificate key here in base64>"
+
+    # Prometheus authentication
+    trento_prometheus_auth: "basic"
+    trento_prometheus_auth_username: "prometheus"
+    trento_prometheus_auth_password: "your-prometheus-password"
 ----
 
 === 4. Run the playbooks
@@ -323,6 +328,7 @@ population of some variables.
 
 | provision_prometheus | Whether to provision Prometheus used by Trento to store
   metrics send by agents | true
+
 |===
 
 *Trento meta-role*
