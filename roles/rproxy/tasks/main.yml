@@ -44,7 +44,7 @@
     that:
       - rproxy_prometheus_auth in ["basic", "none"]
     fail_msg: >-
-      rproxy_prometheus_auth must be set to "basic" or "none" when Prometheus is enabled.
+      trento_prometheus_auth (or rproxy_prometheus_auth) must be set to "basic" or "none" when Prometheus is enabled.
       Set it to "basic" and provide credentials, or to "none" to explicitly allow unauthenticated access.
 
 - name: Validate Prometheus basic auth credentials
