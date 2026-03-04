@@ -64,14 +64,24 @@
     - rproxy_provision_prometheus | bool
     - rproxy_prometheus_auth == "basic"
   no_log: true
-  ansible.builtin.copy:
-    content: "{{ rproxy_prometheus_auth_username }}:{{ rproxy_prometheus_auth_password | password_hash('bcrypt') }}"
-    dest: /etc/nginx/prometheus.htpasswd
+  ansible.builtin.shell:
+    cmd: >-
+      printf '%s:%s\n' '{{ rproxy_prometheus_auth_username }}'
+      "$(openssl passwd -apr1 '{{ rproxy_prometheus_auth_password }}')"
+      > /etc/nginx/prometheus.htpasswd
+  changed_when: true
+  notify:
+    - Restart nginx
+
+- name: Set Prometheus htpasswd file permissions
+  when:
+    - rproxy_provision_prometheus | bool
+    - rproxy_prometheus_auth == "basic"
+  ansible.builtin.file:
+    path: /etc/nginx/prometheus.htpasswd
     owner: root
     group: nginx
     mode: "0640"
-  notify:
-    - Restart nginx
 
 - name: Configure web project
   ansible.builtin.template:
