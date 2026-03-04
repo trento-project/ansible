@@ -38,6 +38,51 @@
   notify:
     - Restart nginx
 
+- name: Validate Prometheus auth configuration
+  when: rproxy_provision_prometheus | bool
+  ansible.builtin.assert:
+    that:
+      - rproxy_prometheus_auth in ["basic", "none"]
+    fail_msg: >-
+      trento_prometheus_auth (or rproxy_prometheus_auth) must be set to "basic" or "none" when Prometheus is enabled.
+      Set it to "basic" and provide credentials, or to "none" to explicitly allow unauthenticated access.
+
+- name: Validate Prometheus basic auth credentials
+  when:
+    - rproxy_provision_prometheus | bool
+    - rproxy_prometheus_auth == "basic"
+  ansible.builtin.assert:
+    that:
+      - rproxy_prometheus_auth_username | length > 0
+      - rproxy_prometheus_auth_password | length > 0
+    fail_msg: >-
+      rproxy_prometheus_auth_username and rproxy_prometheus_auth_password must be provided
+      when rproxy_prometheus_auth is set to "basic".
+
+- name: Generate Prometheus htpasswd file
+  when:
+    - rproxy_provision_prometheus | bool
+    - rproxy_prometheus_auth == "basic"
+  no_log: true
+  ansible.builtin.shell:
+    cmd: >-
+      printf '%s:%s\n' '{{ rproxy_prometheus_auth_username }}'
+      "$(openssl passwd -apr1 '{{ rproxy_prometheus_auth_password }}')"
+      > /etc/nginx/prometheus.htpasswd
+  changed_when: true
+  notify:
+    - Restart nginx
+
+- name: Set Prometheus htpasswd file permissions
+  when:
+    - rproxy_provision_prometheus | bool
+    - rproxy_prometheus_auth == "basic"
+  ansible.builtin.file:
+    path: /etc/nginx/prometheus.htpasswd
+    owner: root
+    group: nginx
+    mode: "0640"
+
 - name: Configure web project
   ansible.builtin.template:
     src: "trento.conf.j2"

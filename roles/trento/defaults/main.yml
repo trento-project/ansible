@@ -38,3 +38,6 @@ trento_rabbitmq_vhost: trento
 trento_prometheus_host_group: ""
 trento_prometheus_host: localhost
 trento_prometheus_port: 9090
+trento_prometheus_auth: ""
+trento_prometheus_auth_username: ""
+trento_prometheus_auth_password: ""

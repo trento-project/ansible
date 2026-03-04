@@ -17,12 +17,12 @@ agent_prometheus_node_exporter_target: ""
 # push mode specific variables
 agent_prometheus_scrape_interval: ""
 agent_prometheus_remote_write_url: ""
-agent_prometheus_auth: ""
+agent_prometheus_auth: "{{ trento_prometheus_auth }}"
 # when auth is bearer - default
 agent_prometheus_auth_bearer_token: ""
 # when auth is basic
-agent_prometheus_auth_username: ""
-agent_prometheus_auth_password: ""
+agent_prometheus_auth_username: "{{ trento_prometheus_auth_username }}"
+agent_prometheus_auth_password: "{{ trento_prometheus_auth_password }}"
 # TLS/mTLS related variables
 agent_prometheus_tls_ca_cert: ""
 agent_prometheus_tls_client_cert: ""
