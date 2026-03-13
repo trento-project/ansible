@@ -17,6 +17,9 @@ on:
         required: true
         description: The OBS package to commit change to.
     secrets:
+      gh_token:
+        description: GitHub Personal Access Token to interact with GH API.
+        required: true
       obs_user:
         description: OBS username for API (OBS and git) and repository access.
         required: true
@@ -110,7 +113,7 @@ jobs:
       - name: Handle .changes file
         if: inputs.update_changelog
         env:
-          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OAUTH_TOKEN: ${{ secrets.gh_token }}
         run: |
           release_version="$(echo '${{ steps.services.outputs.version }}' | cut -d'+' -f 1)"
           /scripts/gh_release_to_obs_changeset.py \
