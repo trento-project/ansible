@@ -17,7 +17,9 @@ jobs:
     with:
       triggering_branch: ${{ github.ref_name }}
     secrets:
-      release_key: ${{ secrets.RELEASE_KEY }}
+      gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
+      ssh_key: ${{ secrets.TRENTOBOT_SSH_KEY }}
+      gpg_key: ${{ secrets.TRENTOBOT_GPG_KEY }}
 
   publish-containers:
     name: Publish GHCR Containers
@@ -34,6 +36,9 @@ jobs:
       image_name: ansible
       tag: ${{ matrix.tag }}
       dockerfile: "docker/Dockerfile"
+    secrets:
+      gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
+      ssh_key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
   obs-sync:
     name: Update OBS package (${{ matrix.name }})
@@ -53,6 +58,7 @@ jobs:
       obs_project: ${{ matrix.obs_project }}
       obs_package: ${{ vars.OBS_PACKAGE }}
     secrets:
+      gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
       obs_user: ${{ secrets.OBS_USER }}
       obs_pass: ${{ secrets.OBS_PASS }}
       obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}

@@ -34,6 +34,16 @@ on:
           building the container. Value should be new-line delimited
           string.
 
+    secrets:
+      gh_token:
+        description: GitHub Personal Access Token to interact with GH API.
+        required: true
+      ssh_key:
+        description: >-
+          SSH key to be used for repository access. The key needs
+          write permissions to the repository.
+        required: true
+
 jobs:
   detect-version:
     name: Detect version
@@ -51,6 +61,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ inputs.branch }}
+          ssh-key: ${{ secrets.ssh_key }}
 
       - name: Get version from git
         id: extract-version
@@ -62,9 +73,6 @@ jobs:
     name: Build and push
     needs: [detect-version]
     runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      packages: write
     env:
       IMAGE_REPOSITORY: ${{ inputs.registry }}/${{ github.repository_owner }}/${{ inputs.image_name }}
     steps:
@@ -72,6 +80,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ inputs.branch }}
+          ssh-key: ${{ secrets.ssh_key }}
 
       - uses: docker/setup-buildx-action@v3
 
@@ -80,7 +89,7 @@ jobs:
         with:
           registry: ${{ inputs.registry }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.gh_token }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta

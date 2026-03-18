@@ -18,9 +18,10 @@ jobs:
     name: Playbook linting
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
       - name: Run ansible-lint on main playbook
         uses: ansible/ansible-lint@v25
@@ -77,9 +78,10 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
       - name: Install Ansible
         run: sudo pipx install --force --include-deps "ansible~=${{ matrix.control_node.ansible_version }}.0"
@@ -197,6 +199,9 @@ jobs:
       image_name: ansible
       tag: rolling
       dockerfile: "docker/Dockerfile"
+    secrets:
+      gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
+      ssh_key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
   obs-sync:
     name: Update obs packages
@@ -207,6 +212,7 @@ jobs:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
       obs_package: ${{ vars.OBS_PACKAGE }}
     secrets:
+      gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
       obs_user: ${{ secrets.OBS_USER }}
       obs_pass: ${{ secrets.OBS_PASS }}
       obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}
