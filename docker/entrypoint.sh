@@ -21,7 +21,7 @@ run(){
 
     printf "\n inventory path: %s, vars path: %s \n" "$@"
 
-    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i $1 --extra-vars "@$2" playbook.yml
+    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i $1 --extra-vars "@$2" site.yml
 }
 
 run "$@"

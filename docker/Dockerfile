@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.description="Ansible playbok for trento infrastru
 WORKDIR /lib/trento-ansible
 COPY roles .
 COPY requirements.yml . 
-COPY playbook.yml .
+COPY site.yml .
 COPY docker/entrypoint.sh .
 RUN zypper refresh && \
     zypper install -y ansible openssh-clients && \
