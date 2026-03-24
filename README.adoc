@@ -915,7 +915,7 @@ $ ansible-playbook -i inventory.yml playbook.cleanup.yml
 they are of general usage, and this could have impact in many other
 services.*
 
-== Usage with Vagrant
+== Local Development Environment
 
 Refer to xref:local-development-environment.adoc[Local Development
 Environment documentation].
