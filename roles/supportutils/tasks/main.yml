@@ -11,9 +11,9 @@
 
 - name: Install Trento support plugin
   community.general.zypper:
-    name: "{{ supportconfig_package_name }}"
+    name: "{{ supportutils_plugin_package_name }}"
     state: present
-    update_cache: "{{ supportconfig_update_cache }}"
+    update_cache: "{{ supportutils_plugin_update_cache }}"
   when:
     - ansible_os_family == "Suse"
     - ansible_distribution_version is version('15.4', '>=')
