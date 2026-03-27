@@ -1,0 +1,5 @@
+---
+supportutils_package_name: supportutils
+supportutils_update_cache: true
+supportconfig_package_name: supportutils-plugin-trento
+supportconfig_update_cache: true

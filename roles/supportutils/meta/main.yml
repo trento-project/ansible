@@ -1,0 +1,10 @@
+galaxy_info:
+  author: "trento-developers@suse.com"
+  description: Install supportconfig and Trento support plugin
+  company: SUSE
+  license: Apache-2.0
+  min_ansible_version: "2.1"
+  galaxy_tags: []
+
+dependencies:
+  - role: trento

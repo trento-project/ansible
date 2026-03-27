@@ -1,0 +1,19 @@
+# code: language=ansible
+---
+- name: Install supportutils
+  community.general.zypper:
+    name: "{{ supportutils_package_name }}"
+    state: present
+    update_cache: "{{ supportutils_update_cache }}"
+  when:
+    - ansible_os_family == "Suse"
+    - ansible_distribution_version is version('15.4', '>=')
+
+- name: Install Trento support plugin
+  community.general.zypper:
+    name: "{{ supportconfig_package_name }}"
+    state: present
+    update_cache: "{{ supportconfig_update_cache }}"
+  when:
+    - ansible_os_family == "Suse"
+    - ansible_distribution_version is version('15.4', '>=')
