@@ -55,6 +55,10 @@ The nginx configuration acts as a reverse proxy for all the components.
 
 `server.yml` playbook installs Trento server components (Web and
 Wanda) along with the supporting third-party application dependencies.
+It can also install `supportutils` together with the
+`supportutils-plugin-trento` package to make `supportconfig` collect
+Trento-specific data. This is controlled by the
+`provision_supportutils` variable.
 
 This playbook supports auto-discovery of the hosts for RabbitMQ, Postgres and Prometheus
 in Web and Wanda. This feature is enabled when `provision_postgres`,
@@ -328,6 +332,10 @@ population of some variables.
 
 | provision_prometheus | Whether to provision Prometheus used by Trento to store
   metrics send by agents | true
+
+| provision_supportutils | Whether to install `supportutils` and the
+  `supportutils-plugin-trento` package on Trento server hosts. Set to
+  `false` if you do not want the Trento support plugin installed. | true
 
 |===
 
@@ -893,7 +901,7 @@ More detailed info about usage and defaults available link:https://github.com/tr
 == Clean up
 
 In order to clean up most of the applied changes and created resources,
-the `playbook.cleanup.yml` playbook could be used. It uses the same
+the `cleanup.yml` playbook could be used. It uses the same
 inventory and variables file than the main playbook.
 
 These are the cleaned resources:
@@ -902,18 +910,21 @@ These are the cleaned resources:
 * Postgresql database and users
 * Reverse proxy vhost configuration file
 * RabbitMQ vhost
+* `supportutils-plugin-trento` package
 * Reverts Firewall rules
 
 Run the playbook with:
 
 [source, console]
 ----
-$ ansible-playbook -i inventory.yml playbook.cleanup.yml
+$ ansible-playbook -i inventory.yml cleanup.yml
 ----
 
 *Disclaimer: The installed packages are not removed as most of the times
 they are of general usage, and this could have impact in many other
-services.*
+services. An exception is `supportutils-plugin-trento`, which is
+removed because it is Trento-specific. The base `supportutils` package
+is left installed.*
 
 == Local Development Environment
 
