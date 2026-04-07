@@ -339,6 +339,13 @@ population of some variables.
 
 |===
 
+To disable the Trento support plugin during provisioning, set:
+
+[source,yaml]
+----
+provision_supportutils: false
+----
+
 *Trento meta-role*
 
 Variables in this role are a bit special. They are shared among
