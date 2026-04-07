@@ -5,8 +5,6 @@
     name: "{{ supportutils_package_name }}"
     state: present
     update_cache: "{{ supportutils_update_cache }}"
-  tags:
-    - supportutils
   when:
     - ansible_distribution == "SLES_SAP"
     - ansible_distribution_version is version('15.5', '>=')
@@ -16,8 +14,6 @@
     name: "{{ supportutils_plugin_package_name }}"
     state: present
     update_cache: "{{ supportutils_plugin_update_cache }}"
-  tags:
-    - supportutils
   when:
     - ansible_distribution == "SLES_SAP"
     - ansible_distribution_version is version('15.5', '>=')

@@ -18,8 +18,6 @@
       ansible.builtin.import_role:
         name: supportutils
         tasks_from: cleanup
-      tags:
-        - supportutils
 
     - name: Clean up Proxy
       ansible.builtin.import_role:

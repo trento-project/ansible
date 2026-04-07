@@ -75,5 +75,3 @@
   roles:
     - role: supportutils
       when: provision_supportutils | bool
-      tags:
-        - supportutils
