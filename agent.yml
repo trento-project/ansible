@@ -10,3 +10,6 @@
 
     - role: agent
       become: true
+
+    - role: supportutils
+      become: true

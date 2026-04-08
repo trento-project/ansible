@@ -8,3 +8,8 @@
       ansible.builtin.import_role:
         name: agent
         tasks_from: cleanup
+
+    - name: Clean up Trento support plugin
+      ansible.builtin.import_role:
+        name: supportutils
+        tasks_from: cleanup

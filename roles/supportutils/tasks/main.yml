@@ -1,19 +1,10 @@
 # code: language=ansible
 ---
-- name: Install supportutils
+- name: Install Trento support tooling
   community.general.zypper:
-    name: "{{ supportutils_package_name }}"
+    name: "{{ supportutils_packages }}"
     state: present
     update_cache: "{{ supportutils_update_cache }}"
-  when:
-    - ansible_distribution == "SLES_SAP"
-    - ansible_distribution_version is version('15.5', '>=')
-
-- name: Install Trento support plugin
-  community.general.zypper:
-    name: "{{ supportutils_plugin_package_name }}"
-    state: present
-    update_cache: "{{ supportutils_plugin_update_cache }}"
   when:
     - ansible_distribution == "SLES_SAP"
     - ansible_distribution_version is version('15.5', '>=')

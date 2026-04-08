@@ -57,8 +57,7 @@ The nginx configuration acts as a reverse proxy for all the components.
 Wanda) along with the supporting third-party application dependencies.
 It can also install `supportutils` together with the
 `supportutils-plugin-trento` package to make `supportconfig` collect
-Trento-specific data. This is controlled by the
-`provision_supportutils` variable.
+Trento-specific data on Trento server hosts.
 
 This playbook supports auto-discovery of the hosts for RabbitMQ, Postgres and Prometheus
 in Web and Wanda. This feature is enabled when `provision_postgres`,
@@ -86,6 +85,9 @@ current version):
 === Agent
 
 `agent.yml` playbook installs and configures Trento agent.
+It can also install `supportutils` together with the
+`supportutils-plugin-trento` package to make `supportconfig` collect
+Trento agent diagnostics.
 
 This playbook supports auto-discovery of the host for RabbitMQ for use
 in agents. This feature is enabled when `provision_rabbitmq` flag is
@@ -333,18 +335,7 @@ population of some variables.
 | provision_prometheus | Whether to provision Prometheus used by Trento to store
   metrics send by agents | true
 
-| provision_supportutils | Whether to install `supportutils` and the
-  `supportutils-plugin-trento` package on Trento server hosts. Set to
-  `false` if you do not want the Trento support plugin installed. | true
-
 |===
-
-To disable the Trento support plugin during provisioning, set:
-
-[source,yaml]
-----
-provision_supportutils: false
-----
 
 *Trento meta-role*
 
@@ -908,10 +899,11 @@ More detailed info about usage and defaults available link:https://github.com/tr
 == Clean up
 
 In order to clean up most of the applied changes and created resources,
-the `cleanup.yml` playbook could be used. It uses the same
-inventory and variables file than the main playbook.
+the cleanup playbooks could be used. They use the same inventory and
+variables file than the main playbook.
 
-These are the cleaned resources:
+`cleanup.yml` removes Trento server-related resources. These are the
+cleaned resources:
 
 * Stops Web and Wanda services
 * Postgresql database and users
@@ -926,6 +918,9 @@ Run the playbook with:
 ----
 $ ansible-playbook -i inventory.yml cleanup.yml
 ----
+
+`cleanup-agents.yml` removes Trento agent-related resources, including
+the `supportutils-plugin-trento` package on agent hosts.
 
 *Disclaimer: The installed packages are not removed as most of the times
 they are of general usage, and this could have impact in many other
