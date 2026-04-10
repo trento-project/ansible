@@ -777,6 +777,26 @@ More detailed info about usage and defaults available link:https://github.com/tr
 
 |===
 
+*Supportutils role*
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| Name | Description | Default
+
+| supportutils_enabled | Whether to install Trento support tooling on
+  supported hosts. | true
+
+| supportutils_package_name | Package name for the base
+  `supportutils` tooling installed by the role. | "supportutils"
+
+| supportutils_plugin_package_name | Package name for the
+  Trento-specific supportconfig plugin installed by the role. |
+  "supportutils-plugin-trento"
+
+| supportutils_update_cache | Whether to refresh the zypper metadata
+  cache before installing the support tooling packages. | true
+|===
+
 *Postgres role*
 
 [width="100%",cols="16%,57%,27%",options="header",]
