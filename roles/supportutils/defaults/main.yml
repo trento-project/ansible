@@ -1,6 +1,5 @@
 ---
-supportutils_packages:
-  - supportutils
-  - supportutils-plugin-trento
+supportutils_enabled: true
+supportutils_package_name: supportutils
 supportutils_plugin_package_name: supportutils-plugin-trento
 supportutils_update_cache: true

@@ -57,7 +57,8 @@ The nginx configuration acts as a reverse proxy for all the components.
 Wanda) along with the supporting third-party application dependencies.
 It can also install `supportutils` together with the
 `supportutils-plugin-trento` package to make `supportconfig` collect
-Trento-specific data on Trento server hosts.
+Trento-specific data on Trento server hosts. This can be disabled by
+setting `supportutils_enabled` to `false` in the inventory.
 
 This playbook supports auto-discovery of the hosts for RabbitMQ, Postgres and Prometheus
 in Web and Wanda. This feature is enabled when `provision_postgres`,
@@ -87,7 +88,8 @@ current version):
 `agent.yml` playbook installs and configures Trento agent.
 It can also install `supportutils` together with the
 `supportutils-plugin-trento` package to make `supportconfig` collect
-Trento agent diagnostics.
+Trento agent diagnostics. This can be disabled by setting
+`supportutils_enabled` to `false` in the inventory.
 
 This playbook supports auto-discovery of the host for RabbitMQ for use
 in agents. This feature is enabled when `provision_rabbitmq` flag is
@@ -336,6 +338,13 @@ population of some variables.
   metrics send by agents | true
 
 |===
+
+To disable Trento support tooling provisioning from inventory, set:
+
+[source,yaml]
+----
+supportutils_enabled: false
+----
 
 *Trento meta-role*
 

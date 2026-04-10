@@ -2,9 +2,12 @@
 ---
 - name: Install Trento support tooling
   community.general.zypper:
-    name: "{{ supportutils_packages }}"
+    name:
+      - "{{ supportutils_package_name }}"
+      - "{{ supportutils_plugin_package_name }}"
     state: present
     update_cache: "{{ supportutils_update_cache }}"
   when:
+    - supportutils_enabled | bool
     - ansible_distribution == "SLES_SAP"
     - ansible_distribution_version is version('15.5', '>=')
