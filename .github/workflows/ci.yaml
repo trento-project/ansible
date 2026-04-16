@@ -2,14 +2,13 @@ name: CI
 
 on:
   push:
-    tags-ignore:
-      - "*"
     branches:
       - "main"
     paths-ignore:
       - "VERSION"
   pull_request:
-  workflow_dispatch:
+    paths-ignore:
+      - "VERSION"
 
 concurrency: ${{ github.workflow }}
 
@@ -190,12 +189,13 @@ jobs:
             --verbose
 
   publish-containers:
-    name: Build and push container images
-    if: github.event_name == 'push' && github.ref_name == 'main'
-    needs: [ansible-lint, test-deploy]
-    uses: ./.github/workflows/publish-containers.yaml
+    name: Publish GHCR Containers
+    if: github.event_name == 'push'
+    needs:
+      - ansible-lint
+      - test-deploy
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@406be0972195864a87ed454458eaa0856d0c5457 # v1.6.0
     with:
-      branch: main
       image_name: ansible
       tag: rolling
       dockerfile: "docker/Dockerfile"
@@ -205,9 +205,11 @@ jobs:
 
   obs-sync:
     name: Update obs packages
-    if: fromJSON(vars.OBS_ENABLED) && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    needs: [ansible-lint, test-deploy]
-    uses: ./.github/workflows/obs.yaml
+    if: fromJSON(vars.OBS_ENABLED) && github.event_name == 'push'
+    needs:
+      - ansible-lint
+      - test-deploy
+    uses: trento-project/.github/.github/workflows/obs-sync.yaml@406be0972195864a87ed454458eaa0856d0c5457 # v1.6.0
     with:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
       obs_package: ${{ vars.OBS_PACKAGE }}
