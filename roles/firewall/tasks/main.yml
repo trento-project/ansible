@@ -61,6 +61,7 @@
       ansible.posix.firewalld:
         port: "{{ item }}"
         permanent: true
+        immediate: "{{ __firewall_firewalld_status.status.ActiveState == 'active' }}"
         state: "{{ firewall_state }}"
       when: __firewall_firewalld_installed
       loop: "{{ firewall_ports }}"

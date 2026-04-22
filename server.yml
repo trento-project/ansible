@@ -64,6 +64,7 @@
       when: provision_proxy | bool
       vars:
         rproxy_provision_prometheus: "{{ provision_prometheus | bool }}"
+        rproxy_provision_mcp_server: "{{ provision_mcp_server | bool }}"
 
     - role: firewall
       become: true
@@ -71,6 +72,10 @@
         - "{{ rproxy_vhost_http_listen_port }}/tcp"
         - "{{ rproxy_vhost_https_listen_port }}/tcp"
       when: provision_proxy | bool
+
+    - role: mcp_server
+      become: true
+      when: provision_mcp_server | bool
 
     - role: supportutils
       become: true

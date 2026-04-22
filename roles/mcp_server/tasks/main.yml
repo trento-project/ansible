@@ -1,0 +1,64 @@
+# code: language=ansible
+---
+- name: Validate MCP Server configuration
+  ansible.builtin.assert:
+    that:
+      - mcp_server_target_mode in ['oas_path', 'trento_url']
+      - mcp_server_transport in ['streamable', 'sse']
+      - mcp_server_verbosity in ['debug', 'info', 'warning', 'error']
+      - mcp_server_header_name | length > 0
+      - (mcp_server_target_mode != 'oas_path') or (mcp_server_oas_paths | length > 0)
+      - (mcp_server_target_mode != 'trento_url') or (mcp_server_trento_url | length > 0)
+    fail_msg: "Invalid Trento MCP Server configuration."
+
+- name: Install Trento MCP Server RPM package
+  community.general.zypper:
+    name: mcp-server-trento
+    state: latest
+    update_cache: true
+  notify:
+    - Restart Trento MCP Server
+
+- name: Create Trento configuration directory
+  ansible.builtin.file:
+    path: /etc/trento
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure Trento MCP Server
+  ansible.builtin.template:
+    src: mcp-server-trento.j2
+    dest: /etc/trento/mcp-server-trento
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  notify:
+    - Restart Trento MCP Server
+
+- name: Start Trento MCP Server service
+  ansible.builtin.service:
+    name: mcp-server-trento
+    state: started
+    enabled: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Wait for Trento MCP Server to accept connections
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ mcp_server_listen_port }}"
+    timeout: 30
+
+- name: Open Trento MCP Server health firewall access
+  ansible.builtin.include_role:
+    name: firewall
+  vars:
+    firewall_ports:
+      - "{{ mcp_server_health_port | default(trento_mcp_health_port) }}/tcp"
+  when:
+    - (mcp_server_health_enabled | default(false)) | bool
+    - (mcp_server_expose_health_port | default(false)) | bool

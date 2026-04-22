@@ -1,0 +1,7 @@
+# code: language=ansible
+---
+- name: Restart Trento MCP Server
+  ansible.builtin.service:
+    name: mcp-server-trento
+    state: restarted
+    enabled: true

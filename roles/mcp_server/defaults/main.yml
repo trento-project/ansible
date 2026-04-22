@@ -1,0 +1,16 @@
+---
+mcp_server_target_mode: "oas_path"
+mcp_server_oas_paths:
+  - "http://127.0.0.1:{{ trento_web_listen_port }}/api/all/openapi"
+  - "http://127.0.0.1:{{ trento_wanda_listen_port }}/api/all/openapi"
+mcp_server_trento_url: ""
+mcp_server_header_name: "Authorization"
+mcp_server_listen_port: "{{ trento_mcp_listen_port }}"
+mcp_server_transport: "streamable"
+mcp_server_tag_filter:
+  - "MCP"
+mcp_server_health_enabled: false
+mcp_server_health_port: "{{ trento_mcp_health_port }}"
+mcp_server_expose_health_port: false
+mcp_server_insecure_skip_tls_verify: false
+mcp_server_verbosity: "info"
