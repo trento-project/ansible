@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+---
+provision_postgres: true
+provision_prometheus: true
+provision_rabbitmq: true
+provision_proxy: true
+provision_mcp_server: false

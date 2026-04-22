@@ -12,12 +12,16 @@ rproxy_vhost_http_listen_port: "{{ nginx_vhost_http_listen_port }}"
 rproxy_vhost_https_listen_port: "{{ nginx_vhost_https_listen_port }}"
 rproxy_web_upstream_name: "{{ web_upstream_name }}"
 rproxy_wanda_upstream_name: "{{ wanda_upstream_name }}"
+rproxy_mcp_upstream_name: "mcp_server"
 rproxy_wanda_location: "{{ wanda_proxy_location | default(trento_wanda_proxy_location) }}" # `wanda_proxy_location` for backwards-compatibility
+rproxy_mcp_listen_port: "{{ trento_mcp_listen_port }}"
+rproxy_mcp_location: "{{ trento_mcp_proxy_location }}"
 rproxy_ssl_cert: "{{ nginx_ssl_cert }}"
 rproxy_ssl_cert_as_base64: "{{ nginx_ssl_cert_as_base64 }}"
 rproxy_ssl_key: "{{ nginx_ssl_key }}"
 rproxy_ssl_key_as_base64: "{{ nginx_ssl_key_as_base64 }}"
 rproxy_provision_prometheus: false
+rproxy_provision_mcp_server: false
 rproxy_prometheus_auth: "{{ trento_prometheus_auth }}"
 rproxy_prometheus_auth_username: "{{ trento_prometheus_auth_username }}"
 rproxy_prometheus_auth_password: "{{ trento_prometheus_auth_password }}"

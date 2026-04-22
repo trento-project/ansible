@@ -20,6 +20,10 @@
     - name: Clean up Trento support plugin
       ansible.builtin.import_role:
         name: supportutils
+
+    - name: Clean up Trento MCP Server
+      ansible.builtin.import_role:
+        name: mcp_server
         tasks_from: cleanup
 
     - name: Clean up Proxy
