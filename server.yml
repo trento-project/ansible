@@ -68,3 +68,6 @@
         - "{{ rproxy_vhost_http_listen_port }}/tcp"
         - "{{ rproxy_vhost_https_listen_port }}/tcp"
       when: provision_proxy | bool
+
+    - role: supportutils
+      become: true

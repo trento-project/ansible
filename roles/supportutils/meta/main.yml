@@ -1,0 +1,7 @@
+galaxy_info:
+  author: "trento-developers@suse.com"
+  description: Install Trento support tooling on server and agent hosts
+  company: SUSE
+  license: Apache-2.0
+  min_ansible_version: "2.1"
+  galaxy_tags: []

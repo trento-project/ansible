@@ -1,0 +1,9 @@
+# code: language=ansible
+---
+- name: Remove Trento support plugin
+  community.general.zypper:
+    name: "{{ supportutils_plugin_package_name }}"
+    state: absent
+  when:
+    - ansible_distribution == "SLES_SAP"
+    - ansible_distribution_version is version('15.5', '>=')
