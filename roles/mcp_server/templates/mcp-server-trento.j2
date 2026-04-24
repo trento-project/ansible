@@ -4,11 +4,13 @@ PORT={{ mcp_server_listen_port }}
 TAG_FILTER={{ mcp_server_tag_filter | join(',') }}
 TRANSPORT={{ mcp_server_transport }}
 ENABLE_HEALTH_CHECK={{ mcp_server_health_enabled | string | lower }}
+HEALTH_API_PATH={{ mcp_server_health_api_path }}
 HEALTH_PORT={{ mcp_server_health_port }}
 INSECURE_SKIP_TLS_VERIFY={{ mcp_server_insecure_skip_tls_verify | string | lower }}
 VERBOSITY={{ mcp_server_verbosity }}
 {% if mcp_server_target_mode == 'trento_url' %}
 TRENTO_URL={{ mcp_server_trento_url }}
+AUTODISCOVERY_PATHS={{ mcp_server_autodiscovery_paths | join(',') }}
 {% else %}
 OAS_PATH={{ mcp_server_oas_paths | join(',') }}
 {% endif %}

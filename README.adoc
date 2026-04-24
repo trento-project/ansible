@@ -789,6 +789,10 @@ per-role basis if appropriate.
 | mcp_server_trento_url | Trento Server base URL used when
   `mcp_server_target_mode` is `trento_url` | ""
 
+| mcp_server_autodiscovery_paths | List of OpenAPI autodiscovery paths
+  appended to `mcp_server_trento_url` when `mcp_server_target_mode` is
+  `trento_url`. | `"/api/all/openapi"`, `"/wanda/api/all/openapi"`
+
 | mcp_server_header_name | Header name used by MCP clients to pass the
   Trento PAT | "Authorization"
 
@@ -803,6 +807,9 @@ per-role basis if appropriate.
 
 | mcp_server_health_enabled | Whether to enable the MCP health
   endpoints | false
+
+| mcp_server_health_api_path | Health check API path used on the Trento
+  target server | "/api/healthz"
 
 | mcp_server_health_port | Port used by the health check HTTP server |
   <value of `trento_mcp_health_port`>
