@@ -47,3 +47,5 @@ trento_prometheus_port: 9090
 trento_prometheus_auth: ""
 trento_prometheus_auth_username: ""
 trento_prometheus_auth_password: ""
+trento_mcp_host_group: ""
+trento_mcp_host: 127.0.0.1

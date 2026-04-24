@@ -21,11 +21,6 @@
       ansible.builtin.import_role:
         name: supportutils
 
-    - name: Clean up Trento MCP Server
-      ansible.builtin.import_role:
-        name: mcp_server
-        tasks_from: cleanup
-
     - name: Clean up Proxy
       ansible.builtin.import_role:
         name: rproxy
@@ -74,3 +69,28 @@
         firewall_ports:
           - "{{ prometheus_port }}/tcp"
         firewall_state: disabled
+
+- name: Clean up Trento MCP Server on dedicated MCP hosts
+  hosts: "{{ ((groups['mcp_hosts'] | default([])) | length > 0) | ternary('mcp_hosts', 'localhost') }}"
+  gather_facts: "{{ (groups['mcp_hosts'] | default([])) | length > 0 }}"
+  become: true
+  tasks:
+    - name: Clean up Trento MCP Server
+      ansible.builtin.import_role:
+        name: mcp_server
+        tasks_from: cleanup
+      when: (groups['mcp_hosts'] | default([])) | length > 0
+
+- name: Clean up Trento MCP Server on Trento server hosts
+  hosts: "{{ (((groups['mcp_hosts'] | default([])) | length == 0) and ((groups['trento_server'] | default([])) | length > 0))
+             | ternary('trento_server', 'localhost') }}"
+  gather_facts: "{{ ((groups['mcp_hosts'] | default([])) | length == 0) and ((groups['trento_server'] | default([])) | length > 0) }}"
+  become: true
+  tasks:
+    - name: Clean up Trento MCP Server
+      ansible.builtin.import_role:
+        name: mcp_server
+        tasks_from: cleanup
+      when:
+        - (groups['mcp_hosts'] | default([])) | length == 0
+        - (groups['trento_server'] | default([])) | length > 0

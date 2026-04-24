@@ -1,0 +1,53 @@
+# code: language=ansible
+---
+- name: Clean up Trento MCP Server on dedicated MCP hosts
+  hosts: "{{ ((groups['mcp_hosts'] | default([])) | length > 0) | ternary('mcp_hosts', 'localhost') }}"
+  gather_facts: "{{ (groups['mcp_hosts'] | default([])) | length > 0 }}"
+  become: true
+  tasks:
+    - name: Clean up Trento MCP Server
+      ansible.builtin.import_role:
+        name: mcp_server
+        tasks_from: cleanup
+      when: (groups['mcp_hosts'] | default([])) | length > 0
+
+- name: Clean up Trento MCP Server on Trento server hosts
+  hosts: "{{ (((groups['mcp_hosts'] | default([])) | length == 0) and ((groups['trento_server'] | default([])) | length > 0))
+             | ternary('trento_server', 'localhost') }}"
+  gather_facts: "{{ ((groups['mcp_hosts'] | default([])) | length == 0) and ((groups['trento_server'] | default([])) | length > 0) }}"
+  become: true
+  tasks:
+    - name: Clean up Trento MCP Server
+      ansible.builtin.import_role:
+        name: mcp_server
+        tasks_from: cleanup
+      when:
+        - (groups['mcp_hosts'] | default([])) | length == 0
+        - (groups['trento_server'] | default([])) | length > 0
+
+- name: Reconfigure reverse proxy after Trento MCP Server cleanup
+  hosts: "{{ ((groups['trento_server'] | default([])) | length > 0) | ternary('trento_server', 'localhost') }}"
+  gather_facts: "{{ mcp_cleanup_reconfigure_rproxy | default(true) | bool and (provision_proxy | default(false)) | bool
+                    and ((groups['trento_server'] | default([])) | length > 0) }}"
+  become: true
+  roles:
+    - role: trento
+      run_once: true
+      when:
+        - mcp_cleanup_reconfigure_rproxy | default(true) | bool
+        - (groups['trento_server'] | default([])) | length > 0
+      vars:
+        trento_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
+        trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else '' }}"
+        trento_prometheus_host_group: "{{ 'prometheus_hosts' if (provision_prometheus | bool) else '' }}"
+        trento_mcp_host_group: "{{ 'mcp_hosts' if ((groups['mcp_hosts'] | default([])) | length > 0) else '' }}"
+
+    - role: rproxy
+      when:
+        - mcp_cleanup_reconfigure_rproxy | default(true) | bool
+        - provision_proxy | bool
+        - (groups['trento_server'] | default([])) | length > 0
+      vars:
+        trento_mcp_host_group: "{{ 'mcp_hosts' if ((groups['mcp_hosts'] | default([])) | length > 0) else '' }}"
+        rproxy_provision_prometheus: "{{ provision_prometheus | bool }}"
+        rproxy_provision_mcp_server: false

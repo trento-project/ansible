@@ -26,9 +26,14 @@ Playbooks::
 
 server::: Install Trento server components
 agent::: Install Trento agents
+mcp::: Install the optional Trento MCP Server
 site::: Compound playbook that executes both `server` and `agent`
   playbooks
+site-mcp::: Compound playbook that executes `site` with the Trento MCP
+  Server enabled
 cleanup::: Clean-up playbook that uninstalls all Trento components
+cleanup-mcp::: Clean-up playbook that removes only the Trento MCP
+  Server while keeping the core Trento server deployment intact
 
 Roles::
 

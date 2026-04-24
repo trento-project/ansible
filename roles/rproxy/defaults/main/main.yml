@@ -14,6 +14,7 @@ rproxy_web_upstream_name: "{{ web_upstream_name }}"
 rproxy_wanda_upstream_name: "{{ wanda_upstream_name }}"
 rproxy_mcp_upstream_name: "mcp_server"
 rproxy_wanda_location: "{{ wanda_proxy_location | default(trento_wanda_proxy_location) }}" # `wanda_proxy_location` for backwards-compatibility
+rproxy_mcp_host: "{{ trento_mcp_effective_host }}"
 rproxy_mcp_listen_port: "{{ trento_mcp_listen_port }}"
 rproxy_mcp_location: "{{ trento_mcp_proxy_location }}"
 rproxy_ssl_cert: "{{ nginx_ssl_cert }}"

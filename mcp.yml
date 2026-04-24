@@ -1,0 +1,50 @@
+---
+- name: Provision Trento MCP Server on dedicated MCP hosts
+  hosts: "{{ ((groups['mcp_hosts'] | default([])) | length > 0) | ternary('mcp_hosts', 'localhost') }}"
+  gather_facts: "{{ mcp_playbook_enabled | default(true) | bool and ((groups['mcp_hosts'] | default([])) | length > 0) }}"
+  roles:
+    - role: mcp_server
+      become: true
+      when:
+        - mcp_playbook_enabled | default(true) | bool
+        - (groups['mcp_hosts'] | default([])) | length > 0
+
+- name: Provision Trento MCP Server on Trento server hosts
+  hosts: "{{ (((groups['mcp_hosts'] | default([])) | length == 0) and ((groups['trento_server'] | default([])) | length > 0))
+             | ternary('trento_server', 'localhost') }}"
+  gather_facts: "{{ mcp_playbook_enabled | default(true) | bool and ((groups['mcp_hosts'] | default([])) | length == 0)
+                    and ((groups['trento_server'] | default([])) | length > 0) }}"
+  roles:
+    - role: mcp_server
+      become: true
+      when:
+        - mcp_playbook_enabled | default(true) | bool
+        - (groups['mcp_hosts'] | default([])) | length == 0
+        - (groups['trento_server'] | default([])) | length > 0
+
+- name: Configure reverse proxy for the Trento MCP Server
+  hosts: "{{ ((groups['trento_server'] | default([])) | length > 0) | ternary('trento_server', 'localhost') }}"
+  gather_facts: "{{ mcp_playbook_enabled | default(true) | bool and (provision_proxy | default(false)) | bool
+                    and ((groups['trento_server'] | default([])) | length > 0) }}"
+  roles:
+    - role: trento
+      run_once: true
+      when:
+        - mcp_playbook_enabled | default(true) | bool
+        - (groups['trento_server'] | default([])) | length > 0
+      vars:
+        trento_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
+        trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else '' }}"
+        trento_prometheus_host_group: "{{ 'prometheus_hosts' if (provision_prometheus | bool) else '' }}"
+        trento_mcp_host_group: "{{ 'mcp_hosts' if ((groups['mcp_hosts'] | default([])) | length > 0) else '' }}"
+
+    - role: rproxy
+      become: true
+      when:
+        - mcp_playbook_enabled | default(true) | bool
+        - provision_proxy | bool
+        - (groups['trento_server'] | default([])) | length > 0
+      vars:
+        trento_mcp_host_group: "{{ 'mcp_hosts' if ((groups['mcp_hosts'] | default([])) | length > 0) else '' }}"
+        rproxy_provision_prometheus: "{{ provision_prometheus | bool }}"
+        rproxy_provision_mcp_server: true

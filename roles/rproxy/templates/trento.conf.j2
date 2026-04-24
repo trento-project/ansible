@@ -17,7 +17,7 @@ upstream {{ wanda_upstream }} {
 
 {% if rproxy_provision_mcp_server -%}
 upstream {{ mcp_upstream }} {
-  server 127.0.0.1:{{ mcp_port }} max_fails=5 fail_timeout=60s;
+  server {{ mcp_host }}:{{ mcp_port }} max_fails=5 fail_timeout=60s;
 }
 {% endif %}
 
