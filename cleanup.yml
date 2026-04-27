@@ -20,6 +20,7 @@
     - name: Clean up Trento support plugin
       ansible.builtin.import_role:
         name: supportutils
+        tasks_from: cleanup
 
     - name: Clean up Proxy
       ansible.builtin.import_role:

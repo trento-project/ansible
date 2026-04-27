@@ -72,15 +72,36 @@ inventory.
 
 === MCP
 
-`mcp.yml` playbook installs only the Trento MCP Server. It uses the
-same host selection rules as `server.yml`: when `mcp_hosts` exists,
-the MCP Server is deployed there, otherwise it is deployed on
-`trento_server`.
+`mcp.yml` playbook installs only the Trento MCP Server. When the
+`mcp_hosts` inventory group exists, the MCP Server is deployed there.
+Otherwise, it is deployed on `trento_server`.
 
-When the MCP Server runs on the same host as Trento, the default
-configuration uses local OpenAPI paths. When it runs on a dedicated
-host, the default configuration switches to `trento_url` mode and uses
-`mcp_server_trento_url`.
+When the MCP Server runs on a `trento_server` host, the default
+configuration uses local OpenAPI specification URLs for Trento Web and
+Wanda. When it runs on a dedicated `mcp_hosts` host, the default
+configuration uses `mcp_server_trento_url` and OpenAPI autodiscovery
+paths.
+
+The default and simplest deployment is to omit `mcp_hosts` and run the
+MCP Server on `trento_server`. Use `mcp_hosts` for advanced deployments
+where the MCP Server must run on a dedicated host. Dedicated MCP
+deployments default `mcp_server_trento_url` to
+`https://<trento_server_name>`; override it when Trento is reachable
+through a different URL, for example without the reverse proxy or TLS.
+
+Dedicated MCP host example:
+
+[source,yaml]
+----
+all:
+  children:
+    mcp_hosts:
+      hosts:
+        trento-mcp:
+          ansible_host: "your-mcp-host"
+          ansible_user: "your-user"
+          ansible_ssh_private_key_file: "/home/user/.ssh/id_rsa"
+----
 
 When `site.yml` is used, MCP is provisioned by importing `mcp.yml`
 after `server.yml` by default. Set `provision_mcp` to `false` to skip
@@ -238,15 +259,9 @@ all:
           ansible_host: "your-host"
           ansible_user: "your-user"
           ansible_ssh_private_key_file: "/home/user/.ssh/id_rsa"
-    mcp_hosts:
+    agents:
       hosts:
         vitellone:
-          ansible_host: "your-host"
-          ansible_user: "your-user"
-          ansible_ssh_private_key_file: "/home/user/.ssh/id_rsa"
-   agents:
-     hosts:
-       vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
           ansible_password: "your-password"
@@ -271,8 +286,6 @@ all:
     rabbitmq_hosts:
       hosts: ...
     prometheus_hosts:
-      hosts: ...
-    mcp_hosts:
       hosts: ...
     agents:
       hosts: ...
@@ -425,10 +438,10 @@ population of some variables.
   metrics send by agents | true
 
 | provision_mcp | Whether to provision the Trento MCP Server as a
-  systemd service from `site.yml`. The playbooks deploy it on `mcp_hosts` when that
-  group exists, or on `trento_server` otherwise. If `provision_proxy`
-  is also `true`, the endpoint is exposed through the existing reverse
-  proxy. | true
+  systemd service from `site.yml`. The playbooks deploy it on `mcp_hosts`
+  when that group exists, or on `trento_server` otherwise. If
+  `provision_proxy` is also `true`, the endpoint is exposed through the
+  existing reverse proxy. | true
 
 |===
 
@@ -565,6 +578,7 @@ per-role basis if appropriate.
   group. Used as input for calculating `trento_mcp_effective_host`,
   which is the default for `rproxy_mcp_host`. When auto-discovery is
   active, the value of `trento_mcp_host` is ignored. | ""
+
 |===
 
 *Web role*
