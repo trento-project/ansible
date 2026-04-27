@@ -74,8 +74,3 @@
 
     - role: supportutils
       become: true
-
-- name: Provision Trento MCP Server
-  ansible.builtin.import_playbook: mcp.yml
-  vars:
-    mcp_playbook_enabled: "{{ provision_mcp_server | bool }}"

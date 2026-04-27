@@ -6,4 +6,3 @@ provision_postgres: true
 provision_prometheus: true
 provision_rabbitmq: true
 provision_proxy: true
-provision_mcp_server: false

@@ -5,6 +5,11 @@
 - name: Provision Trento server components
   ansible.builtin.import_playbook: server.yml
 
+- name: Provision Trento MCP Server
+  ansible.builtin.import_playbook: mcp.yml
+  vars:
+    mcp_playbook_enabled: "{{ provision_mcp | default(provision_mcp_server | default(false), true) | bool }}"
+
 - name: Provision Trento agents
   ansible.builtin.import_playbook: agent.yml
   vars:
