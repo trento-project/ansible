@@ -1,5 +1,0 @@
----
-- name: Provision full Trento installation with MCP Server
-  ansible.builtin.import_playbook: site.yml
-  vars:
-    provision_mcp_server: true

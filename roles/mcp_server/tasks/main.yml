@@ -55,6 +55,32 @@
     port: "{{ mcp_server_listen_port }}"
     timeout: 30
 
+- name: Wait for Trento MCP Server health endpoint to listen
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ mcp_server_health_port | default(trento_mcp_health_port) }}"
+    timeout: 30
+  when: (mcp_server_health_enabled | default(false)) | bool
+
+- name: Probe Trento MCP Server readiness endpoint
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ mcp_server_health_port | default(trento_mcp_health_port) }}/readyz"
+    status_code: 200
+    use_proxy: false
+  register: __mcp_server_healthcheck
+  retries: 6
+  delay: 5
+  until: __mcp_server_healthcheck.status == 200
+  when: (mcp_server_health_enabled | default(false)) | bool
+
+- name: Open Trento MCP Server listener firewall access
+  ansible.builtin.include_role:
+    name: firewall
+  vars:
+    firewall_ports:
+      - "{{ mcp_server_listen_port }}/tcp"
+  when: (mcp_server_expose_listen_port | default(false)) | bool
+
 - name: Open Trento MCP Server health firewall access
   ansible.builtin.include_role:
     name: firewall

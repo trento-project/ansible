@@ -76,6 +76,12 @@ role before provisioning the `postgres`, `prometheus`, `rabbitmq` and
 legitimately owned by the service, on a playbook re-run), failing early
 with a clear message instead of a confusing package/service error.
 
+The `server.yml` playbook invokes the internal `port_check` utility
+role before provisioning the `postgres`, `prometheus`, `rabbitmq` and
+`rproxy` roles. It verifies that each target port is free (or already
+legitimately owned by the service, on a playbook re-run), failing early
+with a clear message instead of a confusing package/service error.
+
 If `provision_mcp_server` is set to `true`, the playbook also installs
 the Trento MCP Server by importing `mcp.yml`. If the optional
 `mcp_hosts` inventory group exists, the MCP Server is installed there;
@@ -86,8 +92,32 @@ Dedicated MCP hosts default to autodiscovery through
 reverse proxy. If `provision_proxy` is also `true`, the endpoint is
 exposed through NGINX at
 `https://<trento_server_name><trento_mcp_proxy_location>/mcp`.
+
+=== MCP
+
+`mcp.yml` playbook installs only the Trento MCP Server. It uses the
+same host selection rules as `server.yml`: when `mcp_hosts` exists,
+the MCP Server is deployed there, otherwise it is deployed on
+`trento_server`.
+
+When the MCP Server runs on the same host as Trento, the default
+configuration uses local OpenAPI paths. When it runs on a dedicated
+host, the default configuration switches to `trento_url` mode and uses
+`mcp_server_trento_url`.
+
+When `site.yml` is used, MCP is provisioned by importing `mcp.yml`
+after `server.yml` by default. Set `provision_mcp` to `false` to skip
+MCP provisioning from `site.yml`.
+
+If `provision_proxy` is `true`, the endpoint is exposed through NGINX
+at `https://<trento_server_name><trento_mcp_proxy_location>/mcp`.
 When `mcp_server_transport` is set to `sse`, clients must use the same
 base URL with the `/sse` path instead of `/mcp`.
+
+If `provision_proxy` is `false`, or the MCP Server is deployed on a
+dedicated `mcp_hosts` machine, the role opens
+`mcp_server_listen_port` in `firewalld` so the MCP service can be
+reached directly on the systemd listener port.
 
 The Trento MCP Server does not install or configure an LLM client.
 Generate a Personal Access Token in Trento Web and configure it in the
@@ -137,19 +167,6 @@ https://www.trento-project.io/docs/latest/user-guide/trento-mcp-how-to-use.html
 and the configuration reference at
 https://www.trento-project.io/docs/mcp-server/Trento%20MCP%20Server%20documentation/configuration-options.html.
 
-=== MCP
-
-`mcp.yml` playbook installs only the Trento MCP Server. It uses the
-same host selection rules as `server.yml`: when `mcp_hosts` exists,
-the MCP Server is deployed there, otherwise it is deployed on
-`trento_server`.
-
-When the MCP Server runs on the same host as Trento, the default
-configuration uses local OpenAPI paths. When it runs on a dedicated
-host, the default configuration switches to `trento_url` mode and uses
-`mcp_server_trento_url`. If Trento is not exposed through the reverse
-proxy in that topology, override the MCP role variables explicitly.
-
 ==== SUSE Linux Enterprise Users
 
 *This playbook requires that the host where you are going to install
@@ -185,15 +202,10 @@ this dependency, turn off the `provision_rabbitmq` flag and specify the
 installs both the server components and agents. Additionally, the API
 key for the agents is automatically retrieved from Trento server and
 passed on to the deployed agents. Thus, the value of
-`agent_web_api_key` variables is ignored when using this playbook. If
-`provision_mcp_server` is set to `true`, `site.yml` also provisions the
-Trento MCP Server through `server.yml`.
-
-=== Site MCP
-
-`site-mcp.yml` is a convenience playbook for a full Trento
-installation with the Trento MCP Server enabled. It behaves like
-`site.yml`, but sets `provision_mcp_server` to `true`.
+`agent_web_api_key` variables is ignored when using this playbook.
+`site.yml` also provisions the Trento MCP Server through `mcp.yml`
+after the server playbook completes. Set `provision_mcp` to `false` to
+opt out.
 
 == Usage
 
@@ -435,11 +447,11 @@ population of some variables.
 | provision_prometheus | Whether to provision Prometheus used by Trento to store
   metrics send by agents | true
 
-| provision_mcp_server | Whether to provision the Trento MCP Server as a
-  systemd service. The playbooks deploy it on `mcp_hosts` when that
+| provision_mcp | Whether to provision the Trento MCP Server as a
+  systemd service from `site.yml`. The playbooks deploy it on `mcp_hosts` when that
   group exists, or on `trento_server` otherwise. If `provision_proxy`
   is also `true`, the endpoint is exposed through the existing reverse
-  proxy. | false
+  proxy. | true
 
 |===
 
@@ -894,6 +906,10 @@ applications. One of `debug`, `info`, `warning` or `error` | info
 | mcp_server_listen_port | Port where the Trento MCP Server listens
   locally | <value of `trento_mcp_listen_port`>
 
+| mcp_server_expose_listen_port | Whether to open the MCP listener port
+  in `firewalld`. Defaults to `true` when the MCP Server runs outside
+  `trento_server`, or when `provision_proxy` is `false`. | Auto-detected
+
 | mcp_server_transport | MCP transport protocol. Valid values are
   `streamable` and `sse`. | "streamable"
 
@@ -901,7 +917,8 @@ applications. One of `debug`, `info`, `warning` or `error` | info
   ["MCP"]
 
 | mcp_server_health_enabled | Whether to enable the MCP health
-  endpoints | false
+  endpoints. When enabled, the role also probes the local MCP
+  readiness endpoint after starting the service. | false
 
 | mcp_server_health_api_path | Health check API path used on the Trento
   target server | "/api/healthz"
