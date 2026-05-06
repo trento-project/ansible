@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+header:
+  comment: on-failure
+  license:
+    spdx-id: Apache-2.0
+    copyright-owner: SUSE LLC
+    software-name: ansible-trento
+    content: |
+      SPDX-FileCopyrightText: SUSE LLC
+      SPDX-License-Identifier: Apache-2.0
+  paths-ignore:
+    - "**/*.adoc"
+    - "**/*.md"
+    - ".ansible-lint"
+    - ".ansible-lint-ignore"
+    - ".github/dependabot.yml"
+    - ".tool-versions"
+    - ".yamllint"
+    - "LICENSE"
+    - "VERSION"
+    - "inventory"

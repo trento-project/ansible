@@ -25,6 +25,9 @@ jobs:
           fetch-depth: 0
           ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
+      - uses: apache/skywalking-eyes/header@61275cc80d0798a405cb070f7d3a8aaf7cf2c2c1 # v0.8.0
+        name: Check license headers
+
       - name: Run ansible-lint on main playbook
         uses: ansible/ansible-lint@a2bc8b8b13a80802215856c56823d85007d3baf5 # v25
 
