@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 wanda_docker_network_name: "{{ trento_docker_network_name }}"
 wanda_force_pull_images: "{{ trento_force_pull_images }}"

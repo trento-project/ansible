@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 # WARNING! Please, put variables here only after careful
 # consideration. Put variables only if they are really common among

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 rabbitmq_username: "{{ trento_rabbitmq_username }}"
 rabbitmq_password: "{{ trento_rabbitmq_password }}"

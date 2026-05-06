@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 wanda_listen_port: "{{ trento_wanda_listen_port }}"
 wanda_proxy_location: "{{ trento_wanda_proxy_location }}"

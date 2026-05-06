@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 galaxy_info:
   author: "trento-developers@suse.com"
   description: Meta-role for common trento-related variables

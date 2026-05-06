@@ -1,3 +1,7 @@
+{#
+SPDX-FileCopyrightText: SUSE LLC
+SPDX-License-Identifier: Apache-2.0
+#}
 CORS_ORIGIN=http://localhost
 SECRET_KEY_BASE={{ wanda_secret_key_base }}
 AMQP_URL={{ wanda_amqp_protocol }}://{{ wanda_rabbitmq_username }}:{{ wanda_rabbitmq_password }}@{{ wanda_rabbitmq_host }}/{{ wanda_rabbitmq_vhost | urlencode | replace('/', '%2F') }}

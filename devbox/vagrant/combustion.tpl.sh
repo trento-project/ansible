@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 # combustion: network
 
 # --- Vagrant base-box setup

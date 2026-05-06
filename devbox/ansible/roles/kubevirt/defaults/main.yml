@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 kubevirt_version: "v1.6.2"
 kubevirt_cdi_version: "v1.63.1"

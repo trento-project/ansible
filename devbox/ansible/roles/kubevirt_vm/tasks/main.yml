@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 - name: Generate SSH Key for devbox
   community.crypto.openssh_keypair:

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 Vagrant.require_version ">= 1.8.0"
 
 BASE_BOX = ENV["TRENTO_VAGRANT_BASE_BOX"] || "SLES15-SP6"

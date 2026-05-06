@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 postgres_install: "{{ install_postgres | default(true) }}" # `install_postgres` is for backwards-compatibility
 postgres_web_username: "{{ trento_web_postgres_username }}"
