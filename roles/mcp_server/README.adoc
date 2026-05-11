@@ -14,14 +14,11 @@ collection.
 
 Important defaults:
 
-* `mcp_server_target_mode` is `trento_url`
 * `mcp_server_trento_url` defaults to `https://<trento_server_name>`
-* `mcp_server_expose_listen_port` defaults to `true` when the MCP
-  Server runs outside `trento_server`, or when `provision_proxy` is
-  `false`
-* `mcp_hosts` must be defined explicitly in inventory; when the MCP
-  Server is colocated with Trento, place that host in both
-  `trento_server` and `mcp_hosts`
+  (or `trento_server_url` when set). Override it when Trento is
+  reachable through a different hostname.
+* `mcp_hosts` is optional. When omitted, MCP is deployed on
+  `trento_server`; when defined, MCP is deployed on those hosts.
 
 == Dependencies
 

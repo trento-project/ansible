@@ -3,14 +3,12 @@
 - name: Validate MCP Server configuration
   ansible.builtin.assert:
     that:
-      - mcp_server_target_mode in ['oas_path', 'trento_url']
       - mcp_server_transport in ['streamable', 'sse']
       - mcp_server_verbosity in ['debug', 'info', 'warning', 'error']
       - mcp_server_header_name | length > 0
       - mcp_server_health_api_path | length > 0
-      - (mcp_server_target_mode != 'oas_path') or (mcp_server_oas_paths | length > 0)
-      - (mcp_server_target_mode != 'trento_url') or (mcp_server_trento_url | length > 0)
-      - (mcp_server_target_mode != 'trento_url') or (mcp_server_autodiscovery_paths | length > 0)
+      - mcp_server_trento_url | length > 0
+      - mcp_server_autodiscovery_paths | length > 0
     fail_msg: "Invalid Trento MCP Server configuration."
 
 - name: Install Trento MCP Server RPM package
