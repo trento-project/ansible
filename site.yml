@@ -7,8 +7,6 @@
 
 - name: Provision Trento MCP Server
   ansible.builtin.import_playbook: mcp.yml
-  vars:
-    mcp_playbook_enabled: "{{ provision_mcp | default(true) | bool }}"
 
 - name: Provision Trento agents
   ansible.builtin.import_playbook: agent.yml
