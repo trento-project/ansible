@@ -76,25 +76,25 @@ inventory.
 `mcp_hosts` inventory group exists, the MCP Server is deployed there.
 Otherwise, it is deployed on `trento_server`.
 
-MCP connects to Trento via `mcp_server_trento_url`, defaulting to
-`https://<trento_server_name>` (or `trento_server_url` when set). MCP
-fetches the Web and Wanda OpenAPI specifications by appending
-`mcp_server_autodiscovery_paths` to that URL, so the URL must front
-both Trento Web and Wanda — which is what `provision_proxy=true`
-provides through NGINX.
+The role auto-selects how MCP discovers the Trento APIs based on
+inventory layout. When the MCP Server runs on a `trento_server` host
+(the default colocated case), it uses `OAS_PATH` against the local
+Trento Web and Wanda backends on `127.0.0.1` — the most direct path,
+with no DNS or TLS dependency. When the MCP Server runs on a dedicated
+`mcp_hosts` machine, it uses `TRENTO_URL` pointing at
+`https://<trento_server_name>` so the request flows through the
+reverse proxy. The user does not configure the mode; it follows from
+where the MCP Server is deployed.
 
 The default and simplest deployment is to omit `mcp_hosts` and run the
 MCP Server on `trento_server`. Use `mcp_hosts` for advanced deployments
-where the MCP Server must run on a dedicated host. Override
-`mcp_server_trento_url` when Trento is reachable through a different
-hostname (for example, when MCP runs in a network where the public
-hostname does not resolve). When `provision_proxy` is `false`, set
-`mcp_server_trento_url` to a Trento endpoint MCP can actually reach.
-
-When the Trento Server uses a self-signed certificate that the MCP
-host does not trust, set `mcp_server_insecure_skip_tls_verify: true`
-or arrange for the CA certificate to be installed in the system trust
-store outside this role.
+where the MCP Server must run on a dedicated host. Dedicated MCP
+deployments default `mcp_server_trento_url` to
+`https://<trento_server_name>`; override it when Trento is reachable
+through a different URL, for example without the reverse proxy or TLS.
+When the dedicated MCP host cannot trust a self-signed proxy
+certificate, set `mcp_server_insecure_skip_tls_verify: true` or install
+the CA certificate in the system trust store outside this role.
 
 Dedicated MCP host example:
 
@@ -845,12 +845,22 @@ per-role basis if appropriate.
 |===
 | Name | Description | Default
 
-| mcp_server_trento_url | Trento Server base URL the MCP Server connects
-  to. Falls back to `trento_server_url` when set. | `https://<trento_server_name>`
+| mcp_server_target_mode | How the Trento MCP Server discovers the
+  Trento APIs. Auto-detected: defaults to `oas_path` when MCP is
+  deployed on a `trento_server` host, or to `trento_url` when deployed
+  on a dedicated `mcp_hosts` host. | Auto-detected
+
+| mcp_server_oas_paths | List of OpenAPI specification URLs used when
+  `mcp_server_target_mode` is `oas_path`. | `http://127.0.0.1:<trento_web_listen_port>/api/all/openapi`,
+  `http://127.0.0.1:<trento_wanda_listen_port>/api/all/openapi`
+
+| mcp_server_trento_url | Trento Server base URL used when
+  `mcp_server_target_mode` is `trento_url`. Falls back to
+  `trento_server_url` when set. | `https://<trento_server_name>`
 
 | mcp_server_autodiscovery_paths | OpenAPI specification paths appended
-  to `mcp_server_trento_url` for autodiscovery. | `"/api/all/openapi"`,
-  `"/wanda/api/all/openapi"`
+  to `mcp_server_trento_url` when `mcp_server_target_mode` is
+  `trento_url`. | `"/api/all/openapi"`, `"/wanda/api/all/openapi"`
 
 | mcp_server_header_name | Header name used by MCP clients to pass the
   Trento PAT | "Authorization"
