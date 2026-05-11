@@ -14,9 +14,11 @@ collection.
 
 Important defaults:
 
+* `mcp_server_target_mode` is auto-detected: `oas_path` when MCP is
+  colocated with `trento_server`, `trento_url` otherwise. The user
+  does not normally set this.
 * `mcp_server_trento_url` defaults to `https://<trento_server_name>`
-  (or `trento_server_url` when set). Override it when Trento is
-  reachable through a different hostname.
+  (or `trento_server_url` when set). Used in `trento_url` mode.
 * `mcp_hosts` is optional. When omitted, MCP is deployed on
   `trento_server`; when defined, MCP is deployed on those hosts.
 
