@@ -71,27 +71,30 @@
           - "{{ prometheus_port }}/tcp"
         firewall_state: disabled
 
-- name: Clean up Trento MCP Server on dedicated MCP hosts
-  hosts: "{{ ((groups['mcp_hosts'] | default([])) | length > 0) | ternary('mcp_hosts', 'localhost') }}"
-  gather_facts: "{{ (groups['mcp_hosts'] | default([])) | length > 0 }}"
+- name: Clean up Trento MCP Server
+  hosts: "{{ ((groups['mcp_hosts'] | default([])) | length > 0) | ternary('mcp_hosts', 'trento_server') }}"
   become: true
   tasks:
     - name: Clean up Trento MCP Server
       ansible.builtin.import_role:
         name: mcp_server
         tasks_from: cleanup
-      when: (groups['mcp_hosts'] | default([])) | length > 0
 
-- name: Clean up Trento MCP Server on Trento server hosts
-  hosts: "{{ (((groups['mcp_hosts'] | default([])) | length == 0) and ((groups['trento_server'] | default([])) | length > 0))
-             | ternary('trento_server', 'localhost') }}"
-  gather_facts: "{{ ((groups['mcp_hosts'] | default([])) | length == 0) and ((groups['trento_server'] | default([])) | length > 0) }}"
-  become: true
-  tasks:
-    - name: Clean up Trento MCP Server
+    - name: Close Trento MCP Server listener firewall port
       ansible.builtin.import_role:
-        name: mcp_server
-        tasks_from: cleanup
+        name: firewall
+      vars:
+        firewall_ports:
+          - "{{ trento_mcp_listen_port }}/tcp"
+        firewall_state: disabled
       when:
-        - (groups['mcp_hosts'] | default([])) | length == 0
-        - (groups['trento_server'] | default([])) | length > 0
+        - (inventory_hostname not in (groups['trento_server'] | default([]))) or not (provision_proxy | bool)
+
+    - name: Close Trento MCP Server health firewall port
+      ansible.builtin.import_role:
+        name: firewall
+      vars:
+        firewall_ports:
+          - "{{ trento_mcp_health_port }}/tcp"
+        firewall_state: disabled
+      when: mcp_server_health_enabled | bool

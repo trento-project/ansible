@@ -8,26 +8,3 @@
     state: stopped
     enabled: false
   when: "'mcp-server-trento.service' in ansible_facts.services"
-
-- name: Clean up Trento MCP Server listener firewall access
-  ansible.builtin.include_role:
-    name: firewall
-  vars:
-    firewall_ports:
-      - "{{ mcp_server_listen_port }}/tcp"
-    firewall_state: disabled
-  when:
-    - "'mcp-server-trento.service' in ansible_facts.services"
-    - (mcp_server_expose_listen_port | default(false)) | bool
-
-- name: Clean up Trento MCP Server health firewall access
-  ansible.builtin.include_role:
-    name: firewall
-  vars:
-    firewall_ports:
-      - "{{ mcp_server_health_port | default(trento_mcp_health_port) }}/tcp"
-    firewall_state: disabled
-  when:
-    - "'mcp-server-trento.service' in ansible_facts.services"
-    - (mcp_server_health_enabled | default(false)) | bool
-    - (mcp_server_expose_health_port | default(false)) | bool

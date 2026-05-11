@@ -113,9 +113,11 @@ When `mcp_server_transport` is set to `sse`, clients must use the same
 base URL with the `/sse` path instead of `/mcp`.
 
 If `provision_proxy` is `false`, or the MCP Server is deployed on a
-dedicated `mcp_hosts` machine, the role opens
-`mcp_server_listen_port` in `firewalld` so the MCP service can be
-reached directly on the systemd listener port.
+dedicated `mcp_hosts` machine, the playbook opens
+`trento_mcp_listen_port` in `firewalld` so the MCP service can be
+reached directly on the systemd listener port. When
+`mcp_server_health_enabled` is `true`, `trento_mcp_health_port` is
+opened as well.
 
 The Trento MCP Server does not install or configure an LLM client.
 Generate a Personal Access Token in Trento Web and configure it in the
@@ -858,10 +860,6 @@ per-role basis if appropriate.
 | mcp_server_listen_port | Port where the Trento MCP Server listens
   locally | <value of `trento_mcp_listen_port`>
 
-| mcp_server_expose_listen_port | Whether to open the MCP listener port
-  in `firewalld`. Defaults to `true` when the MCP Server runs outside
-  `trento_server`, or when `provision_proxy` is `false`. | Auto-detected
-
 | mcp_server_transport | MCP transport protocol. Valid values are
   `streamable` and `sse`. | "streamable"
 
@@ -877,9 +875,6 @@ per-role basis if appropriate.
 
 | mcp_server_health_port | Port used by the health check HTTP server |
   <value of `trento_mcp_health_port`>
-
-| mcp_server_expose_health_port | Whether to open the health check port
-  in `firewalld` when health checks are enabled | false
 
 | mcp_server_insecure_skip_tls_verify | Whether to skip TLS
   verification when fetching HTTPS OpenAPI specifications | false

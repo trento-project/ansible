@@ -10,14 +10,11 @@ mcp_server_autodiscovery_paths:
   - "/wanda/api/all/openapi"
 mcp_server_header_name: "Authorization"
 mcp_server_listen_port: "{{ trento_mcp_listen_port }}"
-mcp_server_expose_listen_port: "{{ (inventory_hostname not in (groups['trento_server'] | default([])))
-                                   or not (provision_proxy | default(false) | bool) }}"
 mcp_server_transport: "streamable"
 mcp_server_tag_filter:
   - "MCP"
 mcp_server_health_enabled: false
 mcp_server_health_api_path: "/api/healthz"
 mcp_server_health_port: "{{ trento_mcp_health_port }}"
-mcp_server_expose_health_port: false
 mcp_server_insecure_skip_tls_verify: false
 mcp_server_verbosity: "info"
