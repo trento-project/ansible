@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 rproxy_conf_base_dir: "/etc/nginx"
 rproxy_vhost_dir: "vhosts.d"

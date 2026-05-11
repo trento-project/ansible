@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 web_server_name: "{{ trento_server_name }}"
 web_listen_port: "{{ trento_web_listen_port }}"

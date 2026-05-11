@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 # Protected values -- The following values are not intended to be
 # specified by end-users:

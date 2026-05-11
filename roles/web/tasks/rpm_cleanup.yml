@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 # code: language=ansible
 ---
 - name: Disable and stop trento-web service

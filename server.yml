@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 - name: Check if Trento would be installed on SLES
   hosts: trento_server

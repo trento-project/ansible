@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 - name: Deploy devbox
   ansible.builtin.import_playbook: deploy_devbox.yml

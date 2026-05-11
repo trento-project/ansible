@@ -1,3 +1,7 @@
+{#
+SPDX-FileCopyrightText: SUSE LLC
+SPDX-License-Identifier: Apache-2.0
+#}
 AMQP_URL={{ web_amqp_protocol }}://{{ web_rabbitmq_username }}:{{ web_rabbitmq_password }}@{{ web_rabbitmq_host }}/{{ web_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
 DATABASE_URL=ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}
 EVENTSTORE_URL=ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}

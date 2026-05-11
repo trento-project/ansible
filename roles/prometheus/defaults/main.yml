@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 prometheus_port: "{{ trento_prometheus_port }}"
 prometheus_web_url: "{{ web_host | default('http://{}'.format(trento_server_name)) }}" # `web_host` is for backwards-compatibility

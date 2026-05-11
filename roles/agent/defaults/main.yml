@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 agent_web_api_key: "{{ undef(hint='API key for Trento Web is mandatory') }}"
 agent_trento_server_url: "{{ trento_server_url | default('http://{}'.format(trento_server_name)) }}"

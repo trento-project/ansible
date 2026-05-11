@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 FROM opensuse/leap:15
 LABEL org.opencontainers.image.source="https://github.com/trento-project/ansible"
 LABEL org.opencontainers.image.authors="Carmine Di Monaco <carmine.dimonaco@suse.com>"

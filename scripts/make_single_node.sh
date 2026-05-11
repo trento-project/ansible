@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+
 # This script creates the necessary files to run the Ansible playbook
 # for a single node installation of Trento.
 # It generates a self-signed certificate and creates the inventory and
