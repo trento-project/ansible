@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 mcp_server_trento_url: "{{ trento_server_url | default('https://{}'.format(trento_server_name), true) }}"
 mcp_server_autodiscovery_paths:
