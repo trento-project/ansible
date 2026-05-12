@@ -129,50 +129,22 @@ opened as well.
 The Trento MCP Server does not install or configure an LLM client.
 Generate a Personal Access Token in Trento Web and configure it in the
 MCP client. With the default `mcp_server_header_name`, clients pass the
-token through the `Authorization` header.
+token through the `Authorization` header. The MCP endpoint exposed by
+this playbook is:
 
-Example MCPHost server entry:
+  https://<trento_server_name>/mcp-server-trento/mcp
 
-[source, yaml]
-----
-mcpServers:
-  trento-mcp-server:
-    type: "remote"
-    url: https://trento.example.com/mcp-server-trento/mcp
-    headers:
-      - "Authorization: Bearer ${env://TRENTO_PAT}"
-----
+(or `/sse` instead of `/mcp` when `mcp_server_transport` is `sse`).
 
-Example VS Code-compatible MCP client entry:
+For up-to-date client configuration examples — including supported
+clients and the exact JSON/YAML to set up the Trento PAT — refer to
+the official Trento MCP Server usage guide:
 
-[source, json]
-----
-{
-  "servers": {
-    "trento": {
-      "type": "http",
-      "url": "https://trento.example.com/mcp-server-trento/mcp",
-      "headers": {
-        "Authorization": "${input:trento-pat}"
-      }
-    }
-  },
-  "inputs": [
-    {
-      "type": "promptString",
-      "id": "trento-pat",
-      "description": "Trento PAT",
-      "password": true
-    }
-  ]
-}
-----
+https://www.trento-project.io/docs/user-guide/trento-mcp-how-to-use.html
 
-For client setup and configuration details, see the official Trento MCP
-Server usage guide at
-https://www.trento-project.io/docs/latest/user-guide/trento-mcp-how-to-use.html
-and the configuration reference at
-https://www.trento-project.io/docs/mcp-server/Trento%20MCP%20Server%20documentation/configuration-options.html.
+For the full server configuration reference, see:
+
+https://www.trento-project.io/docs/user-guide/trento-mcp-config.html
 
 ==== SUSE Linux Enterprise Users
 
