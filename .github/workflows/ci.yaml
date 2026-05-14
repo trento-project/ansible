@@ -200,7 +200,7 @@ jobs:
     needs:
       - ansible-lint
       - test-deploy
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@406be0972195864a87ed454458eaa0856d0c5457 # v1.6.0
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@7ea6a8a1c3ed8a1f2185328219be4a724dd3686e # v1.8.0
     with:
       image_name: ansible
       tag: rolling
@@ -215,7 +215,7 @@ jobs:
     needs:
       - ansible-lint
       - test-deploy
-    uses: trento-project/.github/.github/workflows/obs-sync.yaml@406be0972195864a87ed454458eaa0856d0c5457 # v1.6.0
+    uses: trento-project/.github/.github/workflows/obs-sync.yaml@7ea6a8a1c3ed8a1f2185328219be4a724dd3686e # v1.8.0
     with:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
       obs_package: ${{ vars.OBS_PACKAGE }}
