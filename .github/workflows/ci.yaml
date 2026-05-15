@@ -96,7 +96,7 @@ jobs:
 
       - name: Run playbook
         id: runplaybook
-        uses: dawidd6/action-ansible-playbook@c97d71562fcba83cc1ea0602d5a77013427f7571 # v2
+        uses: dawidd6/action-ansible-playbook@126642a1c6ce512da255ef2b41e8ee90f0077474 # v9
         with:
           playbook: playbook.yml
           key: ${{ secrets.SSH_MACHINE_KEY }}
@@ -151,7 +151,7 @@ jobs:
         run: curl -k "https://${{ env.TEST_HOST_IP }}/api/readyz"
 
       - name: Run playbook cleanup
-        uses: dawidd6/action-ansible-playbook@c97d71562fcba83cc1ea0602d5a77013427f7571 # v2
+        uses: dawidd6/action-ansible-playbook@126642a1c6ce512da255ef2b41e8ee90f0077474 # v9
         if: success() || steps.runplaybook.conclusion == 'failure'
         with:
           playbook: playbook.cleanup.yml
