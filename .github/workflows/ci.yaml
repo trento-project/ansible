@@ -60,14 +60,9 @@ jobs:
           - ansible_version: "9"
             target_python: python3
         install_method: ["rpm", "docker"]
-        sp_version: ['SP7', 'SP6', 'SP5', 'SP4', 'SP3']
+        sp_version: ['SP7', 'SP6', 'SP5', 'SP4']
 
         exclude:
-          - sp_version: "SP3"
-            control_node:
-              ansible_version: "11"
-              target_python: python3.11
-
           - sp_version: "SP4"
             control_node:
               ansible_version: "11"
