@@ -8,10 +8,10 @@
   tasks:
     - name: Check SLES distribution and version
       ansible.builtin.fail:
-        msg: "This playbook only runs on SLES for SAP 15 SP3 or above. Detected: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+        msg: "This playbook only runs on SLES for SAP 15 SP4 or above. Detected: {{ ansible_distribution }} {{ ansible_distribution_version }}"
       when: >
         (ansible_distribution != "SLES_SAP") or
-        (ansible_distribution_version is version('15.3', '<'))
+        (ansible_distribution_version is version('15.4', '<'))
 
 - name: Provision Postgres
   hosts: postgres_hosts

@@ -2,6 +2,17 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
+- name: Check if Trento agents would be installed on SLES
+  hosts: agents
+  become: true
+  tasks:
+    - name: Check SLES distribution and version
+      ansible.builtin.fail:
+        msg: "This playbook only runs on SLES for SAP 15 SP4 or above. Detected: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+      when: >
+        (ansible_distribution != "SLES_SAP") or
+        (ansible_distribution_version is version('15.4', '<'))
+
 - name: Provision Trento agents
   hosts: agents
   roles:
