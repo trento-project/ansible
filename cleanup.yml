@@ -68,5 +68,5 @@
         name: firewall
       vars:
         firewall_ports:
-          - "{{ prometheus_port }}/tcp"
+          - "{{ trento_prometheus_port }}/tcp"
         firewall_state: disabled

@@ -6,7 +6,8 @@
 # It's only available for backwards-compatibility and smooth
 # transition to the new properly named variables. Add new values to
 # `main/main.yml`.
-prometheus_url: "http://localhost:9090"
+# `prometheus_url` is kept only as a backwards-compatible full URL override.
+prometheus_url: ""
 secret_key_base: ""
 access_token_secret: ""
 refresh_token_secret: ""

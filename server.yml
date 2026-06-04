@@ -30,7 +30,7 @@
     - role: firewall
       become: true
       firewall_ports:
-        - "{{ prometheus_port }}/tcp"
+        - "{{ trento_prometheus_port }}/tcp"
       when: provision_prometheus | bool
 
 

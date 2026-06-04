@@ -34,7 +34,7 @@
   notify:
     - Restart Prometheus
 
-- name: Configure prometheus remote write receiver
+- name: Configure prometheus startup options
   ansible.builtin.template:
     src: prometheus-sysconfig.j2
     dest: /etc/sysconfig/prometheus
