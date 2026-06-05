@@ -517,6 +517,10 @@ per-role basis if appropriate.
 | web_wanda_proxy_location | URL Path to Wanda behind a reverse
   proxy | <value of `trento_wanda_proxy_location`>
 
+| web_prometheus_host | Prometheus server host used to build
+  `web_prometheus_url` when `prometheus_url` is not set. |
+  <value of `trento_prometheus_effective_host`>
+
 | web_prometheus_url | Prometheus server URL | Derived from
   `trento_prometheus_host`/`trento_prometheus_port`, or from the deprecated
   `prometheus_url` override.
