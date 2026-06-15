@@ -23,6 +23,10 @@
     name: golang-github-prometheus-prometheus
     state: present
 
+- name: Create Prometheus directories from tmpfiles
+  ansible.builtin.command: systemd-tmpfiles --create /usr/lib/tmpfiles.d/prometheus.conf
+  changed_when: false
+
 - name: Create Prometheus config
   ansible.builtin.template:
     src: prometheus.yml.j2
