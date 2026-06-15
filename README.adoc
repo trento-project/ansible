@@ -431,9 +431,7 @@ per-role basis if appropriate.
   is ignored when `trento_prometheus_host_group` is non-empty string. |
   localhost
 
-| trento_prometheus_port | The port where Prometheus is exposed.
-  This is the canonical port variable for playbook-managed Prometheus
-  and Trento integration. | 9090
+| trento_prometheus_port | Canonical port for playbook-managed Prometheus. | 9090
 
 | trento_prometheus_auth | Authentication method for the Prometheus endpoint.
   Must be "basic" or "none". Shared default for both `rproxy_prometheus_auth`
