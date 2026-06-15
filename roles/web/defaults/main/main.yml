@@ -19,7 +19,9 @@ web_rabbitmq_password: "{{ rabbitmq_password | default(trento_rabbitmq_password)
 web_rabbitmq_vhost: "{{ rabbitmq_vhost | default(trento_rabbitmq_vhost) }}" # `rabbimtq_vhost` for backwards-compatibility
 web_wanda_listen_port: "{{ wanda_listen_port | default(trento_wanda_listen_port) }}" # `wanda_listen_port` for backwards-compatibility
 web_wanda_proxy_location: "{{ wanda_proxy_location | default(trento_wanda_proxy_location) }}" # `wanda_proxy_location` for backwards-compatibility
-web_prometheus_url: "{{ prometheus_url }}"
+web_prometheus_host: "{{ trento_prometheus_effective_host }}"
+web_prometheus_url: >-
+  {{ prometheus_url | default('http://{}:{}'.format(web_prometheus_host, trento_prometheus_port), true) }}
 web_secret_key_base: "{{ secret_key_base }}"
 web_access_token_secret: "{{ access_token_secret }}"
 web_refresh_token_secret: "{{ refresh_token_secret }}"

@@ -40,7 +40,7 @@ trento_rabbitmq_password: "{{ undef(hint='Password for RabbitMQ trento user is m
 trento_rabbitmq_vhost: trento
 trento_prometheus_host_group: ""
 trento_prometheus_host: localhost
-trento_prometheus_port: 9090
+trento_prometheus_port: "{{ prometheus_port | default(9090) }}" # `prometheus_port` for backwards-compatibility
 trento_prometheus_auth: ""
 trento_prometheus_auth_username: ""
 trento_prometheus_auth_password: ""
