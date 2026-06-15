@@ -35,6 +35,7 @@ Trento components:
 * https://github.com/trento-project/wanda[wanda]
 * https://github.com/trento-project/checks[checks]
 * https://github.com/trento-project/agent[agent]
+* https://github.com/trento-project/mcp-server[mcp]
 
 Third-party dependencies:
 
@@ -68,6 +69,82 @@ and any other role using them) are ignored.
 If you want to use external services for these dependencies,
 turn off the respective flag and specify the `*_host` variable in your
 inventory.
+
+=== MCP
+
+`mcp.yml` playbook installs only the Trento MCP Server. When the
+`mcp_hosts` inventory group exists, the MCP Server is deployed there.
+Otherwise, it is deployed on `trento_server`.
+
+The role auto-selects how MCP discovers the Trento APIs based on
+inventory layout. When the MCP Server runs on a `trento_server` host
+(the default colocated case), it uses `OAS_PATH` against the local
+Trento Web and Wanda backends on `127.0.0.1` — the most direct path,
+with no DNS or TLS dependency. When the MCP Server runs on a dedicated
+`mcp_hosts` machine, it uses `TRENTO_URL` pointing at
+`https://<trento_server_name>` so the request flows through the
+reverse proxy. The user does not configure the mode; it follows from
+where the MCP Server is deployed.
+
+The default and simplest deployment is to omit `mcp_hosts` and run the
+MCP Server on `trento_server`. Use `mcp_hosts` for advanced deployments
+where the MCP Server must run on a dedicated host. Dedicated MCP
+deployments default `mcp_server_trento_url` to
+`https://<trento_server_name>`; override it when Trento is reachable
+through a different URL, for example without the reverse proxy or TLS.
+When the dedicated MCP host cannot trust a self-signed proxy
+certificate, set `mcp_server_insecure_skip_tls_verify: true` or install
+the CA certificate in the system trust store outside this role.
+
+Dedicated MCP host example:
+
+[source,yaml]
+----
+all:
+  children:
+    mcp_hosts:
+      hosts:
+        trento-mcp:
+          ansible_host: "your-mcp-host"
+          ansible_user: "your-user"
+          ansible_ssh_private_key_file: "/home/user/.ssh/id_rsa"
+----
+
+When `site.yml` is used, MCP is provisioned by importing `mcp.yml`
+after `server.yml` by default. Set `provision_mcp` to `false` to skip
+MCP provisioning from `site.yml`.
+
+If `provision_proxy` is `true`, the endpoint is exposed through NGINX
+at `https://<trento_server_name><trento_mcp_proxy_location>/mcp`.
+When `mcp_server_transport` is set to `sse`, clients must use the same
+base URL with the `/sse` path instead of `/mcp`.
+
+If `provision_proxy` is `false`, or the MCP Server is deployed on a
+dedicated `mcp_hosts` machine, the playbook opens
+`trento_mcp_listen_port` in `firewalld` so the MCP service can be
+reached directly on the systemd listener port. When
+`mcp_server_health_enabled` is `true`, `trento_mcp_health_port` is
+opened as well.
+
+The Trento MCP Server does not install or configure an LLM client.
+Generate a Personal Access Token in Trento Web and configure it in the
+MCP client. With the default `mcp_server_header_name`, clients pass the
+token through the `Authorization` header. The MCP endpoint exposed by
+this playbook is:
+
+  https://<trento_server_name>/mcp-server-trento/mcp
+
+(or `/sse` instead of `/mcp` when `mcp_server_transport` is `sse`).
+
+For up-to-date client configuration examples — including supported
+clients and the exact JSON/YAML to set up the Trento PAT — refer to
+the official Trento MCP Server usage guide:
+
+https://www.trento-project.io/docs/user-guide/trento-mcp-how-to-use.html
+
+For the full server configuration reference, see:
+
+https://www.trento-project.io/docs/user-guide/trento-mcp-config.html
 
 ==== SUSE Linux Enterprise Users
 
@@ -105,6 +182,9 @@ installs both the server components and agents. Additionally, the API
 key for the agents is automatically retrieved from Trento server and
 passed on to the deployed agents. Thus, the value of
 `agent_web_api_key` variables is ignored when using this playbook.
+`site.yml` also provisions the Trento MCP Server through `mcp.yml`
+after the server playbook completes. Set `provision_mcp` to `false` to
+opt out.
 
 == Usage
 
@@ -127,7 +207,8 @@ $ ssh-copy-id <username>@<ip-of-the-host>
 
 Create an `inventory.yml` file, defining the IP address or domain name
 of the machines for each group expected in the playbook. You might use
-the same machine in more than one group.
+the same machine in more than one group. The `mcp_hosts` group is
+optional; if it is omitted, MCP falls back to `trento_server`.
 
 Example:
 
@@ -159,9 +240,9 @@ all:
           ansible_host: "your-host"
           ansible_user: "your-user"
           ansible_ssh_private_key_file: "/home/user/.ssh/id_rsa"
-   agents:
-     hosts:
-       vitellone:
+    agents:
+      hosts:
+        vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
           ansible_password: "your-password"
@@ -337,6 +418,12 @@ population of some variables.
 | provision_prometheus | Whether to provision Prometheus used by Trento to store
   metrics send by agents | true
 
+| provision_mcp | Whether to provision the Trento MCP Server as a
+  systemd service from `site.yml`. The playbooks deploy it on `mcp_hosts`
+  when that group exists, or on `trento_server` otherwise. If
+  `provision_proxy` is also `true`, the endpoint is exposed through the
+  existing reverse proxy. | true
+
 |===
 
 To disable Trento support tooling provisioning from inventory, set:
@@ -362,11 +449,25 @@ per-role basis if appropriate.
 | trento_wanda_proxy_location | URL Path to Wanda behind a reverse
   proxy | "/wanda"
 
+| trento_mcp_proxy_location | URL Path to the Trento MCP Server behind
+  a reverse proxy | "/mcp-server-trento"
+
 | trento_web_listen_port | Port where the Web service is exposed |
   <random value based on `trento_server_name`>
 
 | trento_wanda_listen_port | Port where the Wanda service is exposed |
   <random value based on `trento_server_name`>
+
+| trento_mcp_listen_port | Port where the Trento MCP Server listens
+  locally | 5000
+
+| trento_mcp_health_port | Port where the Trento MCP Server health
+  endpoint listens when enabled | 8080
+
+| trento_mcp_host | The host where the Trento MCP Server is located.
+  Used as input for calculating `trento_mcp_effective_host`, which is
+  the default for `rproxy_mcp_host`. This variable is ignored when
+  `trento_mcp_host_group` is non-empty string. | 127.0.0.1
 
 | trento_web_admin_username | Username of the admin user in Web
  application | "admin"
@@ -451,6 +552,14 @@ per-role basis if appropriate.
   `*_prometheus_host` variables in some dependent roles. When
   auto-discovery is active, the value of `trento_prometheus_host` is
   ignored. | ""
+
+| trento_mcp_host_group | Name of the host group where the Trento MCP
+  Server is located. If this value is not empty string, activates
+  auto-discovery of the MCP host by searching it in the specified
+  group. Used as input for calculating `trento_mcp_effective_host`,
+  which is the default for `rproxy_mcp_host`. When auto-discovery is
+  active, the value of `trento_mcp_host` is ignored. | ""
+
 |===
 
 *Web role*
@@ -708,6 +817,58 @@ per-role basis if appropriate.
   <generated by the playbook>
 |===
 
+*MCP Server role*
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| Name | Description | Default
+
+| mcp_server_target_mode | How the Trento MCP Server discovers the
+  Trento APIs. Auto-detected: defaults to `oas_path` when MCP is
+  deployed on a `trento_server` host, or to `trento_url` when deployed
+  on a dedicated `mcp_hosts` host. | Auto-detected
+
+| mcp_server_oas_paths | List of OpenAPI specification URLs used when
+  `mcp_server_target_mode` is `oas_path`. | `http://127.0.0.1:<trento_web_listen_port>/api/all/openapi`,
+  `http://127.0.0.1:<trento_wanda_listen_port>/api/all/openapi`
+
+| mcp_server_trento_url | Trento Server base URL used when
+  `mcp_server_target_mode` is `trento_url`. Falls back to
+  `trento_server_url` when set. | `https://<trento_server_name>`
+
+| mcp_server_autodiscovery_paths | OpenAPI specification paths appended
+  to `mcp_server_trento_url` when `mcp_server_target_mode` is
+  `trento_url`. | `"/api/all/openapi"`, `"/wanda/api/all/openapi"`
+
+| mcp_server_header_name | Header name used by MCP clients to pass the
+  Trento PAT | "Authorization"
+
+| mcp_server_listen_port | Port where the Trento MCP Server listens
+  locally | <value of `trento_mcp_listen_port`>
+
+| mcp_server_transport | MCP transport protocol. Valid values are
+  `streamable` and `sse`. | "streamable"
+
+| mcp_server_tag_filter | List of OpenAPI tags exposed as MCP tools |
+  ["MCP"]
+
+| mcp_server_health_enabled | Whether to enable the MCP health
+  endpoints. When enabled, the role also probes the local MCP
+  readiness endpoint after starting the service. | false
+
+| mcp_server_health_api_path | Health check API path used on the Trento
+  target server | "/api/healthz"
+
+| mcp_server_health_port | Port used by the health check HTTP server |
+  <value of `trento_mcp_health_port`>
+
+| mcp_server_insecure_skip_tls_verify | Whether to skip TLS
+  verification when fetching HTTPS OpenAPI specifications | false
+
+| mcp_server_verbosity | Log verbosity for the MCP server. Valid
+  values are `debug`, `info`, `warning`, and `error`. | "info"
+|===
+
 *Agent role*
 
 [width="100%",cols="10%,47%,43%",options="header",]
@@ -905,8 +1066,19 @@ More detailed info about usage and defaults available link:https://github.com/tr
 
 | rproxy_wanda_upstream_name | Wanda upstream name | "wanda"
 
+| rproxy_mcp_upstream_name | Trento MCP Server upstream name | "mcp_server"
+
 | rproxy_wanda_location | Path to forward requests to Wanda in the
   reverse proxy | <value of `trento_wanda_proxy_location`>
+
+| rproxy_mcp_host | The host where the Trento MCP Server is located. |
+  <value of `trento_mcp_effective_host`>
+
+| rproxy_mcp_listen_port | Port where the Trento MCP Server is exposed
+  locally | <value of `trento_mcp_listen_port`>
+
+| rproxy_mcp_location | Path to forward requests to the Trento MCP
+  Server in the reverse proxy | <value of `trento_mcp_proxy_location`>
 
 | rproxy_ssl_cert_as_base64 | Whether SSL certificate is provided as
   base64 string | false
@@ -916,6 +1088,9 @@ More detailed info about usage and defaults available link:https://github.com/tr
 
 | rproxy_provision_prometheus | Whether to provision Prometheus
   proxy configuration in the reverse proxy | false
+
+| rproxy_provision_mcp_server | Whether to provision reverse proxy
+  configuration for the Trento MCP Server | false
 
 | rproxy_prometheus_auth | Authentication method for the Prometheus reverse proxy endpoint.
   Must be set to "basic" or "none" when `rproxy_provision_prometheus` is true. | <value of `trento_prometheus_auth`>
@@ -942,11 +1117,15 @@ variables file than the main playbook.
 cleaned resources:
 
 * Stops Web and Wanda services
+* Stops Trento MCP Server service
 * Postgresql database and users
 * Reverse proxy vhost configuration file
 * RabbitMQ vhost
 * `supportutils-plugin-trento` package
 * Reverts Firewall rules
+
+If `mcp_hosts` is present, `cleanup.yml` also removes the Trento MCP
+Server from those dedicated hosts.
 
 Run the playbook with:
 
@@ -957,6 +1136,10 @@ $ ansible-playbook -i inventory.yml cleanup.yml
 
 `cleanup-agents.yml` removes Trento agent-related resources, including
 the `supportutils-plugin-trento` package on agent hosts.
+
+`cleanup-mcp.yml` removes only the Trento MCP Server. When the core
+Trento server stays in place and `provision_proxy` is `true`, the
+reverse proxy is re-rendered without the MCP endpoint.
 
 *Disclaimer: The installed packages are not removed as most of the times
 they are of general usage, and this could have impact in many other

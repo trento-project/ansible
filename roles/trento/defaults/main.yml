@@ -18,9 +18,12 @@
 
 trento_server_name: "{{ undef(hint='Domain name of the trento installation is mandatory') }}"
 trento_wanda_proxy_location: "/wanda"
+trento_mcp_proxy_location: "/mcp-server-trento"
 
 trento_web_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) }}"
 trento_wanda_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) + 1 }}"
+trento_mcp_listen_port: 5000
+trento_mcp_health_port: 8080
 
 trento_web_admin_username: admin
 trento_web_admin_password: "{{ undef(hint='Password for Web admin interface is mandatory') }}"
@@ -44,3 +47,5 @@ trento_prometheus_port: "{{ prometheus_port | default(9090) }}" # `prometheus_po
 trento_prometheus_auth: ""
 trento_prometheus_auth_username: ""
 trento_prometheus_auth_password: ""
+trento_mcp_host_group: ""
+trento_mcp_host: 127.0.0.1

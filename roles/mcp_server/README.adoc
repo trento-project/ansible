@@ -1,0 +1,59 @@
+= Trento MCP Server Role
+
+Installs and configures the Trento MCP Server as a systemd service.
+
+== Requirements
+
+On the target:
+* `zypper` package manager
+
+== Role Variables
+
+We keep the complete variable documentation in the main README of the
+collection.
+
+Important defaults:
+
+* `mcp_server_target_mode` is auto-detected: `oas_path` when MCP is
+  colocated with `trento_server`, `trento_url` otherwise. The user
+  does not normally set this.
+* `mcp_server_trento_url` defaults to `https://<trento_server_name>`
+  (or `trento_server_url` when set). Used in `trento_url` mode.
+* `mcp_hosts` is optional. When omitted, MCP is deployed on
+  `trento_server`; when defined, MCP is deployed on those hosts.
+
+== Dependencies
+
+This role depends on the `suse.trento.trento` meta-role for shared
+defaults.
+
+== Supported Use
+
+Typical playbook split:
+
+* `site.yml`: full installation, including MCP by default
+* `server.yml`: Trento server stack without MCP
+* `mcp.yml`: MCP-only deployment for existing Trento installations
+
+== Example Playbook
+
+Some of the default values in this role come from the `trento`
+meta-role. You can configure them in your inventory instead of
+overriding the variables in this role.
+
+[source, yaml]
+----
+- hosts: mcp_hosts
+  roles:
+    - role: suse.trento.mcp_server
+      mcp_server_trento_url: "https://trento.example.com"
+----
+
+== License
+
+Apache License, Version 2.0
+
+== Author Information
+
+Developed and maintained by trento-developers@suse.com
+Code repository is hosted on https://github.com/trento-project/ansible

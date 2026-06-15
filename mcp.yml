@@ -1,0 +1,47 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+---
+- name: Provision Trento MCP Server
+  hosts: "{{ ((groups['mcp_hosts'] | default([])) | length > 0) | ternary('mcp_hosts', 'trento_server') }}"
+  become: true
+  roles:
+    - role: mcp_server
+      when: provision_mcp | bool
+
+    - role: firewall
+      firewall_ports:
+        - "{{ trento_mcp_listen_port }}/tcp"
+      when:
+        - provision_mcp | bool
+        - (inventory_hostname not in (groups['trento_server'] | default([]))) or not (provision_proxy | bool)
+
+    - role: firewall
+      firewall_ports:
+        - "{{ trento_mcp_health_port }}/tcp"
+      when:
+        - provision_mcp | bool
+        - mcp_server_health_enabled | bool
+
+- name: Reconfigure reverse proxy to expose Trento MCP Server
+  hosts: trento_server
+  become: true
+  roles:
+    - role: trento
+      run_once: true
+      when:
+        - provision_mcp | bool
+        - provision_proxy | bool
+      vars:
+        trento_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
+        trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else '' }}"
+        trento_prometheus_host_group: "{{ 'prometheus_hosts' if (provision_prometheus | bool) else '' }}"
+        trento_mcp_host_group: "{{ 'mcp_hosts' if ((groups['mcp_hosts'] | default([])) | length > 0) else '' }}"
+
+    - role: rproxy
+      when:
+        - provision_mcp | bool
+        - provision_proxy | bool
+      vars:
+        rproxy_provision_prometheus: "{{ provision_prometheus | bool }}"
+        rproxy_provision_mcp_server: true
