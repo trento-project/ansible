@@ -23,9 +23,16 @@
     name: golang-github-prometheus-prometheus
     state: present
 
+- name: Check Prometheus tmpfiles config
+  ansible.builtin.stat:
+    path: /usr/lib/tmpfiles.d/prometheus.conf
+  register: prometheus_tmpfiles_config
+
 - name: Create Prometheus directories from tmpfiles
-  ansible.builtin.command: systemd-tmpfiles --create /usr/lib/tmpfiles.d/prometheus.conf
+  ansible.builtin.command:
+    cmd: systemd-tmpfiles --create /usr/lib/tmpfiles.d/prometheus.conf
   changed_when: false
+  when: prometheus_tmpfiles_config.stat.exists
 
 - name: Create Prometheus config
   ansible.builtin.template:
