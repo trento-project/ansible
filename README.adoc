@@ -75,13 +75,17 @@ inventory.
 Trento server components has an activated license* for one of the
 supported OSs, with the following modules (Change `x` to match your
 current version):
+On SLES15:
+On SLES 15:
 
-* Basesystem Module 15 x86_64 -
-`SUSEConnect -p sle-module-basesystem/15.x/x86_64`
+* Basesystem Module 15 x86_64 - `SUSEConnect -p sle-module-basesystem/15.x/x86_64`
 * SUSE Package Hub 15 x86_64 - `SUSEConnect -p PackageHub/15.x/x86_64`
 * Python 3 module - `SUSEConnect -p sle-module-python3/15.x/x86_64`
-* (15.6 only) Legacy Module 15 x86_64 -
-`SUSEConnect -p sle-module-legacy/15.6/x86_64`
+* (15.6 only) Legacy Module 15 x86_64 - `SUSEConnect -p sle-module-legacy/15.6/x86_64`
+
+On SLES 16:
+
+* SUSE Package Hub 16 x86_64 - `SUSEConnect -p PackageHub/16.x/x86_64`
 
 === Agent
 
@@ -751,16 +755,16 @@ More detailed info about usage and defaults available link:https://github.com/tr
 |===
 |Name | Description | Default
 
-| agent_prometheus_mode | 
-  Whether to use Prometheus in "pull" mode with prometheus node exporters or in "push" mode with grafana alloy. | 
+| agent_prometheus_mode |
+  Whether to use Prometheus in "pull" mode with prometheus node exporters or in "push" mode with grafana alloy. |
   If unspecified it resolves to "pull" for SLES \<= 15.7 and "pull" for SLES 16 and above.
 
-| agent_prometheus_exporter_name | 
-  Exporter name used in host discovery. | 
+| agent_prometheus_exporter_name |
+  Exporter name used in host discovery. |
   "node_exporter" in case of prometheus "pull" mode, "grafana_alloy" in case of "push" mode.
 
-| agent_prometheus_node_exporter_target | 
-  The target address of the node exporter to scrape metrics from, in case `agent_prometheus_mode` is set to "pull". | 
+| agent_prometheus_node_exporter_target |
+  The target address of the node exporter to scrape metrics from, in case `agent_prometheus_mode` is set to "pull". |
   Defaults to the lowest discovered IP address with a default port number (9100).
 
 | agent_prometheus_remote_write_url | The remote write URL of the Prometheus server, in case `agent_prometheus_mode` is set to "push". | "https://<value of `trento_server_name`>/prometheus/api/v1/write"
