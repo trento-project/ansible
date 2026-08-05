@@ -193,6 +193,9 @@ extra-vars.json
 
 data/
 
+# Roles fetched via `ansible-galaxy install -r requirements.yml`
+/roles/suseconnect/
+
 # Devbox files containing secrets
 devbox/combustion.sh
 devbox/secrets
