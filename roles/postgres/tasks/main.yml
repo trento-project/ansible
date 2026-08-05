@@ -5,7 +5,7 @@
 ---
 - name: Determine SUSE modules to register
   ansible.builtin.set_fact:
-    suseconnect_subscriptions: >-
+    postgres_suseconnect_subscriptions: >-
       {{
         []
         if (ansible_facts['distribution_major_version'] | int >= 16)
@@ -23,9 +23,11 @@
 - name: Register with SCC and activate modules
   ansible.builtin.include_role:
     name: suseconnect
+  vars:
+    suseconnect_subscriptions: "{{ postgres_suseconnect_subscriptions }}"
   when:
     - enable_autoregister | bool
-    - suseconnect_subscriptions | default([]) | length > 0
+    - postgres_suseconnect_subscriptions | default([]) | length > 0
 
 - name: Install postgresql
   when: postgres_install | bool
