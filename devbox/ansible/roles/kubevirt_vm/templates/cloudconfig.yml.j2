@@ -43,7 +43,7 @@ write_files:
     # Install SLES_SAP default packages
     zypper -n install --auto-agree-with-licenses -f patterns-server-enterprise-sap_server
 
-    # --- Enable optinal SUSE modules
+    # --- Enable optional SUSE modules
     # Note: This section should ideally be handled in our ansible
     # playbook. However, for now, we'll configure it here.
     SLES_OPTIONAL_MODULES="PackageHub sle-module-containers"

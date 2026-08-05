@@ -22,12 +22,12 @@ based on https://k3s.io/[K3s]. Or you can use a cluster of you own or
 a cluster you have admin access to.
 
 In that Kubernetes cluster, KubeVirt and its sibling project CDI
-(Containerezed Data Importer) are deployed as Operators. KubeVirt
+(Containerized Data Importer) are deployed as Operators. KubeVirt
 allows management of virtual machines in Kubernetes by extending its
 API with custom resource definitions (CRDs) -- VirtualMachine (VM) and
 VirtualMachineInstance (VMI). VMI represent a _running_ virtual
 machine, while VM resource tracks the state of VMI (similar to
-Deployment and Pod resources in Kuberentes itself).
+Deployment and Pod resources in Kubernetes itself).
 
 For every VMI there is a backing pod running QEMU. The name of the pod
 is prefixed as `virt-launcher-`. These pods could be thought of as
@@ -55,7 +55,7 @@ although with the corresponding performance hit.
 
 CDI is a project that simplifies the workings with VM images. It can
 import VM images from various sources (eg. HTTP/S, container
-repositories, cloning) and seamlessly represent them as Kuberentes
+repositories, cloning) and seamlessly represent them as Kubernetes
 PVCs. This project is used to download the prepared images for use in
 this workflow in a declarative fashion.
 
@@ -422,7 +422,7 @@ $ kubectl delete vm <name-of-devbox>
 ----
 
 If you you have installed k3s cluster manually on you developer
-machine, you can uninstall it by executing the follwoing:
+machine, you can uninstall it by executing the following:
 
 [source, bash]
 ----
