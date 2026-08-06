@@ -6,7 +6,7 @@
 - name: Gather systemd service facts
   ansible.builtin.service_facts:
 
-- name: "Check whether {{ port_check_service }} already owns the port"
+- name: "Check whether the target service already owns port {{ port_check_port }}"
   ansible.builtin.set_fact:
     __port_check_service_running: >-
       {{ (ansible_facts.services[port_check_service ~ '.service'] | default({'state': 'unknown'})).state == 'running' }}
@@ -14,7 +14,7 @@
 # When the service already owns the port (eg. a re-run of the
 # playbook) there is nothing to check: the port is expected to be
 # occupied by our own service.
-- name: "Verify port {{ port_check_port }} is free for {{ port_check_service }}"
+- name: "Verify availability of port {{ port_check_port }}"
   when: not (__port_check_service_running | bool)
   block:
     - name: Gather listening ports facts
@@ -24,7 +24,7 @@
       ansible.builtin.set_fact:
         __port_check_conflicts: "{{ ansible_facts.tcp_listen | selectattr('port', 'equalto', port_check_port | int) | list }}"
 
-    - name: "Fail gracefully when port {{ port_check_port }} is occupied"
+    - name: "Fail gracefully for occupied port {{ port_check_port }}"
       ansible.builtin.fail:
         msg: >-
           Port {{ port_check_port }} is required by {{ port_check_service }} on
