@@ -3,6 +3,18 @@
 
 # code: language=ansible
 ---
+- name: Verify Postgres port availability
+  ansible.builtin.include_role:
+    name: port_check
+  vars:
+    # 5432 is PostgreSQL's package default; this role does not expose
+    # a variable to change it.
+    port_check_port: 5432
+    port_check_service: postgresql
+    port_check_hint: >-
+      Free port 5432 on this host, or set provision_postgres to false and point
+      trento_postgres_host at an existing external PostgreSQL instance.
+
 - name: Install postgresql
   when: postgres_install | bool
   community.general.zypper:
