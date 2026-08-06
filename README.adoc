@@ -431,7 +431,9 @@ per-role basis if appropriate.
   is ignored when `trento_prometheus_host_group` is non-empty string. |
   localhost
 
-| trento_prometheus_port | Canonical port for playbook-managed Prometheus. | 9090
+| trento_prometheus_port | Canonical port for playbook-managed Prometheus.
+  Note that port 9090 is also Cockpit's default port on SLES; if Cockpit is
+  enabled on the target host, override this variable to avoid a conflict. | 9090
 
 | trento_prometheus_auth | Authentication method for the Prometheus endpoint.
   Must be "basic" or "none". Shared default for both `rproxy_prometheus_auth`
