@@ -83,6 +83,7 @@
     ports:
       - "{{ wanda_listen_port }}:4000"
     env:
+      LOG_LEVEL: "{{ wanda_log_level }}"
       CORS_ORIGIN: "http://localhost" # TODO: Remove placeholder
       SECRET_KEY_BASE: "{{ wanda_secret_key_base }}"
       AMQP_URL: "{{ wanda_amqp_protocol }}://{{ wanda_rabbitmq_username }}:{{ wanda_rabbitmq_password }}@{{ wanda_rabbitmq_host }}/{{ wanda_rabbitmq_vhost | urlencode | replace('/', '%2F') }}"

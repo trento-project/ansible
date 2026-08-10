@@ -359,6 +359,9 @@ per-role basis if appropriate.
 |===
 | Name | Description | Default
 
+| trento_log_level | Logging level of Trento Web and Wanda
+applications. One of `debug`, `info`, `warning` or `error` | info
+
 | trento_wanda_proxy_location | URL Path to Wanda behind a reverse
   proxy | "/wanda"
 
@@ -458,6 +461,9 @@ per-role basis if appropriate.
 [width="100%",cols="16%,57%,27%",options="header",]
 |===
 | Name | Description | Default
+
+| web_log_level | Logging level of the Web application | <value
+  of `trento_log_level`>
 
 | web_server_name | Domain name of the Trento web application | <value
   of `trento_server_name`>
@@ -663,6 +669,9 @@ per-role basis if appropriate.
 [width="100%",cols="16%,57%,27%",options="header",]
 |===
 | Name | Description | Default
+
+| wanda_log_level | Logging level of the Wanda application |
+  <value of `trento_log_level`>
 
 | wanda_listen_port | Port where the Wanda service is exposed |
   <value of `trento_wanda_listen_port`>
