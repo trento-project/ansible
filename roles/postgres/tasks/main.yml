@@ -108,7 +108,7 @@
         comment: "Wanda user provisioned by playbook"
         state: present
 
-    - name: Grant privilegies to the web user for the web database
+    - name: Grant privileges to the web user for the web database
       community.postgresql.postgresql_privs:
         login_db: "{{ postgres_web_db }}"
         objs: public
@@ -117,7 +117,7 @@
         type: schema
         state: present
 
-    - name: Grant privilegies to the web user for the web event store
+    - name: Grant privileges to the web user for the web event store
       community.postgresql.postgresql_privs:
         login_db: "{{ postgres_web_event_store }}"
         objs: public
@@ -126,7 +126,7 @@
         type: schema
         state: present
 
-    - name: Grant privilegies to the wanda user for the wanda database
+    - name: Grant privileges to the wanda user for the wanda database
       community.postgresql.postgresql_privs:
         login_db: "{{ postgres_wanda_db }}"
         objs: public

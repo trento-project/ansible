@@ -17,6 +17,7 @@
 # backwards-compatibility with their deprecated names.
 
 trento_server_name: "{{ undef(hint='Domain name of the trento installation is mandatory') }}"
+trento_log_level: info
 trento_wanda_proxy_location: "/wanda"
 
 trento_web_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) }}"
@@ -40,7 +41,7 @@ trento_rabbitmq_password: "{{ undef(hint='Password for RabbitMQ trento user is m
 trento_rabbitmq_vhost: trento
 trento_prometheus_host_group: ""
 trento_prometheus_host: localhost
-trento_prometheus_port: "{{ prometheus_port | default(9090) }}" # `prometheus_port` for backwards-compatibility
+trento_prometheus_port: "{{ prometheus_port | default((ansible_distribution_major_version == '16') | ternary(9191, 9090)) }}" # `prometheus_port` for backwards-compatibility; SLES 16 defaults to 9191 since Cockpit already occupies 9090 there
 trento_prometheus_auth: ""
 trento_prometheus_auth_username: ""
 trento_prometheus_auth_password: ""

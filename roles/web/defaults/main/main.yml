@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
+web_log_level: "{{ trento_log_level }}"
 web_server_name: "{{ trento_server_name }}"
 web_listen_port: "{{ trento_web_listen_port }}"
 web_admin_username: "{{ trento_web_admin_username }}"

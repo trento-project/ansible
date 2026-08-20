@@ -8,7 +8,7 @@ wanda_container_image: ghcr.io/trento-project/trento-wanda:rolling
 wanda_container_name: trento_wanda
 wanda_force_recreate_wanda_container: false
 wanda_remove_wanda_container_image: true
-wanda_checks_container_image: ghcr.io/trento-project/checks:rolling
+wanda_checks_container_image: ghcr.io/trento-project/trento-checks:rolling
 wanda_checks_container_name: trento_checks
 wanda_force_recreate_checks_container: false
 wanda_remove_checks_container_image: true
