@@ -434,7 +434,10 @@ applications. One of `debug`, `info`, `warning` or `error` | info
   is ignored when `trento_prometheus_host_group` is non-empty string. |
   localhost
 
-| trento_prometheus_port | Canonical port for playbook-managed Prometheus. | 9090
+| trento_prometheus_port | Canonical port for playbook-managed Prometheus.
+  Defaults to 9191 on SLES 16 since Cockpit already occupies 9090 there;
+  override this variable directly if you need a different value. | 9090
+  (9191 on SLES 16)
 
 | trento_prometheus_auth | Authentication method for the Prometheus endpoint.
   Must be "basic" or "none". Shared default for both `rproxy_prometheus_auth`
@@ -850,7 +853,7 @@ More detailed info about usage and defaults available link:https://github.com/tr
 | Name | Description | Default
 
 | prometheus_port | Deprecated alias for `trento_prometheus_port`.
-  Keep unset for new deployments. | 9090
+  Keep unset for new deployments. | 9090 (9191 on SLES 16)
 
 | prometheus_web_url | Base URL of Trento Web application where
   Prometheus scrapes for metrics | http://<`trento_server_name`>
