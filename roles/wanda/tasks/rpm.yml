@@ -2,32 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-- name: Determine SUSE modules to register
-  ansible.builtin.set_fact:
-    wanda_suseconnect_subscriptions: >-
-      {{
-        []
-        if (ansible_facts['distribution_major_version'] | int >= 16)
-        else
-        (
-          [
-            {'name': 'sle-module-basesystem', 'state': 'enabled'},
-            {'name': 'sle-module-python3', 'state': 'enabled'}
-          ]
-          + ([{'name': 'sle-module-legacy', 'state': 'enabled'}] if ansible_facts['distribution_version'] == '15.6' else [])
-        )
-      }}
-  when: enable_autoregister | bool
-
-- name: Register with SCC and activate modules
-  ansible.builtin.include_role:
-    name: suseconnect
-  vars:
-    suseconnect_subscriptions: "{{ wanda_suseconnect_subscriptions }}"
-  when:
-    - enable_autoregister | bool
-    - wanda_suseconnect_subscriptions | default([]) | length > 0
-
 - name: Install Trento Wanda RPM packages
   community.general.zypper:
     name:

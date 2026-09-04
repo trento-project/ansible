@@ -76,8 +76,9 @@ Trento server components has an activated license* for one of the
 supported OSs, with the following modules (Change `x` to match your
 current version).
 
-Instead of registering by hand, set `enable_autoregister` to `true` to
-have every host in the play register the modules above itself (via the
+Instead of registering by hand, set `enable_suseconnect` to `true` in
+your inventory to have every host in the play register the modules
+above itself (via the
 https://github.com/SUSE/ansible-suseconnect[suseconnect] role).
 
 On SLES 15:
@@ -345,10 +346,10 @@ population of some variables.
 | provision_prometheus | Whether to provision Prometheus used by Trento to store
   metrics send by agents | true
 
-| enable_autoregister | Whether to automatically register the SCC
+| enable_suseconnect | Whether to automatically register the SCC
   modules required for the host's SLES version via `SUSEConnect`,
   instead of registering them by hand (see the SUSE Linux Enterprise Users section above).
-  | false
+  Set it in your inventory, e.g. under `[all:vars]` or in a `group_vars`/`host_vars` file. | false
 
 |===
 

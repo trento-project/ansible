@@ -6,4 +6,26 @@ provision_postgres: true
 provision_prometheus: true
 provision_rabbitmq: true
 provision_proxy: true
-enable_autoregister: false
+enable_suseconnect: false
+
+# Modules needed by roles that only install base packages.
+# - SLES 16 and later ship these without registration;
+# - SLES 15 and earlier require registration of the base modules;
+# - and just SLES 15.6 requires the legacy module also to be registered.
+suseconnect_base_modules: >-
+  {{
+    []
+    if ansible_facts['distribution_version'] is version('16.0', '>=')
+    else
+    [
+      {'name': 'sle-module-basesystem', 'state': 'enabled'},
+      {'name': 'sle-module-python3', 'state': 'enabled'}
+    ] + (
+      [{'name': 'sle-module-legacy', 'state': 'enabled'}]
+      if ansible_facts['distribution_version'] is version('15.6', '==')
+      else []
+    )
+  }}
+
+# Modules needed by roles that also install packages from SUSE Package Hub (agent, prometheus).
+suseconnect_base_modules_with_packagehub: "{{ suseconnect_base_modules + [{'name': 'PackageHub', 'state': 'enabled'}] }}"
