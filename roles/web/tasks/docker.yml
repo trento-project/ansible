@@ -75,6 +75,7 @@
       test: ["CMD", "curl", "--fail", "http://localhost:4000/api/healthz"]
       interval: 5s
     env:
+      LOG_LEVEL: "{{ web_log_level }}"
       AMQP_URL: "{{ web_amqp_protocol }}://{{ web_rabbitmq_username }}:{{ web_rabbitmq_password }}@{{ web_rabbitmq_host }}/{{ web_rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
       DATABASE_URL: "ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}"
       EVENTSTORE_URL: "ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}"

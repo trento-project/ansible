@@ -48,6 +48,6 @@ all:
     web_alert_sender: "alert-sender-mail"
     web_alert_recipient: "alert-receiver-mail"
     web_smtp_server: "smtp-server-address"
-    web_smtp_port: "smpt-port"
+    web_smtp_port: "smtp-port"
     web_smtp_user: "smtp-user"
     web_smtp_password: "smtp-password"
