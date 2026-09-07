@@ -9,11 +9,13 @@
 - name: "Check whether the target service already owns port {{ port_check_port }}"
   ansible.builtin.set_fact:
     __port_check_service_running: >-
-      {{ (ansible_facts.services[port_check_service ~ '.service'] | default({'state': 'unknown'})).state == 'running' }}
+      {{
+        (port_check_service ~ '.service') in ansible_facts.services
+        and ansible_facts.services[port_check_service ~ '.service'].state == 'running'
+      }}
 
-# When the service already owns the port (eg. a re-run of the
-# playbook) there is nothing to check: the port is expected to be
-# occupied by our own service.
+# When the service already owns the port (eg. a re-run of the playbook),
+# there is nothing to check: the port is expected to be occupied by our own service.
 - name: "Verify availability of port {{ port_check_port }}"
   when: not (__port_check_service_running | bool)
   block:
@@ -27,9 +29,8 @@
     - name: "Fail gracefully for occupied port {{ port_check_port }}"
       ansible.builtin.fail:
         msg: >-
-          Port {{ port_check_port }} is required by {{ port_check_service }} on
-          {{ inventory_hostname }}, but it is already in use by
-          {{ __port_check_conflicts | map(attribute='name') | join(', ') }}
+          Port {{ port_check_port }} is required by {{ port_check_service }} on {{ inventory_hostname }},
+          but it is already in use by {{ __port_check_conflicts | map(attribute='name') | join(', ') }}
           (pid {{ __port_check_conflicts | map(attribute='pid') | join(', ') }}).
           {{ port_check_hint }}
       when: __port_check_conflicts | length > 0

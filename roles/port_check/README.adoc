@@ -1,24 +1,13 @@
 = Port Check Ansible Role
 
-Helper role that allows us to concentrate our common "is this port
-free before we bind it" handling into a single re-usable component.
-This role is not intended to be used directly by end-users.
+Helper role that centralizes the "is this port free before we bind it?" check into a single, re-usable component. It is not intended to be used directly by end-users. The check works as follows:
 
-Our common handling includes:
-. Checking whether the target systemd service is already running.
-.. If it is, the port is assumed to be legitimately owned by it
-already (eg. a re-run of the playbook) and no further check is done.
-. Otherwise, checking whether any process is already listening on
-the given port.
-.. If one is, the play fails with a message naming the offending
-process/pid and a hint on how to resolve the conflict, instead of
-letting package/service tasks fail later with a less helpful error.
+Check whether the target systemd service is already running. If so, the port is assumed to already be legitimately owned by it (eg. on a playbook re-run), and no further check happens.
+Otherwise, check whether any process is already listening on the given port. If one is, fail with a message naming the offending process/pid and a hint on how to resolve the conflict, instead of letting a later package/service task fail with a less helpful error.
 
 == Requirements
 
-This role uses `community.general.listen_ports_facts` and
-`ansible.builtin.service_facts`, so it depends on their
-dependencies.
+This role uses `community.general.listen_ports_facts` and `ansible.builtin.service_facts`, so it depends on their dependencies.
 
 == Role Variables
 
@@ -26,16 +15,13 @@ dependencies.
 |===
 | Name | Description | Default
 | port_check_port | TCP port that is about to be bound. | <undefined/mandatory>
-| port_check_service | systemd unit name (without the `.service`
-  suffix) that is expected to own the port once started. | <undefined/mandatory>
-| port_check_hint | Extra text appended to the failure message,
-  eg. which variable to change to pick a different port. | ""
+| port_check_service | systemd unit name (without the `.service` suffix) that is expected to own the port once started. | <undefined/mandatory>
+| port_check_hint | Extra text appended to the failure message, eg. which variable to change to pick a different port. | ""
 |===
 
 == Dependencies
 
-This role does not have any dependencies on other roles, nor exports
-any variables.
+This role does not have any dependencies on other roles, nor exports any variables.
 
 == Example Playbook
 
