@@ -3,9 +3,9 @@ SPDX-FileCopyrightText: SUSE LLC
 SPDX-License-Identifier: Apache-2.0
 #}
 LOG_LEVEL={{ web_log_level }}
-AMQP_URL={{ web_amqp_protocol }}://{{ web_rabbitmq_username }}:{{ web_rabbitmq_password }}@{{ web_rabbitmq_host }}/{{ web_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
-DATABASE_URL=ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}
-EVENTSTORE_URL=ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}
+AMQP_URL={{ web_amqp_protocol }}://{{ web_rabbitmq_username }}:{{ web_rabbitmq_password }}@{{ web_rabbitmq_host }}:{{ web_rabbitmq_port }}/{{ web_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
+DATABASE_URL=ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}:{{ web_postgres_port }}/{{ web_postgres_db }}
+EVENTSTORE_URL=ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}:{{ web_postgres_port }}/{{ web_postgres_event_store }}
 {% if web_enable_alerting is not none %}
 ENABLE_ALERTING={{ web_enable_alerting | string | lower }}
 {% endif %}

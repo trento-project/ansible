@@ -76,9 +76,9 @@
       interval: 5s
     env:
       LOG_LEVEL: "{{ web_log_level }}"
-      AMQP_URL: "{{ web_amqp_protocol }}://{{ web_rabbitmq_username }}:{{ web_rabbitmq_password }}@{{ web_rabbitmq_host }}/{{ web_rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
-      DATABASE_URL: "ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}"
-      EVENTSTORE_URL: "ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}"
+      AMQP_URL: "{{ web_amqp_protocol }}://{{ web_rabbitmq_username }}:{{ web_rabbitmq_password }}@{{ web_rabbitmq_host }}:{{ web_rabbitmq_port }}/{{ web_rabbitmq_vhost | urlencode | replace('/', '%2F') }}"
+      DATABASE_URL: "ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}:{{ web_postgres_port }}/{{ web_postgres_db }}"
+      EVENTSTORE_URL: "ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}:{{ web_postgres_port }}/{{ web_postgres_event_store }}"
       ENABLE_ALERTING: "{{ omit if web_enable_alerting is none else (web_enable_alerting | string | lower) }}"
       SMTP_SERVER: "{{ omit if web_smtp_server is none else web_smtp_server }}"
       SMTP_PORT: "{{ omit if web_smtp_port is none else (web_smtp_port | string) }}"
