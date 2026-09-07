@@ -44,7 +44,7 @@ any variables.
 - hosts: servers
   tasks:
     - name: Verify Prometheus port availability
-      ansible.builtin.include_role:
+      ansible.builtin.import_role:
         name: suse.trento.port_check
       vars:
         port_check_port: "{{ trento_prometheus_port }}"

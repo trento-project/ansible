@@ -4,7 +4,7 @@
 # code: language=ansible
 ---
 - name: Verify RabbitMQ port availability
-  ansible.builtin.include_role:
+  ansible.builtin.import_role:
     name: port_check
   vars:
     # 5672 is RabbitMQ's package default AMQP port; this role does not

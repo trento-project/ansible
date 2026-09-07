@@ -4,7 +4,7 @@
 # code: language=ansible
 ---
 - name: Verify Prometheus port availability
-  ansible.builtin.include_role:
+  ansible.builtin.import_role:
     name: port_check
   vars:
     port_check_port: "{{ trento_prometheus_port }}"
