@@ -52,6 +52,9 @@ jobs:
     name: Run ansible${{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/${{ matrix.target.label }}
     needs: [ansible-lint]
     runs-on: ubuntu-24.04
+    concurrency:
+      group: test-deploy-host-${{ matrix.target.label }}
+      cancel-in-progress: false
     strategy:
       fail-fast: false
       max-parallel: 2
