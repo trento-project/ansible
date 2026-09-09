@@ -55,6 +55,7 @@ jobs:
     concurrency:
       group: test-deploy-host-${{ matrix.target.label }}
       cancel-in-progress: false
+      queue: max
     strategy:
       fail-fast: false
       matrix:
