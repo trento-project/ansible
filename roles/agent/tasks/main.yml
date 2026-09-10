@@ -55,8 +55,10 @@
     - name: Fail with Package Hub guidance
       ansible.builtin.fail:
         msg: >-
-          Failed to install golang-github-prometheus-node_exporter.
-          Register SUSE Package Hub first: SUSEConnect -p
+          Failed to install golang-github-prometheus-node_exporter:
+          {{ ansible_failed_result.msg | default(ansible_failed_result) }}.
+          If this is because SUSE Package Hub is not registered on this
+          host, register it with: SUSEConnect -p
           PackageHub/{{ ansible_facts['distribution_version'] }}/{{ ansible_facts['architecture'] }}
 
 - name: Install and configure alloy on SLES 16 and later

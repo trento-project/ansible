@@ -217,7 +217,7 @@ all:
 === 4. Run the playbooks
 
 Prior to running the playbooks, tell ansible to fetch the required
-modules:
+collections and roles (`requirements.yml` lists both):
 
 [source, console]
 ----
