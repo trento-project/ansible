@@ -1,0 +1,49 @@
+= Port Check Ansible Role
+
+Helper role that centralizes the "is this port free before we bind it?" check into a single, re-usable component. It is not intended to be used directly by end-users. The check works as follows:
+
+Check whether any process is already listening on the given port. If none is, the port is free and nothing else happens.
+Otherwise, check whether the listening process is the target systemd service itself (matched by PID, via its `MainPID`), in which case the port is assumed to already be legitimately owned by it (eg. on a playbook re-run) and no failure is raised.
+If the listening process belongs to anything else, fail with a message naming the offending process/pid and a hint on how to resolve the conflict, instead of letting a later package/service task fail with a less helpful error.
+
+== Requirements
+
+This role uses `community.general.listen_ports_facts`, `ansible.builtin.systemd_service`, and the `pgrep` command (from procps), so it depends on their dependencies.
+
+== Role Variables
+
+[width="100%",cols="16%,57%,27%",options="header",]
+|===
+| Name | Description | Default
+| port_check_port | TCP port that is about to be bound. | <undefined/mandatory>
+| port_check_service | systemd unit name (without the `.service` suffix) that is expected to own the port once started. | <undefined/mandatory>
+| port_check_hint | Extra text appended to the failure message, eg. which variable to change to pick a different port. | ""
+|===
+
+== Dependencies
+
+This role does not have any dependencies on other roles, nor exports any variables.
+
+== Example Playbook
+
+[source, yaml]
+----
+- hosts: servers
+  tasks:
+    - name: Verify Prometheus port availability
+      ansible.builtin.import_role:
+        name: suse.trento.port_check
+      vars:
+        port_check_port: "{{ trento_prometheus_port }}"
+        port_check_service: prometheus
+        port_check_hint: "Set prometheus_port to a free port and re-run the playbook."
+----
+
+== License
+
+Apache License, Version 2.0
+
+== Author Information
+
+Developed and maintained by trento-developers@suse.com
+Code repository is hosted on https://github.com/trento-project/ansible

@@ -3,6 +3,16 @@
 
 # code: language=ansible
 ---
+- name: Verify Prometheus port availability
+  ansible.builtin.import_role:
+    name: port_check
+  vars:
+    port_check_port: "{{ trento_prometheus_port }}"
+    port_check_service: prometheus
+    port_check_hint: >-
+      Set prometheus_port (or trento_prometheus_port) to a free port and re-run the
+      playbook. Note that port 9090 is also Cockpit's default port on SLES.
+
 - name: Ensure prometheus group is present
   ansible.builtin.group:
     name: prometheus

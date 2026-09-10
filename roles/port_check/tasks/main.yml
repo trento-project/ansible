@@ -1,0 +1,56 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+# code: language=ansible
+---
+# Snapshot of every process currently listening on a TCP port.
+- name: Gather listening ports facts
+  community.general.listen_ports_facts:
+
+# Narrow the snapshot down to whatever is bound to our target port.
+- name: "Identify processes already bound to port {{ port_check_port }}"
+  ansible.builtin.set_fact:
+    __port_check_conflicts: "{{ ansible_facts.tcp_listen | selectattr('port', 'equalto', port_check_port | int) | list }}"
+
+# Nothing to check if the port is free; only investigate further otherwise.
+- name: "Verify availability of port {{ port_check_port }}"
+  when: __port_check_conflicts | length > 0
+  block:
+    # MainPID lets us tell our own service apart from a genuine conflict.
+    - name: "Get systemd status of {{ port_check_service }}"
+      ansible.builtin.systemd_service:
+        name: "{{ port_check_service }}"
+      register: __port_check_service_status
+
+    # Needed to also recognize forked worker processes as belonging to the service.
+    - name: "Get direct child PIDs of {{ port_check_service }}"
+      ansible.builtin.command:
+        argv:
+          - pgrep
+          - -P
+          - "{{ __port_check_service_status.status.MainPID | default(0) | int }}"
+      register: __port_check_service_children
+      changed_when: false
+      failed_when: false
+      when: (__port_check_service_status.status.MainPID | default(0) | int) != 0
+
+    # A foreign process is still caught even if the service also holds the port.
+    - name: "Identify conflicts not owned by {{ port_check_service }}"
+      vars:
+        __port_check_owned_pids: >-
+          {{
+            [__port_check_service_status.status.MainPID | default(0) | int]
+            + (__port_check_service_children.stdout_lines | default([]) | map('int') | list)
+          }}
+      ansible.builtin.set_fact:
+        __port_check_foreign_conflicts: "{{ __port_check_conflicts | rejectattr('pid', 'in', __port_check_owned_pids) | list }}"
+
+    # Only fails when something other than our own service still holds the port.
+    - name: "Fail gracefully for occupied port {{ port_check_port }}"
+      ansible.builtin.fail:
+        msg: >-
+          Port {{ port_check_port }} is required by {{ port_check_service }} on {{ inventory_hostname }},
+          but it is already in use by {{ __port_check_foreign_conflicts | map(attribute='name') | unique | join(', ') }}
+          (pid {{ __port_check_foreign_conflicts | map(attribute='pid') | unique | join(', ') }}).
+          {{ port_check_hint }}
+      when: __port_check_foreign_conflicts | length > 0
