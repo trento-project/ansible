@@ -22,12 +22,13 @@
         name: "{{ port_check_service }}"
       register: __port_check_service_status
 
-    # Needed to also recognize forked worker processes (eg. nginx) as belonging to the service.
+    # Needed to also recognize forked worker processes as belonging to the service.
     - name: "Get direct child PIDs of {{ port_check_service }}"
       ansible.builtin.command: "pgrep -P {{ __port_check_service_status.status.MainPID | default(0) | int }}"
       register: __port_check_service_children
       changed_when: false
-      failed_when: false  # exits 1 when the service has no child processes
+      failed_when: false
+      when: (__port_check_service_status.status.MainPID | default(0) | int) != 0
 
     # A foreign process is still caught even if the service also holds the port.
     - name: "Identify conflicts not owned by {{ port_check_service }}"
@@ -35,7 +36,7 @@
         __port_check_owned_pids: >-
           {{
             [__port_check_service_status.status.MainPID | default(0) | int]
-            + (__port_check_service_children.stdout_lines | map('int') | list)
+            + (__port_check_service_children.stdout_lines | default([]) | map('int') | list)
           }}
       ansible.builtin.set_fact:
         __port_check_foreign_conflicts: "{{ __port_check_conflicts | rejectattr('pid', 'in', __port_check_owned_pids) | list }}"
