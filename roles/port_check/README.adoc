@@ -2,12 +2,13 @@
 
 Helper role that centralizes the "is this port free before we bind it?" check into a single, re-usable component. It is not intended to be used directly by end-users. The check works as follows:
 
-Check whether the target systemd service is already running. If so, the port is assumed to already be legitimately owned by it (eg. on a playbook re-run), and no further check happens.
-Otherwise, check whether any process is already listening on the given port. If one is, fail with a message naming the offending process/pid and a hint on how to resolve the conflict, instead of letting a later package/service task fail with a less helpful error.
+Check whether any process is already listening on the given port. If none is, the port is free and nothing else happens.
+Otherwise, check whether the listening process is the target systemd service itself (matched by PID, via its `MainPID`), in which case the port is assumed to already be legitimately owned by it (eg. on a playbook re-run) and no failure is raised.
+If the listening process belongs to anything else, fail with a message naming the offending process/pid and a hint on how to resolve the conflict, instead of letting a later package/service task fail with a less helpful error.
 
 == Requirements
 
-This role uses `community.general.listen_ports_facts` and `ansible.builtin.service_facts`, so it depends on their dependencies.
+This role uses `community.general.listen_ports_facts` and `ansible.builtin.systemd_service`, so it depends on their dependencies.
 
 == Role Variables
 
