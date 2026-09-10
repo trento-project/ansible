@@ -74,14 +74,23 @@ inventory.
 *This playbook requires that the host where you are going to install
 Trento server components has an activated license* for one of the
 supported OSs, with the following modules (Change `x` to match your
-current version):
+current version).
 
-* Basesystem Module 15 x86_64 -
-`SUSEConnect -p sle-module-basesystem/15.x/x86_64`
+Instead of registering by hand, set `enable_suseconnect` to `true` in
+your inventory to have every host in the play register the modules
+above itself (via the
+https://github.com/SUSE/ansible-suseconnect[suseconnect] role).
+
+On SLES 15:
+
+* Basesystem Module 15 x86_64 - `SUSEConnect -p sle-module-basesystem/15.x/x86_64`
 * SUSE Package Hub 15 x86_64 - `SUSEConnect -p PackageHub/15.x/x86_64`
 * Python 3 module - `SUSEConnect -p sle-module-python3/15.x/x86_64`
-* (15.6 only) Legacy Module 15 x86_64 -
-`SUSEConnect -p sle-module-legacy/15.6/x86_64`
+* (15.6 only) Legacy Module 15 x86_64 - `SUSEConnect -p sle-module-legacy/15.6/x86_64`
+
+On SLES 16:
+
+* SUSE Package Hub 16 x86_64 - `SUSEConnect -p PackageHub/16.x/x86_64`
 
 === Agent
 
@@ -208,11 +217,11 @@ all:
 === 4. Run the playbooks
 
 Prior to running the playbooks, tell ansible to fetch the required
-modules:
+collections and roles (`requirements.yml` lists both):
 
 [source, console]
 ----
-$ ansible-galaxy collection install -r requirements.yml
+$ ansible-galaxy install -r requirements.yml
 ----
 
 Run a playbook:
@@ -336,6 +345,11 @@ population of some variables.
 
 | provision_prometheus | Whether to provision Prometheus used by Trento to store
   metrics send by agents | true
+
+| enable_suseconnect | Whether to automatically register the SCC
+  modules required for the host's SLES version via `SUSEConnect`,
+  instead of registering them by hand (see the SUSE Linux Enterprise Users section above).
+  Set it in your inventory, e.g. under `[all:vars]` or in a `group_vars`/`host_vars` file. | false
 
 |===
 
@@ -763,16 +777,16 @@ More detailed info about usage and defaults available link:https://github.com/tr
 |===
 |Name | Description | Default
 
-| agent_prometheus_mode | 
-  Whether to use Prometheus in "pull" mode with prometheus node exporters or in "push" mode with grafana alloy. | 
+| agent_prometheus_mode |
+  Whether to use Prometheus in "pull" mode with prometheus node exporters or in "push" mode with grafana alloy. |
   If unspecified it resolves to "pull" for SLES \<= 15.7 and "pull" for SLES 16 and above.
 
-| agent_prometheus_exporter_name | 
-  Exporter name used in host discovery. | 
+| agent_prometheus_exporter_name |
+  Exporter name used in host discovery. |
   "node_exporter" in case of prometheus "pull" mode, "grafana_alloy" in case of "push" mode.
 
-| agent_prometheus_node_exporter_target | 
-  The target address of the node exporter to scrape metrics from, in case `agent_prometheus_mode` is set to "pull". | 
+| agent_prometheus_node_exporter_target |
+  The target address of the node exporter to scrape metrics from, in case `agent_prometheus_mode` is set to "pull". |
   Defaults to the lowest discovered IP address with a default port number (9100).
 
 | agent_prometheus_remote_write_url | The remote write URL of the Prometheus server, in case `agent_prometheus_mode` is set to "push". | "https://<value of `trento_server_name`>/prometheus/api/v1/write"

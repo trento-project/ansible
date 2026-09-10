@@ -22,6 +22,12 @@
         # to please the linter.
         trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else ''}}"
 
+    - role: suseconnect
+      become: true
+      vars:
+        suseconnect_subscriptions: "{{ suseconnect_base_modules_with_packagehub }}"
+      when: enable_suseconnect | bool
+
     - role: agent
       become: true
 
