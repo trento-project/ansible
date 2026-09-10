@@ -52,9 +52,12 @@ jobs:
     name: Run ansible${{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/${{ matrix.target.label }}
     needs: [ansible-lint]
     runs-on: ubuntu-24.04
+    concurrency:
+      group: test-deploy-host-${{ matrix.target.label }}
+      cancel-in-progress: false
+      queue: max
     strategy:
       fail-fast: false
-      max-parallel: 2
       matrix:
         control_node:
           - ansible_version: "11"
@@ -164,7 +167,7 @@ jobs:
 
       - name: Run playbook cleanup
         uses: dawidd6/action-ansible-playbook@126642a1c6ce512da255ef2b41e8ee90f0077474 # v9
-        if: success() || steps.runplaybook.conclusion == 'failure'
+        if: always() && steps.runplaybook.conclusion != 'skipped'
         with:
           playbook: playbook.cleanup.yml
           key: ${{ secrets.SSH_MACHINE_KEY }}
