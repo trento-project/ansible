@@ -37,6 +37,23 @@
     state: started
     enabled: true
 
+- name: "Configure postgres to listen on port {{ postgres_port }}"
+  # postgresql.conf only exists once the data directory has been
+  # initialized by the first service start above. `port` is a
+  # postmaster-context setting: editing the file directly (rather than
+  # via `postgresql_set`) avoids needing a live SQL connection on
+  # whatever port happens to currently be active.
+  ansible.builtin.lineinfile:
+    path: /var/lib/pgsql/data/postgresql.conf
+    regexp: "^#?port\\s*="
+    line: "port = {{ postgres_port }}"
+  notify: Restart postgres
+
+- name: Apply postgres port change now
+  # Later tasks in this role connect over SQL and need the port change
+  # (if any) to be live already, rather than deferred to end of play.
+  ansible.builtin.meta: flush_handlers
+
 - name: Configure Postgres
   become: true
   become_user: postgres
@@ -46,6 +63,9 @@
     # other possibilities:
     # https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user
     ansible_ssh_pipelining: true
+  module_defaults:
+    group/community.postgresql.all:
+      login_port: "{{ postgres_port }}"
   block:
     - name: "Configure postgres to listen on *"
       community.postgresql.postgresql_set:
