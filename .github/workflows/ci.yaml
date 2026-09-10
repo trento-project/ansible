@@ -52,9 +52,12 @@ jobs:
     name: Run ansible${{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/${{ matrix.target.label }}
     needs: [ansible-lint]
     runs-on: ubuntu-24.04
+    concurrency:
+      group: test-deploy-host-${{ matrix.target.label }}
+      cancel-in-progress: false
+      queue: max
     strategy:
       fail-fast: false
-      max-parallel: 2
       matrix:
         control_node:
           - ansible_version: "11"
@@ -164,7 +167,7 @@ jobs:
 
       - name: Run playbook cleanup
         uses: dawidd6/action-ansible-playbook@126642a1c6ce512da255ef2b41e8ee90f0077474 # v9
-        if: success() || steps.runplaybook.conclusion == 'failure'
+        if: always() && steps.runplaybook.conclusion != 'skipped'
         with:
           playbook: playbook.cleanup.yml
           key: ${{ secrets.SSH_MACHINE_KEY }}
@@ -212,7 +215,7 @@ jobs:
     needs:
       - ansible-lint
       - test-deploy
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@7ea6a8a1c3ed8a1f2185328219be4a724dd3686e # v1.8.0
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@7bdd3e4e59084a0edca7da6ece0456490defafb2 # v1.9.0
     with:
       image_name: ansible
       tag: rolling
@@ -227,7 +230,7 @@ jobs:
     needs:
       - ansible-lint
       - test-deploy
-    uses: trento-project/.github/.github/workflows/obs-sync.yaml@7ea6a8a1c3ed8a1f2185328219be4a724dd3686e # v1.8.0
+    uses: trento-project/.github/.github/workflows/obs-sync.yaml@7bdd3e4e59084a0edca7da6ece0456490defafb2 # v1.9.0
     with:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
       obs_package: ${{ vars.OBS_PACKAGE }}
