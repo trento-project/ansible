@@ -17,7 +17,7 @@
   when: __port_check_conflicts | length > 0
   block:
     # MainPID lets us tell our own service apart from a genuine conflict.
-    - name: "Get {{ port_check_service }} status"
+    - name: "Get systemd status of {{ port_check_service }}"
       ansible.builtin.systemd_service:
         name: "{{ port_check_service }}"
       register: __port_check_service_status
