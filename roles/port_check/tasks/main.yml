@@ -24,7 +24,11 @@
 
     # Needed to also recognize forked worker processes as belonging to the service.
     - name: "Get direct child PIDs of {{ port_check_service }}"
-      ansible.builtin.command: "pgrep -P {{ __port_check_service_status.status.MainPID | default(0) | int }}"
+      ansible.builtin.command:
+        argv:
+          - pgrep
+          - -P
+          - "{{ __port_check_service_status.status.MainPID | default(0) | int }}"
       register: __port_check_service_children
       changed_when: false
       failed_when: false
