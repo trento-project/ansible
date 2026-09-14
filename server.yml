@@ -16,6 +16,12 @@
 - name: Provision Postgres
   hosts: postgres_hosts
   roles:
+    - role: suseconnect
+      become: true
+      vars:
+        suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
+      when: provision_postgres | bool and enable_suseconnect | bool
+
     - role: postgres
       become: true
       when: provision_postgres | bool
@@ -23,6 +29,12 @@
 - name: Provision Prometheus
   hosts: prometheus_hosts
   roles:
+    - role: suseconnect
+      become: true
+      vars:
+        suseconnect_subscriptions: "{{ suseconnect_base_modules_with_packagehub }}"
+      when: provision_prometheus | bool and enable_suseconnect | bool
+
     - role: prometheus
       become: true
       when: provision_prometheus | bool
@@ -37,6 +49,12 @@
 - name: Provision RabbitMQ
   hosts: rabbitmq_hosts
   roles:
+    - role: suseconnect
+      become: true
+      vars:
+        suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
+      when: provision_rabbitmq | bool and enable_suseconnect | bool
+
     - role: rabbitmq
       become: true
       when: provision_rabbitmq | bool
@@ -52,6 +70,12 @@
         trento_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
         trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else '' }}"
         trento_prometheus_host_group: "{{ 'prometheus_hosts' if (provision_prometheus | bool) else '' }}"
+
+    - role: suseconnect
+      become: true
+      vars:
+        suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
+      when: enable_suseconnect | bool
 
     - role: web
       become: true

@@ -13,5 +13,5 @@ COPY playbook.yml .
 COPY docker/entrypoint.sh .
 RUN zypper refresh && \
     zypper install -y ansible openssh-clients && \
-    ansible-galaxy collection install -r requirements.yml 
+    ansible-galaxy install -r requirements.yml
 ENTRYPOINT ["/lib/trento-ansible/entrypoint.sh"]

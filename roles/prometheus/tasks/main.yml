@@ -18,10 +18,21 @@
     comment: "User for Prometheus service"
   when: ansible_distribution_version >= "15.4"
 
-- name: Install package using zypper module
-  ansible.builtin.package:
-    name: golang-github-prometheus-prometheus
-    state: present
+- name: Install Prometheus package
+  block:
+    - name: Install package using zypper module
+      ansible.builtin.package:
+        name: golang-github-prometheus-prometheus
+        state: present
+  rescue:
+    - name: Fail with Package Hub guidance
+      ansible.builtin.fail:
+        msg: >-
+          Failed to install golang-github-prometheus-prometheus:
+          {{ ansible_failed_result.msg | default(ansible_failed_result) }}.
+          If this is because SUSE Package Hub is not registered on this
+          host, register it with: SUSEConnect -p
+          PackageHub/{{ ansible_facts['distribution_version'] }}/{{ ansible_facts['architecture'] }}
 
 - name: Check Prometheus tmpfiles config
   ansible.builtin.stat:

@@ -43,12 +43,23 @@
     enabled: true
 
 - name: Install 'node_exporter' on SLES 15.7 and earlier
-  community.general.zypper:
-    name: golang-github-prometheus-node_exporter
-    state: latest
   when: agent_install_monitoring_dep and agent_prometheus_mode_pull
   notify:
     - Restart Prometheus node_exporter service
+  block:
+    - name: Install node_exporter package
+      community.general.zypper:
+        name: golang-github-prometheus-node_exporter
+        state: latest
+  rescue:
+    - name: Fail with Package Hub guidance
+      ansible.builtin.fail:
+        msg: >-
+          Failed to install golang-github-prometheus-node_exporter:
+          {{ ansible_failed_result.msg | default(ansible_failed_result) }}.
+          If this is because SUSE Package Hub is not registered on this
+          host, register it with: SUSEConnect -p
+          PackageHub/{{ ansible_facts['distribution_version'] }}/{{ ansible_facts['architecture'] }}
 
 - name: Install and configure alloy on SLES 16 and later
   when: agent_install_monitoring_dep and agent_prometheus_mode_push
