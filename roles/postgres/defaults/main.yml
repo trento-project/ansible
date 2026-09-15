@@ -3,6 +3,7 @@
 
 ---
 postgres_install: "{{ install_postgres | default(true) }}" # `install_postgres` is for backwards-compatibility
+postgres_port: "{{ trento_postgres_port }}"
 postgres_web_username: "{{ trento_web_postgres_username }}"
 postgres_web_password: "{{ web_postgres_password | default(trento_web_postgres_password) }}"
 postgres_web_db: "{{ web_postgres_db | default(trento_web_postgres_db) }}"

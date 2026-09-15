@@ -390,6 +390,9 @@ applications. One of `debug`, `info`, `warning` or `error` | info
   auto-discovery is active, the value of `trento_postgres_host` is
   ignored. | ""
 
+| trento_postgres_port | Canonical port for playbook-managed Postgres.
+  Override this variable directly if you need a different value. | 5432
+
 | trento_web_postgres_username | Name of the Postgres user used by Web
   application | "web"
 
@@ -405,15 +408,17 @@ applications. One of `debug`, `info`, `warning` or `error` | info
 | trento_wanda_postgres_db | Name of the Postgres database of Wanda
   application | "wandadb"
 
-| trento_rabbitmq_host | The host where RabbitMQ is located. It could
-  include the service port. Used as input for calculating
-  `trento_rabbitmq_effective_host` variable that is the default for
-  `*_rabbitmq_host` variables in some dependent roles. This variable
-  is ignored when `trento_rabbitmq_host_group` is non-empty string. |
-  localhost
+| trento_rabbitmq_host | The host where RabbitMQ is located. Prefer
+  `trento_rabbitmq_port` for a non-default port; embedding the port
+  directly here (eg. "myhost:5673") is still supported for
+  backwards-compatibility. Used as input for
+  calculating `trento_rabbitmq_effective_host` variable that is the
+  default for `*_rabbitmq_host` variables in some dependent roles.
+  This variable is ignored when `trento_rabbitmq_host_group` is
+  non-empty string. | localhost
 
 | trento_rabbitmq_host_group | Name of the host group where RabbitMQ
-  is located. It could include the service port. If this value is not
+  is located. If this value is not
   empty string, activates auto-discovery of the RabbitMQ host by
   searching it in the specified group. Used as input for calculating
   `trento_rabbitmq_effective_host` variable that is the default for
@@ -426,6 +431,10 @@ applications. One of `debug`, `info`, `warning` or `error` | info
 
 | trento_rabbitmq_vhost | The rabbitmq vhost used for the current
   deployment | "trento"
+
+| trento_rabbitmq_port | Canonical AMQP port for playbook-managed
+  RabbitMQ. Override this variable directly if you need a different
+  value. | 5672
 
 | trento_prometheus_host | The host where Prometheus is
   located. Used as input for calculating
@@ -488,6 +497,9 @@ applications. One of `debug`, `info`, `warning` or `error` | info
   `trento_postgres_host` and `trento_postgres_host_group` variables,
   please refer to their documentation.
 
+| web_postgres_port | Port of the Postgres database for Web | <value
+  of `trento_postgres_port`>
+
 | web_postgres_username | Name of the postgres user used by Web
   application | <value of `trento_web_postgres_username`>
 
@@ -504,10 +516,13 @@ applications. One of `debug`, `info`, `warning` or `error` | info
 | web_amqp_protocol | URL scheme of the AMQP protocol -- either `amqp`
   or `amqps`. Used in Web and Wanda when connecting to RabbitMQ | amqp
 
-| web_rabbitmq_host | The host where RabbitMQ is located. It could
-  include the service port. | Default value depends on the value of
-  `trento_rabbitmq_host` and `trento_rabbitmq_host_group` variables,
-  please refer to their documentation.
+| web_rabbitmq_host | The host where RabbitMQ is located. | Default
+  value depends on the value of `trento_rabbitmq_host` and
+  `trento_rabbitmq_host_group` variables, please refer to their
+  documentation.
+
+| web_rabbitmq_port | AMQP port where RabbitMQ is located | <value of
+  `trento_rabbitmq_port`>
 
 | web_rabbitmq_username | Username used to connect to RabbitMQ |
   <value of `trento_rabbitmq_username`>
@@ -690,6 +705,9 @@ applications. One of `debug`, `info`, `warning` or `error` | info
   `trento_postgres_host` and `trento_postgres_host_group` variables,
   please refer to their documentation.
 
+| wanda_postgres_port | Port of the Postgres database for Wanda |
+  <value of `trento_postgres_port`>
+
 | wanda_postgres_username | Name of the Postgres user used by
   Wanda application | <value of `trento_wanda_postgres_username`>
 
@@ -702,10 +720,13 @@ applications. One of `debug`, `info`, `warning` or `error` | info
 | wanda_amqp_protocol | URL scheme of the AMQP protocol -- either
   `amqp` or `amqps`. Used when connecting to RabbitMQ | amqp
 
-| wanda_rabbitmq_host | The host where RabbitMQ is located. It could
-  include the service port. | Default value depends on the value of
-  `trento_rabbitmq_host` and `trento_rabbitmq_host_group` variables,
-  please refer to their documentation.
+| wanda_rabbitmq_host | The host where RabbitMQ is located. | Default
+  value depends on the value of `trento_rabbitmq_host` and
+  `trento_rabbitmq_host_group` variables, please refer to their
+  documentation.
+
+| wanda_rabbitmq_port | AMQP port where RabbitMQ is located | <value
+  of `trento_rabbitmq_port`>
 
 | wanda_rabbitmq_username | Username used to connect to RabbitMQ |
   <value of `trento_rabbitmq_username`>
@@ -731,10 +752,13 @@ applications. One of `debug`, `info`, `warning` or `error` | info
 | agent_amqp_protocol | URL scheme of the AMQP protocol -- either
   `amqp` or `amqps`. Used to connect to RabbitMQ | "amqp"
 
-| agent_rabbitmq_host | The host where RabbitMQ is located. It could
-  include the service port. | Default value depends on the value of
-  `trento_rabbitmq_host` and `trento_rabbitmq_host_group` variables,
-  please refer to their documentation.
+| agent_rabbitmq_host | The host where RabbitMQ is located. | Default
+  value depends on the value of `trento_rabbitmq_host` and
+  `trento_rabbitmq_host_group` variables, please refer to their
+  documentation.
+
+| agent_rabbitmq_port | AMQP port where RabbitMQ is located | <value
+  of `trento_rabbitmq_port`>
 
 | agent_rabbitmq_username | Username used to connect to RabbitMQ |
   <value of `trento_rabbitmq_username`>
@@ -824,6 +848,9 @@ More detailed info about usage and defaults available link:https://github.com/tr
 | postgres_install | Install postgresql in the postgres provisioning
   phase | true
 
+| postgres_port | Port on which Postgres listens | <value of
+  `trento_postgres_port`>
+
 | postgres_web_username | Name of the Postgres user used by Web
   application | <value of `trento_web_postgres_username`>
 
@@ -870,6 +897,9 @@ More detailed info about usage and defaults available link:https://github.com/tr
 [width="100%",cols="16%,57%,27%",options="header",]
 |===
 | Name | Description | Default
+
+| rabbitmq_port | AMQP port on which RabbitMQ listens | <value of
+  `trento_rabbitmq_port`>
 
 | rabbitmq_username | Username used by various Trento applications to
   connect to RabbitMQ | <value of `trento_rabbitmq_username`>
