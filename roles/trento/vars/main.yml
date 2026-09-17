@@ -49,3 +49,13 @@ __trento_prometheus_discovery_host: "{{ (inventory_hostname in groups[trento_pro
 trento_prometheus_effective_host: "{{ trento_prometheus_host_group is truthy
                                     | ternary(__trento_prometheus_discovery_host,
                                               trento_prometheus_host) }}"
+
+# MCP Server auto-discovery
+__trento_mcp_inventory_host: "{{ groups[trento_mcp_host_group][0] }}"
+__trento_mcp_ansible_host: "{{ hostvars[__trento_mcp_inventory_host].ansible_host }}"
+__trento_mcp_discovery_host: "{{ (inventory_hostname in groups[trento_mcp_host_group])
+                              | ternary('127.0.0.1',
+                                        __trento_mcp_ansible_host | default(__trento_mcp_inventory_host)) }}"
+trento_mcp_effective_host: "{{ trento_mcp_host_group is truthy
+                             | ternary(__trento_mcp_discovery_host,
+                                       trento_mcp_host) }}"
