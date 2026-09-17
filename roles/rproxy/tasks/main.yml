@@ -3,6 +3,24 @@
 
 # code: language=ansible
 ---
+- name: Verify reverse proxy HTTP port availability
+  ansible.builtin.import_role:
+    name: port_check
+  vars:
+    port_check_port: "{{ rproxy_vhost_http_listen_port }}"
+    port_check_service: "{{ rproxy_os_service }}"
+    port_check_hint: >-
+      Set rproxy_vhost_http_listen_port to a free port and re-run the playbook.
+
+- name: Verify reverse proxy HTTPS port availability
+  ansible.builtin.import_role:
+    name: port_check
+  vars:
+    port_check_port: "{{ rproxy_vhost_https_listen_port }}"
+    port_check_service: "{{ rproxy_os_service }}"
+    port_check_hint: >-
+      Set rproxy_vhost_https_listen_port to a free port and re-run the playbook.
+
 - name: Install nginx
   when: rproxy_install | bool
   community.general.zypper:

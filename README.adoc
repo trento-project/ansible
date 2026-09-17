@@ -69,6 +69,14 @@ If you want to use external services for these dependencies,
 turn off the respective flag and specify the `*_host` variable in your
 inventory.
 
+The `postgres`, `prometheus`, `rabbitmq` and `rproxy` roles depend on
+the internal `port_check` utility role, which verifies their target
+port is free (or already legitimately owned by the service, on a
+playbook re-run) before installation proceeds, failing early with a
+clear message instead of a confusing package/service error. It is not
+meant to be used directly; see `roles/port_check/README.adoc` for
+details.
+
 ==== SUSE Linux Enterprise Users
 
 *This playbook requires that the host where you are going to install

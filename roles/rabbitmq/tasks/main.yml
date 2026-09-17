@@ -3,6 +3,18 @@
 
 # code: language=ansible
 ---
+- name: Verify RabbitMQ port availability
+  ansible.builtin.import_role:
+    name: port_check
+  vars:
+    # 5672 is RabbitMQ's package default AMQP port; this role does not
+    # expose a variable to change it.
+    port_check_port: 5672
+    port_check_service: rabbitmq-server
+    port_check_hint: >-
+      Free port 5672 on this host, or set provision_rabbitmq to false and point
+      trento_rabbitmq_host at an existing external RabbitMQ instance.
+
 - name: Install RabbitMQ
   community.general.zypper:
     name: rabbitmq-server
