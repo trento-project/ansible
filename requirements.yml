@@ -13,3 +13,8 @@ collections:
     version: 3.14.2
   - name: ansible.posix
     version: 1.6.2
+
+roles:
+  - name: suseconnect
+    src: https://github.com/SUSE/ansible-suseconnect.git
+    version: 1.0.2-suse
