@@ -14,7 +14,7 @@
 
 # Nothing to check if the port is free; only investigate further otherwise.
 - name: "Verify availability of port {{ port_check_port }}"
-  when: __port_check_conflicts | length > 0
+  when: __port_check_conflicts is truthy
   block:
     # MainPID lets us tell our own service apart from a genuine conflict.
     - name: "Get systemd status of {{ port_check_service }}"
@@ -28,11 +28,10 @@
         argv:
           - pgrep
           - -P
-          - "{{ __port_check_service_status.status.MainPID | default(0) | int }}"
+          - "{{ __port_check_service_status.status.MainPID | int }}"
       register: __port_check_service_children
-      changed_when: false
       failed_when: false
-      when: (__port_check_service_status.status.MainPID | default(0) | int) != 0
+      when: __port_check_service_status.status.MainPID | default(0) | int is truthy
 
     # A foreign process is still caught even if the service also holds the port.
     - name: "Identify conflicts not owned by {{ port_check_service }}"
@@ -53,4 +52,4 @@
           but it is already in use by {{ __port_check_foreign_conflicts | map(attribute='name') | unique | join(', ') }}
           (pid {{ __port_check_foreign_conflicts | map(attribute='pid') | unique | join(', ') }}).
           {{ port_check_hint }}
-      when: __port_check_foreign_conflicts | length > 0
+      when: __port_check_foreign_conflicts is truthy
