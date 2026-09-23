@@ -375,11 +375,15 @@ applications. One of `debug`, `info`, `warning` or `error` | info
  application | "admin"
 
 | trento_postgres_host | The host where Postgres database is
-  located. Used as input for calculating
+  located. Embedding a port here (eg. "myhost:5433") is deprecated --
+  use `trento_postgres_port` instead. Used as input for calculating
   `trento_postgres_effective_host` variable that is the default for
   `*_postgres_host` variables in some dependent roles.  This variable
   is ignored when `trento_postgres_host_group` is non-empty string. |
   localhost
+
+| trento_postgres_port | Canonical port for playbook-managed Postgres.
+  Override this variable directly if you need a different value. | 5432
 
 | trento_postgres_host_group | Name of the host group where Postgres
   database is located. If this value is not empty string, activates
@@ -389,9 +393,6 @@ applications. One of `debug`, `info`, `warning` or `error` | info
   `*_postgres_host` variables in some dependent roles. When
   auto-discovery is active, the value of `trento_postgres_host` is
   ignored. | ""
-
-| trento_postgres_port | Canonical port for playbook-managed Postgres.
-  Override this variable directly if you need a different value. | 5432
 
 | trento_web_postgres_username | Name of the Postgres user used by Web
   application | "web"
@@ -408,14 +409,17 @@ applications. One of `debug`, `info`, `warning` or `error` | info
 | trento_wanda_postgres_db | Name of the Postgres database of Wanda
   application | "wandadb"
 
-| trento_rabbitmq_host | The host where RabbitMQ is located. Prefer
-  `trento_rabbitmq_port` for a non-default port; embedding the port
-  directly here (eg. "myhost:5673") is still supported for
-  backwards-compatibility. Used as input for
-  calculating `trento_rabbitmq_effective_host` variable that is the
-  default for `*_rabbitmq_host` variables in some dependent roles.
-  This variable is ignored when `trento_rabbitmq_host_group` is
-  non-empty string. | localhost
+| trento_rabbitmq_host | The host where RabbitMQ is located. Embedding
+  a port here (eg. "myhost:5673") is deprecated -- use
+  `trento_rabbitmq_port` instead. Used as input for calculating
+  `trento_rabbitmq_effective_host` variable that is the default for
+  `*_rabbitmq_host` variables in some dependent roles. This variable
+  is ignored when `trento_rabbitmq_host_group` is non-empty string. |
+  localhost
+
+| trento_rabbitmq_port | Canonical AMQP port for playbook-managed
+  RabbitMQ. Override this variable directly if you need a different
+  value. | 5672
 
 | trento_rabbitmq_host_group | Name of the host group where RabbitMQ
   is located. If this value is not
@@ -431,10 +435,6 @@ applications. One of `debug`, `info`, `warning` or `error` | info
 
 | trento_rabbitmq_vhost | The rabbitmq vhost used for the current
   deployment | "trento"
-
-| trento_rabbitmq_port | Canonical AMQP port for playbook-managed
-  RabbitMQ. Override this variable directly if you need a different
-  value. | 5672
 
 | trento_prometheus_host | The host where Prometheus is
   located. Used as input for calculating
@@ -787,16 +787,16 @@ More detailed info about usage and defaults available link:https://github.com/tr
 |===
 |Name | Description | Default
 
-| agent_prometheus_mode | 
-  Whether to use Prometheus in "pull" mode with prometheus node exporters or in "push" mode with grafana alloy. | 
+| agent_prometheus_mode |
+  Whether to use Prometheus in "pull" mode with prometheus node exporters or in "push" mode with grafana alloy. |
   If unspecified it resolves to "pull" for SLES \<= 15.7 and "pull" for SLES 16 and above.
 
-| agent_prometheus_exporter_name | 
-  Exporter name used in host discovery. | 
+| agent_prometheus_exporter_name |
+  Exporter name used in host discovery. |
   "node_exporter" in case of prometheus "pull" mode, "grafana_alloy" in case of "push" mode.
 
-| agent_prometheus_node_exporter_target | 
-  The target address of the node exporter to scrape metrics from, in case `agent_prometheus_mode` is set to "pull". | 
+| agent_prometheus_node_exporter_target |
+  The target address of the node exporter to scrape metrics from, in case `agent_prometheus_mode` is set to "pull". |
   Defaults to the lowest discovered IP address with a default port number (9100).
 
 | agent_prometheus_remote_write_url | The remote write URL of the Prometheus server, in case `agent_prometheus_mode` is set to "push". | "https://<value of `trento_server_name`>/prometheus/api/v1/write"
