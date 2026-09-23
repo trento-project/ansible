@@ -31,12 +31,10 @@ __trento_postgres_effective_host: "{{ trento_postgres_host_group is truthy
                                               trento_postgres_host) }}"
 
 # `trento_postgres_host` has historically allowed embedding the port
-# directly (eg. "myhost:5433") for backwards-compatibility. Split it
-# back out here so `trento_postgres_port` remains the single source of
-# truth for anything that needs the port on its own. Only a single
-# colon is treated as a host:port separator, so bare (unbracketed)
-# IPv6 literals -- which always contain 2+ colons -- are left alone
-# rather than being mangled.
+# directly (eg. "myhost:5433") for backwards-compatibility.
+# Now it is handled separately through `trento_postgres_effective_port`,
+# which will be derived from either the embedded port in `trento_postgres_host`
+# or from the separate `trento_postgres_port` variable.
 __trento_postgres_effective_host_parts: "{{ __trento_postgres_effective_host.rsplit(':', 1) }}"
 trento_postgres_effective_host: >-
   {{
@@ -62,12 +60,10 @@ __trento_rabbitmq_effective_host: "{{ trento_rabbitmq_host_group is truthy
                                               trento_rabbitmq_host) }}"
 
 # `trento_rabbitmq_host` has historically allowed embedding the port
-# directly (eg. "myhost:5673") for backwards-compatibility. Split it
-# back out here so `trento_rabbitmq_port` remains the single source of
-# truth for anything that needs the port on its own. Only a single
-# colon is treated as a host:port separator, so bare (unbracketed)
-# IPv6 literals -- which always contain 2+ colons -- are left alone
-# rather than being mangled.
+# directly (eg. "myhost:5673") for backwards-compatibility.
+# Now it is handled separately through `trento_rabbitmq_effective_port`,
+# which will be derived from either the embedded port in `trento_rabbitmq_host`
+# or from the separate `trento_rabbitmq_port` variable.
 __trento_rabbitmq_effective_host_parts: "{{ __trento_rabbitmq_effective_host.rsplit(':', 1) }}"
 trento_rabbitmq_effective_host: >-
   {{
