@@ -77,9 +77,7 @@ supported OSs, with the following modules (Change `x` to match your
 current version).
 
 Instead of registering by hand, set `enable_suseconnect` to `true` in
-your inventory to have every host in the play register the modules
-above itself (via the
-https://github.com/SUSE/ansible-suseconnect[suseconnect] role).
+your inventory to have every host in the play register the modules above itself.
 
 On SLES 15:
 
@@ -217,11 +215,11 @@ all:
 === 4. Run the playbooks
 
 Prior to running the playbooks, tell ansible to fetch the required
-collections and roles (`requirements.yml` lists both):
+collections:
 
 [source, console]
 ----
-$ ansible-galaxy install -r requirements.yml
+$ ansible-galaxy collection install -r requirements.yml
 ----
 
 Run a playbook:
