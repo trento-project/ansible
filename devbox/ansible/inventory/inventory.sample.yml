@@ -108,6 +108,12 @@ trento_components:
       mpNiKDOPALNTs+Ukdkt5KlE=
       -----END PRIVATE KEY-----
 
+    # Component provisioning flags
+    provision_postgres: true
+    provision_rabbitmq: true
+    provision_prometheus: true
+    provision_proxy: true
+
 trento_server:
   children:
     devboxes:
