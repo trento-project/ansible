@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0
           ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
-      - uses: apache/skywalking-eyes/header@61275cc80d0798a405cb070f7d3a8aaf7cf2c2c1 # v0.8.0
+      - uses: apache/skywalking-eyes/header@a196742f472feaffafea537ce5a2a4c3c53a8de4 # v0.9.0
         name: Check license headers
 
       - name: Run ansible-lint on main playbook
@@ -215,7 +215,7 @@ jobs:
     needs:
       - ansible-lint
       - test-deploy
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@7bdd3e4e59084a0edca7da6ece0456490defafb2 # v1.9.0
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@d8679bc6bc759e119793a2d59285098613f52055 # v1.10.0
     with:
       image_name: ansible
       tag: rolling
@@ -230,7 +230,7 @@ jobs:
     needs:
       - ansible-lint
       - test-deploy
-    uses: trento-project/.github/.github/workflows/obs-sync.yaml@7bdd3e4e59084a0edca7da6ece0456490defafb2 # v1.9.0
+    uses: trento-project/.github/.github/workflows/obs-sync.yaml@d8679bc6bc759e119793a2d59285098613f52055 # v1.10.0
     with:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
       obs_package: ${{ vars.OBS_PACKAGE }}
@@ -239,3 +239,20 @@ jobs:
       obs_user: ${{ secrets.OBS_USER }}
       obs_pass: ${{ secrets.OBS_PASS }}
       obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}
+
+  dependabot-auto-merge:
+    name: Approve and merge Dependabot PRs
+    if: >
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled') &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.user.login == 'dependabot[bot]'
+    needs:
+      - ansible-lint
+      - test-deploy
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    uses: trento-project/.github/.github/workflows/dependabot-auto-merge.yaml@d8679bc6bc759e119793a2d59285098613f52055 # v1.10.0
