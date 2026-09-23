@@ -45,3 +45,6 @@ all:
     trento_prometheus_auth: "basic"
     trento_prometheus_auth_username: "prometheus"
     trento_prometheus_auth_password: "your-prometheus-password"
+
+    # SUSEConnect auto-registration
+    enable_suseconnect: true
