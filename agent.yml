@@ -24,7 +24,7 @@
         # to please the linter.
         trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else ''}}"
 
-    - role: suseconnect
+    - role: suse.linux_system_roles.suseconnect
       become: true
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules_with_packagehub }}"

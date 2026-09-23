@@ -18,7 +18,7 @@
   vars_files:
     - vars/main.yml
   roles:
-    - role: suseconnect
+    - role: suse.linux_system_roles.suseconnect
       become: true
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
@@ -35,7 +35,7 @@
   vars_files:
     - vars/main.yml
   roles:
-    - role: suseconnect
+    - role: suse.linux_system_roles.suseconnect
       become: true
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules_with_packagehub }}"
@@ -59,7 +59,7 @@
   vars_files:
     - vars/main.yml
   roles:
-    - role: suseconnect
+    - role: suse.linux_system_roles.suseconnect
       become: true
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
@@ -85,7 +85,7 @@
         trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else '' }}"
         trento_prometheus_host_group: "{{ 'prometheus_hosts' if (provision_prometheus | bool) else '' }}"
 
-    - role: suseconnect
+    - role: suse.linux_system_roles.suseconnect
       become: true
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules }}"

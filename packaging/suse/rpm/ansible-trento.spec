@@ -42,6 +42,7 @@ BuildRequires:  %{modern_python}-distlib
 
 Requires:       ansible-core >= 2.16
 Requires:       ansible >= 9
+Requires:       ansible-linux-system-roles
 
 %description
 Collection of Ansible roles and playbooks for deploying and managing
