@@ -62,6 +62,9 @@ jobs:
           fetch-depth: 0
           ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
+      - name: Mark workspace as safe for Git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Run ansible-lint on main playbook
         uses: ansible/ansible-lint@262624cd0ab22a4221293216856c59671ce7aa5e # v26.6.0
 
