@@ -61,6 +61,8 @@
     src: "{{ item.item }}.trento-backup"
     dest: "{{ item.item }}"
     remote_src: true
+    owner: postgres
+    group: postgres
     mode: preserve
   loop: "{{ __postgres_configuration_backups.results }}"
   when: item.stat.exists
