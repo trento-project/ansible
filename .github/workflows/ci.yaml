@@ -156,12 +156,14 @@ jobs:
             nginx_ssl_key='${{ secrets.SSL_KEY }}' \
             agent_server_ca_cert='${{ secrets.SERVER_CA_CERT }}' \
             agent_server_ca_cert_as_base64='true' \
-            install_method='${{ matrix.install_method }}'
-            trento_prometheus_auth='basic'
-            trento_prometheus_auth_username='prometheus'
-            trento_prometheus_auth_password='prometheus-password'"
+            install_method='${{ matrix.install_method }}' \
+            trento_prometheus_auth='basic' \
+            trento_prometheus_auth_username='prometheus' \
+            trento_prometheus_auth_password='prometheus-password' \
+            trento_postgres_port='5499' \
+            trento_rabbitmq_port='5699'"
             --verbose
-
+          # FIXME: ^^^^^^ ports are hardcoded for a CI test run, revert this change
       - name: Test readiness
         run: curl -k "https://${{ env.TEST_HOST_IP }}/api/readyz"
 
@@ -206,7 +208,9 @@ jobs:
             nginx_ssl_key_as_base64='true' \
             nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
             nginx_ssl_key='${{ secrets.SSL_KEY }}' \
-            install_method='${{ matrix.install_method }}'"
+            install_method='${{ matrix.install_method }}' \
+            trento_postgres_port='5499' \
+            trento_rabbitmq_port='5699'"
             --verbose
 
   publish-containers:
