@@ -37,6 +37,17 @@
     state: started
     enabled: true
 
+- name: Preserve postgres configuration before Trento changes
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ item }}.trento-backup"
+    remote_src: true
+    mode: preserve
+    force: false
+  loop:
+    - /var/lib/pgsql/data/postgresql.conf
+    - /var/lib/pgsql/data/pg_hba.conf
+
 - name: "Configure postgres to listen on port {{ postgres_port }}"
   # postgresql.conf only exists once the data directory has been
   # initialized by the first service start above. `port` is a
