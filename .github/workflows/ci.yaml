@@ -133,6 +133,7 @@ jobs:
               target_python: python3.11
 
     env:
+      PIPX_BIN_DIR: /usr/local/bin
       TEST_HOST_IP: ${{ vars[matrix.target.host_var] }}
       ANSIBLE_ROLES_PATH: /usr/share/ansible/roles:~/.ansible/roles
       ANSIBLE_COLLECTIONS_PATH: /usr/share/ansible/collections:~/.ansible/collections
