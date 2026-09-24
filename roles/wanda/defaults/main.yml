@@ -17,3 +17,4 @@ wanda_rabbitmq_password: "{{ rabbitmq_password | default(trento_rabbitmq_passwor
 wanda_rabbitmq_vhost: "{{ rabbitmq_vhost | default(trento_rabbitmq_vhost) }}" # `rabbimtq_vhost` for backwards-compatibility
 wanda_web_listen_port: "{{ web_listen_port | default(trento_web_listen_port) }}" # `web_listen_port` for backwards-compatibility
 wanda_secret_key_base: "{{ secret_key_base | default('') }}" # `secret_key_base` is for backwards-compatibility
+wanda_provision_proxy: "{{ provision_proxy | default(true) }}"
