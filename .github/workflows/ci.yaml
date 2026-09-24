@@ -20,7 +20,6 @@ concurrency:
 jobs:
   ansible-lint:
     name: Playbook linting
-    if: ${{ false }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
@@ -52,7 +51,6 @@ jobs:
   test-deploy:
     name: Run ansible${{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/${{ matrix.target.label }}
     needs: [ansible-lint]
-    if: ${{ always() }}
     runs-on: ubuntu-24.04
     concurrency:
       group: test-deploy-host-${{ matrix.target.label }}
@@ -111,29 +109,8 @@ jobs:
       - name: Install galaxy deps
         run: ansible-galaxy install -r requirements.yml
 
-      - name: Test PostgreSQL configuration lifecycle
-        uses: dawidd6/action-ansible-playbook@126642a1c6ce512da255ef2b41e8ee90f0077474 # v9
-        with:
-          playbook: playbook.reset-postgres.yml
-          key: ${{ secrets.SSH_MACHINE_KEY }}
-          inventory: |
-            all:
-              vars:
-                ansible_user: ${{ secrets.TEST_HOST_USER }}
-                ansible_python_interpreter: /usr/bin/${{ matrix.target.target_python || matrix.control_node.target_python }}
-              children:
-                postgres_hosts:
-                  hosts:
-                    server:
-                      ansible_host: ${{ env.TEST_HOST_IP }}
-          options: |
-            --extra-vars "web_postgres_password='trento' \
-            wanda_postgres_password='wanda' \
-            trento_postgres_port='5499'"
-
       - name: Run playbook
         id: runplaybook
-        if: ${{ false }}
         uses: dawidd6/action-ansible-playbook@126642a1c6ce512da255ef2b41e8ee90f0077474 # v9
         with:
           playbook: playbook.yml
@@ -188,7 +165,6 @@ jobs:
             --verbose
           # FIXME: ^^^^^^ ports are hardcoded for a CI test run, revert this change
       - name: Test readiness
-        if: steps.runplaybook.conclusion == 'success'
         run: curl -k "https://${{ env.TEST_HOST_IP }}/api/readyz"
 
       - name: Run playbook cleanup
