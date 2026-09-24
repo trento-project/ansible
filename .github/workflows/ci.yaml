@@ -19,24 +19,38 @@ concurrency:
 
 env:
   PIPX_BIN_DIR: /usr/local/bin
+  LEAP_IMAGE: registry.opensuse.org/opensuse/leap:16.0
   ZYPPER_PACKAGES: >-
     bash
-    git
-    openssh-clients
-    tar
-    gzip
     curl
+    git
+    gzip
+    openssh-clients
     python3
     python3-pip
     python3-pipx
+    tar
+    wget
     ansible-linux-system-roles
 
 jobs:
+  license-header:
+    name: Check license headers
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
+
+      - uses: apache/skywalking-eyes/header@a196742f472feaffafea537ce5a2a4c3c53a8de4 # v0.9.0
+        name: Check license headers
+
   ansible-lint:
     name: Playbook linting
     runs-on: ubuntu-24.04
     container:
-      image: registry.opensuse.org/opensuse/leap:16.0
+      image: ${{ env.LEAP_IMAGE }}
     env:
       ANSIBLE_ROLES_PATH: /usr/share/ansible/roles:~/.ansible/roles
       ANSIBLE_COLLECTIONS_PATH: /usr/share/ansible/collections:~/.ansible/collections
@@ -45,23 +59,13 @@ jobs:
         run: |
           zypper -n in -y $ZYPPER_PACKAGES
 
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
-      - uses: apache/skywalking-eyes/header@a196742f472feaffafea537ce5a2a4c3c53a8de4 # v0.9.0
-        name: Check license headers
-
-      - name: Install Ansible and ansible-lint
-        run: |
-          pipx install --force --include-deps ansible
-          pipx inject --include-apps ansible ansible-lint
-
       - name: Run ansible-lint on main playbook
         uses: ansible/ansible-lint@262624cd0ab22a4221293216856c59671ce7aa5e # v26.6.0
-        with:
-          setup_python: false
 
       - name: List available collections
         run: |
@@ -80,10 +84,10 @@ jobs:
 
   test-deploy:
     name: Run ansible${{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/${{ matrix.target.label }}
-    needs: [ansible-lint]
+    needs: [ansible-lint, license-header]
     runs-on: ubuntu-24.04
     container:
-      image: registry.opensuse.org/opensuse/leap:16.0
+      image: ${{ env.LEAP_IMAGE }}
     concurrency:
       group: test-deploy-host-${{ matrix.target.label }}
       cancel-in-progress: false
@@ -182,7 +186,7 @@ jobs:
           zypper -n in -y $ZYPPER_PACKAGES
 
       - name: Checkout repo
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
