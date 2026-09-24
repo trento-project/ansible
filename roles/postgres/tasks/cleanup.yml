@@ -16,27 +16,32 @@
     - name: Remove web database
       community.postgresql.postgresql_db:
         name: "{{ postgres_web_db }}"
+        login_port: "{{ postgres_port }}"
         state: absent
         force: true
 
     - name: Remove web event store database
       community.postgresql.postgresql_db:
         name: "{{ postgres_web_event_store }}"
+        login_port: "{{ postgres_port }}"
         state: absent
         force: true
 
     - name: Remove wanda event store database
       community.postgresql.postgresql_db:
         name: "{{ postgres_wanda_db }}"
+        login_port: "{{ postgres_port }}"
         state: absent
         force: true
 
     - name: Remove web database user
       community.postgresql.postgresql_user:
         name: "{{ postgres_web_username }}"
+        login_port: "{{ postgres_port }}"
         state: absent
 
     - name: Remove wanda database user
       community.postgresql.postgresql_user:
         name: "{{ postgres_wanda_username }}"
+        login_port: "{{ postgres_port }}"
         state: absent
