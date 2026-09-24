@@ -125,9 +125,10 @@ jobs:
 
       - name: Install Ansible
         run: |
-          pipx install --force --include-deps "ansible~=${{ matrix.control_node.ansible_version }}.0"
-          echo "/root/.local/bin" >> "$GITHUB_PATH"
+          mkdir -p /usr/local/bin
+          PIPX_BIN_DIR=/usr/local/bin pipx install --force --include-deps "ansible~=${{ matrix.control_node.ansible_version }}.0"
           ln -sf /root/.local/bin/* /usr/local/bin/ || true
+          ln -sf /root/.local/bin/* /usr/bin/ || true
 
       - name: Install galaxy deps
         run: ansible-galaxy install -r requirements.yml
