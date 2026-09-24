@@ -18,8 +18,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PIPX_BIN_DIR: /usr/local/bin
-  LEAP_IMAGE: registry.opensuse.org/opensuse/leap:16.0
   ZYPPER_PACKAGES: >-
     bash
     curl
@@ -50,7 +48,7 @@ jobs:
     name: Playbook linting
     runs-on: ubuntu-24.04
     container:
-      image: ${{ env.LEAP_IMAGE }}
+      image: registry.opensuse.org/opensuse/leap:16.0
     env:
       ANSIBLE_ROLES_PATH: /usr/share/ansible/roles:~/.ansible/roles
       ANSIBLE_COLLECTIONS_PATH: /usr/share/ansible/collections:~/.ansible/collections
@@ -87,7 +85,7 @@ jobs:
     needs: [ansible-lint, license-header]
     runs-on: ubuntu-24.04
     container:
-      image: ${{ env.LEAP_IMAGE }}
+      image: registry.opensuse.org/opensuse/leap:16.0
     concurrency:
       group: test-deploy-host-${{ matrix.target.label }}
       cancel-in-progress: false
