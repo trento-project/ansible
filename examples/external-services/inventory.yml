@@ -19,9 +19,11 @@ all:
           ansible_user: root
 
   vars:
+    # Component provisioning flags
     provision_postgres: false
     provision_rabbitmq: false
     provision_prometheus: false
+    provision_proxy: true
     trento_postgres_host: "yourexternalpg.com"
     trento_rabbitmq_host: "yourexternalrabbit.com:5671"
     trento_server_name: "your-servername.com"

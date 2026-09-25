@@ -51,3 +51,9 @@ all:
     web_smtp_port: "smtp-port"
     web_smtp_user: "smtp-user"
     web_smtp_password: "smtp-password"
+
+    # Component provisioning flags
+    provision_postgres: true
+    provision_rabbitmq: true
+    provision_prometheus: true
+    provision_proxy: true
