@@ -45,3 +45,9 @@ all:
     trento_prometheus_auth: "basic"
     trento_prometheus_auth_username: "prometheus"
     trento_prometheus_auth_password: "your-prometheus-password"
+
+    # Component provisioning flags
+    provision_postgres: true
+    provision_rabbitmq: true
+    provision_prometheus: true
+    provision_proxy: true
