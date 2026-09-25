@@ -2,9 +2,10 @@
 SPDX-FileCopyrightText: SUSE LLC
 SPDX-License-Identifier: Apache-2.0
 #}
-AMQP_URL={{ web_amqp_protocol }}://{{ web_rabbitmq_username }}:{{ web_rabbitmq_password }}@{{ web_rabbitmq_host }}/{{ web_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
-DATABASE_URL=ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_db }}
-EVENTSTORE_URL=ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}/{{ web_postgres_event_store }}
+LOG_LEVEL={{ web_log_level }}
+AMQP_URL={{ web_amqp_protocol }}://{{ web_rabbitmq_username }}:{{ web_rabbitmq_password }}@{{ web_rabbitmq_host }}:{{ web_rabbitmq_port }}/{{ web_rabbitmq_vhost | urlencode | replace('/', '%2F') }}
+DATABASE_URL=ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}:{{ web_postgres_port }}/{{ web_postgres_db }}
+EVENTSTORE_URL=ecto://{{ web_postgres_username }}:{{ web_postgres_password }}@{{ web_postgres_host }}:{{ web_postgres_port }}/{{ web_postgres_event_store }}
 {% if web_enable_alerting is not none %}
 ENABLE_ALERTING={{ web_enable_alerting | string | lower }}
 {% endif %}
@@ -36,7 +37,7 @@ ENABLE_API_KEY={{ web_enable_api_key | string | lower }}
 CHARTS_ENABLED={{ web_enable_charts | string | lower }}
 PORT={{ web_listen_port }}
 TRENTO_WEB_ORIGIN={{ web_server_name }}
-{% if provision_proxy | bool %}
+{% if web_provision_proxy | bool %}
 OAS_SERVER_URL={{ web_oas_server_url }}
 CHECKS_SERVICE_BASE_URL={{ web_wanda_proxy_location }}
 {% else %}

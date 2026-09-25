@@ -21,3 +21,4 @@ header:
     - "LICENSE"
     - "VERSION"
     - "inventory"
+    - "packaging/suse/rpm/ansible-trento.spec"

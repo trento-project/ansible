@@ -16,24 +16,62 @@
     - name: Remove web database
       community.postgresql.postgresql_db:
         name: "{{ postgres_web_db }}"
+        login_port: "{{ postgres_port }}"
         state: absent
+        force: true
 
     - name: Remove web event store database
       community.postgresql.postgresql_db:
         name: "{{ postgres_web_event_store }}"
+        login_port: "{{ postgres_port }}"
         state: absent
+        force: true
 
     - name: Remove wanda event store database
       community.postgresql.postgresql_db:
         name: "{{ postgres_wanda_db }}"
+        login_port: "{{ postgres_port }}"
         state: absent
+        force: true
 
     - name: Remove web database user
       community.postgresql.postgresql_user:
         name: "{{ postgres_web_username }}"
+        login_port: "{{ postgres_port }}"
         state: absent
 
     - name: Remove wanda database user
       community.postgresql.postgresql_user:
         name: "{{ postgres_wanda_username }}"
+        login_port: "{{ postgres_port }}"
         state: absent
+
+- name: Check postgres configuration backups
+  become: true
+  ansible.builtin.stat:
+    path: "{{ item }}.trento-backup"
+  loop:
+    - /var/lib/pgsql/data/postgresql.conf
+    - /var/lib/pgsql/data/pg_hba.conf
+  register: __postgres_configuration_backups
+
+- name: Restore postgres configuration
+  become: true
+  ansible.builtin.copy:
+    src: "{{ item.item }}.trento-backup"
+    dest: "{{ item.item }}"
+    remote_src: true
+    owner: postgres
+    group: postgres
+    mode: preserve
+  loop: "{{ __postgres_configuration_backups.results }}"
+  when: item.stat.exists
+  notify: Restart postgres
+
+- name: Remove postgres configuration backups
+  become: true
+  ansible.builtin.file:
+    path: "{{ item.item }}.trento-backup"
+    state: absent
+  loop: "{{ __postgres_configuration_backups.results }}"
+  when: item.stat.exists

@@ -10,4 +10,4 @@ SPDX-License-Identifier: Apache-2.0
 #
 # Command line options for prometheus
 #
-ARGS="{{ (prometheus_enable_remote_write_receiver | bool) | ternary('--web.enable-remote-write-receiver', '') }}"
+ARGS="--web.listen-address=:{{ trento_prometheus_port }}{{ (prometheus_enable_remote_write_receiver | bool) | ternary(' --web.enable-remote-write-receiver', '') }}"

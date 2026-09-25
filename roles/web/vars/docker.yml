@@ -10,6 +10,7 @@ web_force_recreate_container: false
 web_remove_container_image: true
 
 # Overrides
-web_prometheus_url: "http://host.docker.internal:9090"
+web_prometheus_host: >-
+  {{ (trento_prometheus_effective_host in ['localhost', '127.0.0.1', '::1']) | ternary('host.docker.internal', trento_prometheus_effective_host) }}
 web_postgres_host: "host.docker.internal"
 web_rabbitmq_host: "host.docker.internal"
