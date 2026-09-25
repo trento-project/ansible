@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+# code: language=ansible
+---
+- name: Restart RabbitMQ
+  ansible.builtin.service:
+    name: rabbitmq-server
+    state: restarted
