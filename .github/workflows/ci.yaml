@@ -17,18 +17,55 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  ZYPPER_PACKAGES: >-
+    bash
+    curl
+    git
+    gzip
+    openssh-clients
+    python3
+    python3-pip
+    python3-pipx
+    tar
+    wget
+    ansible-linux-system-roles
+
 jobs:
-  ansible-lint:
-    name: Playbook linting
+  license-header:
+    name: Check license headers
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
       - uses: apache/skywalking-eyes/header@a196742f472feaffafea537ce5a2a4c3c53a8de4 # v0.9.0
         name: Check license headers
+
+  ansible-lint:
+    name: Playbook linting
+    runs-on: ubuntu-24.04
+    container:
+      image: registry.opensuse.org/opensuse/leap:16.0
+    env:
+      ANSIBLE_ROLES_PATH: /usr/share/ansible/roles:~/.ansible/roles
+      ANSIBLE_COLLECTIONS_PATH: /usr/share/ansible/collections:~/.ansible/collections
+    steps:
+      - name: Bootstrap container dependencies
+        run: |
+          zypper -n in -y $ZYPPER_PACKAGES
+          test -x /usr/bin/bash
+          echo /usr/bin >> "$GITHUB_PATH"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
+
+      - name: Mark workspace as safe for Git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Run ansible-lint on main playbook
         uses: ansible/ansible-lint@262624cd0ab22a4221293216856c59671ce7aa5e # v26.6.0
@@ -50,8 +87,10 @@ jobs:
 
   test-deploy:
     name: Run ansible${{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/${{ matrix.target.label }}
-    needs: [ansible-lint]
+    needs: [ansible-lint, license-header]
     runs-on: ubuntu-24.04
+    container:
+      image: registry.opensuse.org/opensuse/leap:16.0
     concurrency:
       group: test-deploy-host-${{ matrix.target.label }}
       cancel-in-progress: false
@@ -94,17 +133,71 @@ jobs:
               target_python: python3.11
 
     env:
+      PIPX_BIN_DIR: /usr/local/bin
       TEST_HOST_IP: ${{ vars[matrix.target.host_var] }}
+      ANSIBLE_ROLES_PATH: /usr/share/ansible/roles:~/.ansible/roles
+      ANSIBLE_COLLECTIONS_PATH: /usr/share/ansible/collections:~/.ansible/collections
+      ANSIBLE_INVENTORY: |
+        all:
+          vars:
+            ansible_user: ${{ secrets.TEST_HOST_USER }}
+            ansible_python_interpreter: /usr/bin/${{ matrix.target.target_python || matrix.control_node.target_python }}
+          children:
+            trento_server:
+              hosts:
+                server:
+                  ansible_host: ${{ vars[matrix.target.host_var] }}
+            postgres_hosts:
+              hosts:
+                server:
+                  ansible_host: ${{ vars[matrix.target.host_var] }}
+            rabbitmq_hosts:
+              hosts:
+                server:
+                  ansible_host: ${{ vars[matrix.target.host_var] }}
+            prometheus_hosts:
+              hosts:
+                server:
+                  ansible_host: ${{ vars[matrix.target.host_var] }}
+            agents:
+              hosts:
+                agent:
+                  ansible_host: ${{ vars[matrix.target.host_var] }}
+      ANSIBLE_OPTIONS: |
+        --verbose
+        --extra-vars "web_postgres_password='trento' \
+        wanda_postgres_password='wanda' \
+        rabbitmq_password='trento' \
+        prometheus_url='http://localhost' \
+        trento_server_name='trento-deployment.example.com' \
+        web_admin_password='adminpassword' \
+        enable_api_key='false' \
+        nginx_vhost_listen_port='443' \
+        nginx_ssl_cert_as_base64='true' \
+        nginx_ssl_key_as_base64='true' \
+        nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
+        nginx_ssl_key='${{ secrets.SSL_KEY }}' \
+        agent_server_ca_cert='${{ secrets.SERVER_CA_CERT }}' \
+        agent_server_ca_cert_as_base64='true' \
+        install_method='${{ matrix.install_method }}' \
+        trento_prometheus_auth='basic' \
+        trento_prometheus_auth_username='prometheus' \
+        trento_prometheus_auth_password='prometheus-password'"
 
     steps:
+      - name: Bootstrap container dependencies
+        run: |
+          zypper -n in -y $ZYPPER_PACKAGES
+
       - name: Checkout repo
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
       - name: Install Ansible
-        run: sudo pipx install --force --include-deps "ansible~=${{ matrix.control_node.ansible_version }}.0"
+        run: |
+          pipx install --force --include-deps "ansible~=${{ matrix.control_node.ansible_version }}.0"
 
       - name: Install galaxy deps
         run: ansible-galaxy install -r requirements.yml
@@ -115,52 +208,8 @@ jobs:
         with:
           playbook: playbook.yml
           key: ${{ secrets.SSH_MACHINE_KEY }}
-          inventory: |
-            all:
-              vars:
-                ansible_user: ${{ secrets.TEST_HOST_USER }}
-                ansible_python_interpreter: /usr/bin/${{ matrix.target.target_python || matrix.control_node.target_python }}
-              children:
-                trento_server:
-                  hosts:
-                    server:
-                      ansible_host: ${{ env.TEST_HOST_IP }}
-                postgres_hosts:
-                  hosts:
-                    server:
-                      ansible_host: ${{ env.TEST_HOST_IP }}
-                rabbitmq_hosts:
-                  hosts:
-                    server:
-                      ansible_host: ${{ env.TEST_HOST_IP }}
-                prometheus_hosts:
-                  hosts:
-                    server:
-                      ansible_host: ${{ env.TEST_HOST_IP }}
-                agents:
-                  hosts:
-                    agent:
-                      ansible_host: ${{ env.TEST_HOST_IP }}
-          options: |
-            --extra-vars "web_postgres_password='trento' \
-            wanda_postgres_password='wanda' \
-            rabbitmq_password='trento' \
-            prometheus_url='http://localhost' \
-            trento_server_name='trento-deployment.example.com' \
-            web_admin_password='adminpassword' \
-            enable_api_key='false' \
-            nginx_vhost_listen_port='443' \
-            nginx_ssl_cert_as_base64='true' \
-            nginx_ssl_key_as_base64='true' \
-            nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
-            nginx_ssl_key='${{ secrets.SSL_KEY }}' \
-            agent_server_ca_cert='${{ secrets.SERVER_CA_CERT }}' \
-            agent_server_ca_cert_as_base64='true' \
-            install_method='${{ matrix.install_method }}' \
-            trento_prometheus_auth='basic' \
-            trento_prometheus_auth_username='prometheus' \
-            trento_prometheus_auth_password='prometheus-password'"
-            --verbose
+          inventory: ${{ env.ANSIBLE_INVENTORY }}
+          options: ${{ env.ANSIBLE_OPTIONS }}
 
       - name: Test readiness
         run: curl -k "https://${{ env.TEST_HOST_IP }}/api/readyz"
@@ -171,48 +220,8 @@ jobs:
         with:
           playbook: playbook.cleanup.yml
           key: ${{ secrets.SSH_MACHINE_KEY }}
-          inventory: |
-            all:
-              vars:
-                ansible_user: ${{ secrets.TEST_HOST_USER }}
-                ansible_python_interpreter: /usr/bin/${{ matrix.target.target_python || matrix.control_node.target_python }}
-              children:
-                trento_server:
-                  hosts:
-                    server:
-                      ansible_host: ${{ env.TEST_HOST_IP }}
-                postgres_hosts:
-                  hosts:
-                    server:
-                      ansible_host: ${{ env.TEST_HOST_IP }}
-                rabbitmq_hosts:
-                  hosts:
-                    server:
-                      ansible_host: ${{ env.TEST_HOST_IP }}
-                prometheus_hosts:
-                  hosts:
-                    server:
-                      ansible_host: ${{ env.TEST_HOST_IP }}
-          options: |
-            --extra-vars "web_postgres_password='trento' \
-            wanda_postgres_password='wanda' \
-            rabbitmq_password='trento' \
-            prometheus_url='http://localhost' \
-            trento_server_name='trento-deployment.example.com' \
-            web_admin_password='adminpassword' \
-            enable_api_key='false' \
-            nginx_vhost_listen_port='443' \
-            nginx_ssl_cert_as_base64='true' \
-            nginx_ssl_key_as_base64='true' \
-            nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
-            nginx_ssl_key='${{ secrets.SSL_KEY }}' \
-            agent_server_ca_cert='${{ secrets.SERVER_CA_CERT }}' \
-            agent_server_ca_cert_as_base64='true' \
-            install_method='${{ matrix.install_method }}' \
-            trento_prometheus_auth='basic' \
-            trento_prometheus_auth_username='prometheus' \
-            trento_prometheus_auth_password='prometheus-password'"
-            --verbose
+          inventory: ${{ env.ANSIBLE_INVENTORY }}
+          options: ${{ env.ANSIBLE_OPTIONS }}
 
   publish-containers:
     name: Publish GHCR Containers
