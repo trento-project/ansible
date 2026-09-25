@@ -15,14 +15,34 @@
 
 - name: Provision Postgres
   hosts: postgres_hosts
+  vars_files:
+    - vars/main.yml
   roles:
+    - role: suse.linux_system_roles.suseconnect
+      become: true
+      vars:
+        suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
+      when:
+        - provision_postgres | default(true) | bool
+        - enable_suseconnect | default(false) | bool
+
     - role: postgres
       become: true
       when: provision_postgres | default(true) | bool
 
 - name: Provision Prometheus
   hosts: prometheus_hosts
+  vars_files:
+    - vars/main.yml
   roles:
+    - role: suse.linux_system_roles.suseconnect
+      become: true
+      vars:
+        suseconnect_subscriptions: "{{ suseconnect_base_modules_with_packagehub }}"
+      when:
+        - provision_prometheus | default(true) | bool
+        - enable_suseconnect | default(false) | bool
+
     - role: prometheus
       become: true
       when: provision_prometheus | default(true) | bool
@@ -36,13 +56,25 @@
 
 - name: Provision RabbitMQ
   hosts: rabbitmq_hosts
+  vars_files:
+    - vars/main.yml
   roles:
+    - role: suse.linux_system_roles.suseconnect
+      become: true
+      vars:
+        suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
+      when:
+        - provision_rabbitmq | default(true) | bool
+        - enable_suseconnect | default(false) | bool
+
     - role: rabbitmq
       become: true
       when: provision_rabbitmq | default(true) | bool
 
 - name: Configure Trento components
   hosts: trento_server
+  vars_files:
+    - vars/main.yml
   roles:
     # Explicitly call the trento role with the passed parameters to
     # please the linter.
@@ -52,6 +84,12 @@
         trento_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | default(true) | bool) else '' }}"
         trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | default(true) | bool) else '' }}"
         trento_prometheus_host_group: "{{ 'prometheus_hosts' if (provision_prometheus | default(true) | bool) else '' }}"
+
+    - role: suse.linux_system_roles.suseconnect
+      become: true
+      vars:
+        suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
+      when: enable_suseconnect | default(false) | bool
 
     - role: web
       become: true

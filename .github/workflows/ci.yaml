@@ -30,6 +30,34 @@ jobs:
       - uses: apache/skywalking-eyes/header@a196742f472feaffafea537ce5a2a4c3c53a8de4 # v0.9.0
         name: Check license headers
 
+      - name: Resolve SUSE Linux system roles collection version
+        id: suse-roles-version
+        run: |
+          filename=$(curl -s "https://api.opensuse.org/public/build/openSUSE:Factory/standard/x86_64/ansible-linux-system-roles" \
+            | grep -o 'filename="ansible-linux-system-roles-[^"]*\.noarch\.rpm"' \
+            | head -1 | cut -d'"' -f2)
+          echo "filename=${filename}" >> "$GITHUB_OUTPUT"
+
+      - name: Cache SUSE Linux system roles collection
+        id: cache-suse-roles
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.ansible/collections/ansible_collections/suse
+          key: suse-linux-system-roles-${{ steps.suse-roles-version.outputs.filename }}
+
+      - name: Install SUSE Linux system roles collection
+        if: steps.cache-suse-roles.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends rpm2cpio cpio
+          mkdir -p ~/.ansible/collections/ansible_collections
+          curl -sL -o /tmp/suse-roles.rpm \
+            "https://api.opensuse.org/public/build/openSUSE:Factory/standard/x86_64/ansible-linux-system-roles/${{ steps.suse-roles-version.outputs.filename }}"
+          rm -rf /tmp/suse-roles-extract
+          mkdir -p /tmp/suse-roles-extract
+          rpm2cpio /tmp/suse-roles.rpm | cpio -idm --quiet -D /tmp/suse-roles-extract
+          cp -a /tmp/suse-roles-extract/usr/share/ansible/collections/ansible_collections/suse ~/.ansible/collections/ansible_collections/suse
+
       - name: Run ansible-lint on main playbook
         uses: ansible/ansible-lint@262624cd0ab22a4221293216856c59671ce7aa5e # v26.6.0
 
@@ -106,6 +134,34 @@ jobs:
       - name: Install Ansible
         run: sudo pipx install --force --include-deps "ansible~=${{ matrix.control_node.ansible_version }}.0"
 
+      - name: Resolve SUSE Linux system roles collection version
+        id: suse-roles-version
+        run: |
+          filename=$(curl -s "https://api.opensuse.org/public/build/openSUSE:Factory/standard/x86_64/ansible-linux-system-roles" \
+            | grep -o 'filename="ansible-linux-system-roles-[^"]*\.noarch\.rpm"' \
+            | head -1 | cut -d'"' -f2)
+          echo "filename=${filename}" >> "$GITHUB_OUTPUT"
+
+      - name: Cache SUSE Linux system roles collection
+        id: cache-suse-roles
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.ansible/collections/ansible_collections/suse
+          key: suse-linux-system-roles-${{ steps.suse-roles-version.outputs.filename }}
+
+      - name: Install SUSE Linux system roles collection
+        if: steps.cache-suse-roles.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends rpm2cpio cpio
+          mkdir -p ~/.ansible/collections/ansible_collections
+          curl -sL -o /tmp/suse-roles.rpm \
+            "https://api.opensuse.org/public/build/openSUSE:Factory/standard/x86_64/ansible-linux-system-roles/${{ steps.suse-roles-version.outputs.filename }}"
+          rm -rf /tmp/suse-roles-extract
+          mkdir -p /tmp/suse-roles-extract
+          rpm2cpio /tmp/suse-roles.rpm | cpio -idm --quiet -D /tmp/suse-roles-extract
+          cp -a /tmp/suse-roles-extract/usr/share/ansible/collections/ansible_collections/suse ~/.ansible/collections/ansible_collections/suse
+
       - name: Install galaxy deps
         run: ansible-galaxy install -r requirements.yml
 
@@ -149,6 +205,7 @@ jobs:
             trento_server_name='trento-deployment.example.com' \
             web_admin_password='adminpassword' \
             enable_api_key='false' \
+            enable_suseconnect='false' \
             nginx_vhost_listen_port='443' \
             nginx_ssl_cert_as_base64='true' \
             nginx_ssl_key_as_base64='true' \
@@ -201,6 +258,7 @@ jobs:
             trento_server_name='trento-deployment.example.com' \
             web_admin_password='adminpassword' \
             enable_api_key='false' \
+            enable_suseconnect='false' \
             nginx_vhost_listen_port='443' \
             nginx_ssl_cert_as_base64='true' \
             nginx_ssl_key_as_base64='true' \

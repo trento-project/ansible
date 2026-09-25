@@ -74,14 +74,21 @@ inventory.
 *This playbook requires that the host where you are going to install
 Trento server components has an activated license* for one of the
 supported OSs, with the following modules (Change `x` to match your
-current version):
+current version).
 
-* Basesystem Module 15 x86_64 -
-`SUSEConnect -p sle-module-basesystem/15.x/x86_64`
+Instead of registering by hand, set `enable_suseconnect` to `true` in
+your inventory to have every host in the play register the modules above itself.
+
+On SLES 15:
+
+* Basesystem Module 15 x86_64 - `SUSEConnect -p sle-module-basesystem/15.x/x86_64`
 * SUSE Package Hub 15 x86_64 - `SUSEConnect -p PackageHub/15.x/x86_64`
 * Python 3 module - `SUSEConnect -p sle-module-python3/15.x/x86_64`
-* (15.6 only) Legacy Module 15 x86_64 -
-`SUSEConnect -p sle-module-legacy/15.6/x86_64`
+* (15.6 only) Legacy Module 15 x86_64 - `SUSEConnect -p sle-module-legacy/15.6/x86_64`
+
+On SLES 16:
+
+* SUSE Package Hub 16 x86_64 - `SUSEConnect -p PackageHub/16.x/x86_64`
 
 === Agent
 
@@ -208,7 +215,7 @@ all:
 === 4. Run the playbooks
 
 Prior to running the playbooks, tell ansible to fetch the required
-modules:
+collections:
 
 [source, console]
 ----
@@ -336,6 +343,11 @@ population of some variables.
 
 | provision_prometheus | Whether to provision Prometheus used by Trento to store
   metrics send by agents | true
+
+| enable_suseconnect | Whether to automatically register the SCC
+  modules required for the host's SLES version via `SUSEConnect`,
+  instead of registering them by hand (see the SUSE Linux Enterprise Users section above).
+  Set it in your inventory, e.g. under `[all:vars]` or in a `group_vars`/`host_vars` file. | false
 
 |===
 
