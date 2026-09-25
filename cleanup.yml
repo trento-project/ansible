@@ -88,7 +88,7 @@
           - "{{ trento_mcp_listen_port }}/tcp"
         firewall_state: disabled
       when:
-        - (inventory_hostname not in (groups['trento_server'] | default([]))) or not (provision_proxy | bool)
+        - (inventory_hostname not in (groups['trento_server'] | default([]))) or not (provision_proxy | default(true) | bool)
 
     - name: Close Trento MCP Server health firewall port
       ansible.builtin.import_role:
