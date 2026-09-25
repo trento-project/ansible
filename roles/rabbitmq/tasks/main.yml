@@ -9,6 +9,15 @@
     state: present
     update_cache: true
 
+- name: "Configure RabbitMQ to listen on port {{ rabbitmq_port }}"
+  ansible.builtin.lineinfile:
+    path: /etc/rabbitmq/rabbitmq.conf
+    regexp: "^listeners\\.tcp\\.default\\s*="
+    line: "listeners.tcp.default = {{ rabbitmq_port }}"
+    mode: "0644"
+    create: true
+  notify: Restart RabbitMQ
+
 - name: Start RabbitMQ service
   ansible.builtin.service:
     name: rabbitmq-server
