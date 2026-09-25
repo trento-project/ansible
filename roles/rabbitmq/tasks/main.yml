@@ -3,17 +3,6 @@
 
 # code: language=ansible
 ---
-- name: Verify RabbitMQ port availability
-  ansible.builtin.import_role:
-    name: port_check
-  vars:
-    port_check_port: "{{ rabbitmq_port }}"
-    port_check_service: rabbitmq-server
-    port_check_hint: >-
-      Set trento_rabbitmq_port to a free port and re-run the playbook.
-      You can also set provision_rabbitmq=false,
-      and point trento_rabbitmq_host at an existing external RabbitMQ instance.
-
 - name: Install RabbitMQ
   community.general.zypper:
     name: rabbitmq-server

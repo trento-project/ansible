@@ -3,17 +3,6 @@
 
 # code: language=ansible
 ---
-- name: Verify Postgres port availability
-  ansible.builtin.import_role:
-    name: port_check
-  vars:
-    port_check_port: "{{ postgres_port }}"
-    port_check_service: postgresql
-    port_check_hint: >-
-      Set trento_postgres_port to a free port and re-run the playbook.
-      You can also set provision_postgres=false,
-      and point trento_postgres_host at an existing external PostgreSQL instance.
-
 - name: Install postgresql
   when: postgres_install | bool
   community.general.zypper:
