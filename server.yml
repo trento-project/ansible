@@ -28,7 +28,7 @@
 
     - role: postgres
       become: true
-      when: provision_postgres | bool
+      when: provision_postgres | default(true) | bool
 
 - name: Provision Prometheus
   hosts: prometheus_hosts
@@ -45,13 +45,13 @@
 
     - role: prometheus
       become: true
-      when: provision_prometheus | bool
+      when: provision_prometheus | default(true) | bool
 
     - role: firewall
       become: true
       firewall_ports:
         - "{{ trento_prometheus_port }}/tcp"
-      when: provision_prometheus | bool
+      when: provision_prometheus | default(true) | bool
 
 
 - name: Provision RabbitMQ
@@ -69,7 +69,7 @@
 
     - role: rabbitmq
       become: true
-      when: provision_rabbitmq | bool
+      when: provision_rabbitmq | default(true) | bool
 
 - name: Configure Trento components
   hosts: trento_server
@@ -81,9 +81,9 @@
     - role: trento
       run_once: true
       vars:
-        trento_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | bool) else '' }}"
-        trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | bool) else '' }}"
-        trento_prometheus_host_group: "{{ 'prometheus_hosts' if (provision_prometheus | bool) else '' }}"
+        trento_postgres_host_group: "{{ 'postgres_hosts' if (provision_postgres | default(true) | bool) else '' }}"
+        trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | default(true) | bool) else '' }}"
+        trento_prometheus_host_group: "{{ 'prometheus_hosts' if (provision_prometheus | default(true) | bool) else '' }}"
 
     - role: suse.linux_system_roles.suseconnect
       become: true
@@ -99,16 +99,16 @@
 
     - role: rproxy
       become: true
-      when: provision_proxy | bool
+      when: provision_proxy | default(true) | bool
       vars:
-        rproxy_provision_prometheus: "{{ provision_prometheus | bool }}"
+        rproxy_provision_prometheus: "{{ provision_prometheus | default(true) | bool }}"
 
     - role: firewall
       become: true
       firewall_ports:
         - "{{ rproxy_vhost_http_listen_port }}/tcp"
         - "{{ rproxy_vhost_https_listen_port }}/tcp"
-      when: provision_proxy | bool
+      when: provision_proxy | default(true) | bool
 
     - role: supportutils
       become: true
