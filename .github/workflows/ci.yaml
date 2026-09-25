@@ -159,11 +159,9 @@ jobs:
             install_method='${{ matrix.install_method }}' \
             trento_prometheus_auth='basic' \
             trento_prometheus_auth_username='prometheus' \
-            trento_prometheus_auth_password='prometheus-password' \
-            trento_postgres_port='5499' \
-            trento_rabbitmq_port='5699'"
+            trento_prometheus_auth_password='prometheus-password'"
             --verbose
-          # FIXME: ^^^^^^ ports are hardcoded for a CI test run, revert this change
+
       - name: Test readiness
         run: curl -k "https://${{ env.TEST_HOST_IP }}/api/readyz"
 
