@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+---
+port_check_port: "{{ undef(hint='port_check_port is mandatory') }}"
+port_check_service: "{{ undef(hint='port_check_service (systemd unit name, without the .service suffix) is mandatory') }}"
+port_check_hint: ""
