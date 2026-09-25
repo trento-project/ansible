@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+---
+- name: Gather service facts
+  ansible.builtin.service_facts:
+
+- name: Stop and disable Trento MCP Server service
+  ansible.builtin.service:
+    name: mcp-server-trento
+    state: stopped
+    enabled: false
+  when: "'mcp-server-trento.service' in ansible_facts.services"

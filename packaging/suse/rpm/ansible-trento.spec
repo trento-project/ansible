@@ -59,7 +59,7 @@ cp %{SOURCE2} ./meta/
 
 # Create playbooks directory containing the playbooks
 mkdir ./playbooks/
-cp -r site.yml server.yml agent.yml cleanup.yml ./playbooks/
+cp -r site.yml server.yml agent.yml mcp.yml cleanup.yml cleanup-mcp.yml ./playbooks/
 
 # Move out developer docs, won't be packaged
 mkdir ./docs_unused/
