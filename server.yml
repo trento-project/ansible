@@ -23,7 +23,7 @@
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
       when:
-        - provision_postgres | bool
+        - provision_postgres | default(true) | bool
         - enable_suseconnect | default(false) | bool
 
     - role: postgres
@@ -40,7 +40,7 @@
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules_with_packagehub }}"
       when:
-        - provision_prometheus | bool
+        - provision_prometheus | default(true) | bool
         - enable_suseconnect | default(false) | bool
 
     - role: prometheus
@@ -64,7 +64,7 @@
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
       when:
-        - provision_rabbitmq | bool
+        - provision_rabbitmq | default(true) | bool
         - enable_suseconnect | default(false) | bool
 
     - role: rabbitmq
