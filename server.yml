@@ -20,12 +20,12 @@
       become: true
       when: provision_postgres | default(true) | bool
       vars:
-        port_check_port: "{{ trento_postgres_effective_port }}"
+        port_check_port: "{{ postgres_port }}"
         port_check_service: postgresql
         port_check_hint: >-
-          Set trento_postgres_port to a free port and re-run the playbook.
+          Set postgres_port to a free port and re-run the playbook.
           You can also set provision_postgres=false,
-          and point trento_postgres_host at an existing external PostgreSQL instance.
+          and point postgres_host at an existing external PostgreSQL instance.
     - role: postgres
       become: true
       when: provision_postgres | default(true) | bool
@@ -60,12 +60,12 @@
       become: true
       when: provision_rabbitmq | default(true) | bool
       vars:
-        port_check_port: "{{ trento_rabbitmq_effective_port }}"
+        port_check_port: "{{ rabbitmq_port }}"
         port_check_service: rabbitmq-server
         port_check_hint: >-
-          Set trento_rabbitmq_port to a free port and re-run the playbook.
+          Set rabbitmq_port to a free port and re-run the playbook.
           You can also set provision_rabbitmq=false,
-          and point trento_rabbitmq_host at an existing external RabbitMQ instance.
+          and point rabbitmq_host at an existing external RabbitMQ instance.
     - role: rabbitmq
       become: true
       when: provision_rabbitmq | default(true) | bool
