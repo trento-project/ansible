@@ -19,6 +19,7 @@ concurrency:
 
 env:
   ZYPPER_PACKAGES: >-
+    ansible-linux-system-roles
     bash
     curl
     git
@@ -29,7 +30,6 @@ env:
     python3-pipx
     tar
     wget
-    ansible-linux-system-roles
 
 jobs:
   license-header:
@@ -165,24 +165,26 @@ jobs:
                   ansible_host: ${{ vars[matrix.target.host_var] }}
       ANSIBLE_OPTIONS: |
         --verbose
-        --extra-vars "web_postgres_password='trento' \
-        wanda_postgres_password='wanda' \
-        rabbitmq_password='trento' \
-        prometheus_url='http://localhost' \
-        trento_server_name='trento-deployment.example.com' \
-        web_admin_password='adminpassword' \
-        enable_api_key='false' \
-        nginx_vhost_listen_port='443' \
-        nginx_ssl_cert_as_base64='true' \
-        nginx_ssl_key_as_base64='true' \
-        nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
-        nginx_ssl_key='${{ secrets.SSL_KEY }}' \
+        --extra-vars " \
         agent_server_ca_cert='${{ secrets.SERVER_CA_CERT }}' \
         agent_server_ca_cert_as_base64='true' \
+        enable_api_key='false' \
         install_method='${{ matrix.install_method }}' \
+        nginx_ssl_cert='${{ secrets.SSL_CERT }}' \
+        nginx_ssl_cert_as_base64='true' \
+        nginx_ssl_key='${{ secrets.SSL_KEY }}' \
+        nginx_ssl_key_as_base64='true' \
+        nginx_vhost_listen_port='443' \
+        prometheus_url='http://localhost' \
+        rabbitmq_password='trento' \
         trento_prometheus_auth='basic' \
+        trento_prometheus_auth_password='prometheus-password' \
         trento_prometheus_auth_username='prometheus' \
-        trento_prometheus_auth_password='prometheus-password'"
+        trento_server_name='trento-deployment.example.com' \
+        wanda_postgres_password='wanda' \
+        web_admin_password='adminpassword' \
+        web_postgres_password='trento' \
+        "
 
     steps:
       - name: Bootstrap container dependencies
