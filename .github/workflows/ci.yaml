@@ -53,6 +53,8 @@ jobs:
       - name: Bootstrap container dependencies
         run: |
           zypper -n in -y $ZYPPER_PACKAGES
+          # required by the ansible-lint GHA
+          echo /usr/bin >> "$GITHUB_PATH"
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -190,6 +192,8 @@ jobs:
           ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
       - name: Install Ansible
+        env:
+          PIPX_BIN_DIR: /usr/local/bin # rootless pipx binaries directory
         run: |
           pipx install --force --include-deps "ansible~=${{ matrix.control_node.ansible_version }}.0"
 
