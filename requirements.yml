@@ -13,3 +13,5 @@ collections:
     version: 3.14.2
   - name: ansible.posix
     version: 1.6.2
+  # Not in galaxy, use ansible-linux-system-roles package instead
+  # - name: suse.linux_system_roles

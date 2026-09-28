@@ -51,3 +51,6 @@ all:
     provision_rabbitmq: true
     provision_prometheus: true
     provision_proxy: true
+
+    # SUSEConnect auto-registration
+    enable_suseconnect: true
