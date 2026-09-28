@@ -49,15 +49,10 @@ jobs:
     runs-on: ubuntu-24.04
     container:
       image: registry.opensuse.org/opensuse/leap:16.0
-    env:
-      ANSIBLE_ROLES_PATH: /usr/share/ansible/roles:~/.ansible/roles
-      ANSIBLE_COLLECTIONS_PATH: /usr/share/ansible/collections:~/.ansible/collections
     steps:
       - name: Bootstrap container dependencies
         run: |
           zypper -n in -y $ZYPPER_PACKAGES
-          test -x /usr/bin/bash
-          echo /usr/bin >> "$GITHUB_PATH"
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -133,10 +128,7 @@ jobs:
               target_python: python3.11
 
     env:
-      PIPX_BIN_DIR: /usr/local/bin
       TEST_HOST_IP: ${{ vars[matrix.target.host_var] }}
-      ANSIBLE_ROLES_PATH: /usr/share/ansible/roles:~/.ansible/roles
-      ANSIBLE_COLLECTIONS_PATH: /usr/share/ansible/collections:~/.ansible/collections
       ANSIBLE_INVENTORY: |
         all:
           vars:
