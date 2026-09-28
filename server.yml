@@ -26,6 +26,16 @@
         - provision_postgres | default(true) | bool
         - enable_suseconnect | default(false) | bool
 
+    - role: port_check
+      become: true
+      when: provision_postgres | default(true) | bool
+      vars:
+        port_check_port: "{{ postgres_port }}"
+        port_check_service: postgresql
+        port_check_hint: >-
+          Set postgres_port to a free port and re-run the playbook.
+          You can also set provision_postgres=false,
+          and point postgres_host at an existing external PostgreSQL instance.
     - role: postgres
       become: true
       when: provision_postgres | default(true) | bool
@@ -43,6 +53,15 @@
         - provision_prometheus | default(true) | bool
         - enable_suseconnect | default(false) | bool
 
+    - role: port_check
+      become: true
+      when: provision_prometheus | default(true) | bool
+      vars:
+        port_check_port: "{{ trento_prometheus_port }}"
+        port_check_service: prometheus
+        port_check_hint: >-
+          Set trento_prometheus_port to a free port and re-run the playbook.
+          Note that port 9090 is also Cockpit's default port on SLES.
     - role: prometheus
       become: true
       when: provision_prometheus | default(true) | bool
@@ -67,6 +86,16 @@
         - provision_rabbitmq | default(true) | bool
         - enable_suseconnect | default(false) | bool
 
+    - role: port_check
+      become: true
+      when: provision_rabbitmq | default(true) | bool
+      vars:
+        port_check_port: "{{ rabbitmq_port }}"
+        port_check_service: rabbitmq-server
+        port_check_hint: >-
+          Set rabbitmq_port to a free port and re-run the playbook.
+          You can also set provision_rabbitmq=false,
+          and point rabbitmq_host at an existing external RabbitMQ instance.
     - role: rabbitmq
       become: true
       when: provision_rabbitmq | default(true) | bool
@@ -97,6 +126,22 @@
     - role: wanda
       become: true
 
+    - role: port_check
+      become: true
+      when: provision_proxy | default(true) | bool
+      vars:
+        port_check_port: "{{ nginx_vhost_http_listen_port }}"
+        port_check_service: nginx
+        port_check_hint: >-
+          Set rproxy_vhost_http_listen_port to a free port and re-run the playbook.
+    - role: port_check
+      become: true
+      when: provision_proxy | default(true) | bool
+      vars:
+        port_check_port: "{{ nginx_vhost_https_listen_port }}"
+        port_check_service: nginx
+        port_check_hint: >-
+          Set rproxy_vhost_https_listen_port to a free port and re-run the playbook.
     - role: rproxy
       become: true
       when: provision_proxy | default(true) | bool
