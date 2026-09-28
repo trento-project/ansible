@@ -15,12 +15,20 @@
 
 - name: Provision Trento agents
   hosts: agents
+  vars_files:
+    - vars/main.yml
   roles:
     - role: trento
       vars:
         # Explicitly call the trento role with the passed parameters
         # to please the linter.
         trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | default(true) | bool) else ''}}"
+
+    - role: suse.linux_system_roles.suseconnect
+      become: true
+      vars:
+        suseconnect_subscriptions: "{{ suseconnect_base_modules_with_packagehub }}"
+      when: enable_suseconnect | default(false) | bool
 
     - role: agent
       become: true
