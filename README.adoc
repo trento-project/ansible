@@ -220,13 +220,28 @@ all:
 
 === 4. Run the playbooks
 
-Prior to running the playbooks, tell ansible to fetch the required
-collections:
+The playbooks support two distribution and dependency models:
+
+==== Developer workstations and CI (Ansible Galaxy)
+
+When running playbooks from a development environment or CI, install the required
+roles and collections defined in `requirements.yml`:
 
 [source, console]
 ----
-$ ansible-galaxy collection install -r requirements.yml
+$ ansible-galaxy install -r requirements.yml
 ----
+
+This installs the required Galaxy collections and clones the `suseconnect` role from Git.
+
+==== SLES RPM deployments (Production)
+
+When deploying on SLES systems where components are installed via RPM packages:
+
+* Dependencies are fulfilled by system RPM packages such as `ansible-linux-system-roles` (`zypper in ansible-linux-system-roles`).
+* Playbooks declare `collections: [suse.linux_system_roles]` while calling `role: suseconnect`. Ansible resolves the role from the installed SUSE system collection before falling back to standalone role paths.
+
+==== Execute the playbook
 
 Run a playbook:
 

@@ -15,10 +15,12 @@
 
 - name: Provision Postgres
   hosts: postgres_hosts
+  collections:
+    - suse.linux_system_roles
   vars_files:
     - vars/main.yml
   roles:
-    - role: suse.linux_system_roles.suseconnect
+    - role: suseconnect
       become: true
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
@@ -42,10 +44,12 @@
 
 - name: Provision Prometheus
   hosts: prometheus_hosts
+  collections:
+    - suse.linux_system_roles
   vars_files:
     - vars/main.yml
   roles:
-    - role: suse.linux_system_roles.suseconnect
+    - role: suseconnect
       become: true
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules_with_packagehub }}"
@@ -75,10 +79,12 @@
 
 - name: Provision RabbitMQ
   hosts: rabbitmq_hosts
+  collections:
+    - suse.linux_system_roles
   vars_files:
     - vars/main.yml
   roles:
-    - role: suse.linux_system_roles.suseconnect
+    - role: suseconnect
       become: true
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
@@ -102,6 +108,8 @@
 
 - name: Configure Trento components
   hosts: trento_server
+  collections:
+    - suse.linux_system_roles
   vars_files:
     - vars/main.yml
   roles:
@@ -114,7 +122,7 @@
         trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | default(true) | bool) else '' }}"
         trento_prometheus_host_group: "{{ 'prometheus_hosts' if (provision_prometheus | default(true) | bool) else '' }}"
 
-    - role: suse.linux_system_roles.suseconnect
+    - role: suseconnect
       become: true
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
