@@ -15,7 +15,7 @@
 
 - name: Provision Postgres
   hosts: postgres_hosts
-  collections: # noqa: fqcn[keyword]
+  collections:
     - suse.linux_system_roles
   vars_files:
     - vars/main.yml
@@ -44,7 +44,7 @@
 
 - name: Provision Prometheus
   hosts: prometheus_hosts
-  collections: # noqa: fqcn[keyword]
+  collections:
     - suse.linux_system_roles
   vars_files:
     - vars/main.yml
@@ -79,7 +79,7 @@
 
 - name: Provision RabbitMQ
   hosts: rabbitmq_hosts
-  collections: # noqa: fqcn[keyword]
+  collections:
     - suse.linux_system_roles
   vars_files:
     - vars/main.yml
@@ -108,7 +108,7 @@
 
 - name: Configure Trento components
   hosts: trento_server
-  collections: # noqa: fqcn[keyword]
+  collections:
     - suse.linux_system_roles
   vars_files:
     - vars/main.yml
