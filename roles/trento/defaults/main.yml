@@ -50,3 +50,5 @@ trento_prometheus_port: "{{ prometheus_port | default((ansible_distribution_majo
 trento_prometheus_auth: ""
 trento_prometheus_auth_username: ""
 trento_prometheus_auth_password: ""
+trento_mcp_host_group: ""
+trento_mcp_host: 127.0.0.1
