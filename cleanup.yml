@@ -97,4 +97,4 @@
         firewall_ports:
           - "{{ trento_mcp_health_port }}/tcp"
         firewall_state: disabled
-      when: mcp_server_health_enabled | bool
+      when: trento_mcp_health_enabled | bool

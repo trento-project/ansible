@@ -21,7 +21,7 @@ mcp_server_listen_port: "{{ trento_mcp_listen_port }}"
 mcp_server_transport: "streamable"
 mcp_server_tag_filter:
   - "MCP"
-mcp_server_health_enabled: false
+mcp_server_health_enabled: "{{ trento_mcp_health_enabled }}"
 mcp_server_health_api_path: "/api/healthz"
 mcp_server_health_port: "{{ trento_mcp_health_port }}"
 mcp_server_insecure_skip_tls_verify: false

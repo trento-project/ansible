@@ -146,7 +146,7 @@ If `provision_proxy` is `false`, or the MCP Server is deployed on a
 dedicated `mcp_hosts` machine, the playbook opens
 `trento_mcp_listen_port` in `firewalld` so the MCP service can be
 reached directly on the systemd listener port. When
-`mcp_server_health_enabled` is `true`, `trento_mcp_health_port` is
+`trento_mcp_health_enabled` is `true`, `trento_mcp_health_port` is
 opened as well.
 
 The Trento MCP Server does not install or configure an LLM client.
@@ -489,6 +489,10 @@ applications. One of `debug`, `info`, `warning` or `error` | info
 
 | trento_mcp_health_port | Port where the Trento MCP Server health
   endpoint listens when enabled | 8080
+
+| trento_mcp_health_enabled | Whether to enable the Trento MCP Server
+  health endpoints and open `trento_mcp_health_port` in `firewalld` |
+  false
 
 | trento_mcp_host | The host where the Trento MCP Server is located.
   Used as input for calculating `trento_mcp_effective_host`, which is
@@ -910,7 +914,8 @@ applications. One of `debug`, `info`, `warning` or `error` | info
 
 | mcp_server_health_enabled | Whether to enable the MCP health
   endpoints. When enabled, the role also probes the local MCP
-  readiness endpoint after starting the service. | false
+  readiness endpoint after starting the service. |
+  <value of `trento_mcp_health_enabled`>
 
 | mcp_server_health_api_path | Health check API path used on the Trento
   target server | "/api/healthz"

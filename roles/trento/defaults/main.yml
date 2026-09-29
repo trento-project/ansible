@@ -25,6 +25,7 @@ trento_web_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) 
 trento_wanda_listen_port: "{{ 32767 | random(start=1024, seed=trento_server_name) + 1 }}"
 trento_mcp_listen_port: 5000
 trento_mcp_health_port: 8080
+trento_mcp_health_enabled: false
 
 trento_web_admin_username: admin
 trento_web_admin_password: "{{ undef(hint='Password for Web admin interface is mandatory') }}"

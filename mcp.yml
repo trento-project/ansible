@@ -21,7 +21,7 @@
         - "{{ trento_mcp_health_port }}/tcp"
       when:
         - provision_mcp | default(true) | bool
-        - mcp_server_health_enabled | bool
+        - trento_mcp_health_enabled | bool
 
 - name: Reconfigure reverse proxy to expose Trento MCP Server
   hosts: trento_server
