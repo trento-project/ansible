@@ -52,7 +52,7 @@ jobs:
     name: Controller container smoke test
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@3d3c42f5aac5ba805825da76410c181273ba90b1 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
         with:
           fetch-depth: 0
           ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
