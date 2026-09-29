@@ -33,10 +33,12 @@ COPY playbook.yml .
 COPY docker/entrypoint.sh .
 
 RUN set -euo pipefail; zypper refresh && \
-    zypper install -y ansible openssh-clients && \
+    zypper install -y python311 python311-pip git openssh-clients && \
+    zypper -n clean -a
+
+RUN python3.11 -m pip install --no-cache-dir ansible-core && \
     ansible-galaxy install -r requirements.yml
 
-RUN set -euo pipefail; zypper -n clean -a
 RUN set -euo pipefail; sed -i 's/^\([^:]*:[^:]*:\)[^:]*\(:.*\)$/\1\2/' /etc/shadow
 
 ENTRYPOINT ["/lib/trento-ansible/entrypoint.sh"]
