@@ -204,10 +204,10 @@ jobs:
       - name: Verify Ansible installation
         run: |
           echo "PATH=$PATH"
-          pipx list
-          which ansible
-          which ansible-playbook
-          which ansible-galaxy
+          pipx list --global
+          command -v ansible
+          command -v ansible-playbook
+          command -v ansible-galaxy
           ansible --version
 
       - name: Run playbook
