@@ -36,7 +36,7 @@ trento_components:
   vars:
     # Common for most components
     trento_server_name: "trento.local"
-    enable_suseconnect: false
+    enable_suseconnect: true
 
     # DB passwords
     web_postgres_password: "pass"

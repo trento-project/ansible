@@ -1,8 +1,8 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-ARG OS_VER=16.0
-FROM registry.opensuse.org/opensuse/leap:${OS_VER}
+ARG OS_VER=15.7
+FROM registry.suse.com/bci/bci-base:${OS_VER}
 ARG OS_VER
 ARG VERSION=dev
 # Define labels according to https://en.opensuse.org/Building_derived_containers
@@ -33,18 +33,10 @@ COPY playbook.yml .
 COPY docker/entrypoint.sh .
 
 RUN set -euo pipefail; zypper refresh && \
-    zypper install -y ansible ansible-linux-system-roles openssh-clients && \
-    ansible-galaxy collection install -r requirements.yml
+    zypper install -y ansible openssh-clients && \
+    ansible-galaxy install -r requirements.yml
 
-RUN set -euo pipefail; zypper -n clean -a; \
-    rm -rf {/target,}/var/log/{alternatives.log,lastlog,tallylog,zypper.log,zypp/history,YaST2}; \
-    rm -rf {/target,}/run/*; \
-    rm -f {/target,}/etc/{shadow-,group-,passwd-,.pwd.lock}; \
-    rm -f {/target,}/usr/lib/sysimage/rpm/.rpm.lock; \
-    rm -f {/target,}/var/lib/zypp/AnonymousUniqueId; \
-    rm -f {/target,}/var/lib/zypp/AutoInstalled; \
-    rm -f {/target,}/var/cache/ldconfig/aux-cache
-
+RUN set -euo pipefail; zypper -n clean -a
 RUN set -euo pipefail; sed -i 's/^\([^:]*:[^:]*:\)[^:]*\(:.*\)$/\1\2/' /etc/shadow
 
 ENTRYPOINT ["/lib/trento-ansible/entrypoint.sh"]

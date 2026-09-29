@@ -32,7 +32,7 @@
       {{ prometheus_package_install_result.msg | default(prometheus_package_install_result) }}.
       If SUSE Package Hub is not registered on this host, set
       enable_suseconnect: true in the inventory and rerun this playbook.
-  when: prometheus_package_install_result.failed | default(false)
+  when: prometheus_package_install_result is failed
 
 - name: Check Prometheus tmpfiles config
   ansible.builtin.stat:
