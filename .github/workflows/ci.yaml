@@ -201,6 +201,15 @@ jobs:
       - name: Install galaxy deps
         run: ansible-galaxy install -r requirements.yml
 
+      - name: Verify Ansible installation
+        run: |
+          echo "PATH=$PATH"
+          pipx list
+          which ansible
+          which ansible-playbook
+          which ansible-galaxy
+          ansible --version
+
       - name: Run playbook
         id: runplaybook
         uses: dawidd6/action-ansible-playbook@126642a1c6ce512da255ef2b41e8ee90f0077474 # v9
