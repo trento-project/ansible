@@ -1,5 +1,3 @@
-agent.yml fqcn[keyword] skip
-server.yml fqcn[keyword] skip
 roles/agent/defaults/main/deprecated.yml var-naming[no-role-prefix] skip
 roles/web/defaults/main/deprecated.yml var-naming[no-role-prefix] skip
 roles/rproxy/defaults/main/deprecated.yml var-naming[no-role-prefix] skip

@@ -13,7 +13,7 @@
         (ansible_distribution != "SLES_SAP") or
         (ansible_distribution_version is version('15.4', '<'))
 
-- name: Provision Trento agents
+- name: Provision Trento agents # noqa: fqcn[keyword]
   hosts: agents
   collections:
     - suse.linux_system_roles

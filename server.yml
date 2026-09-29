@@ -13,7 +13,7 @@
         (ansible_distribution != "SLES_SAP") or
         (ansible_distribution_version is version('15.4', '<'))
 
-- name: Provision Postgres
+- name: Provision Postgres # noqa: fqcn[keyword]
   hosts: postgres_hosts
   collections:
     - suse.linux_system_roles
@@ -42,7 +42,7 @@
       become: true
       when: provision_postgres | default(true) | bool
 
-- name: Provision Prometheus
+- name: Provision Prometheus # noqa: fqcn[keyword]
   hosts: prometheus_hosts
   collections:
     - suse.linux_system_roles
@@ -77,7 +77,7 @@
       when: provision_prometheus | default(true) | bool
 
 
-- name: Provision RabbitMQ
+- name: Provision RabbitMQ # noqa: fqcn[keyword]
   hosts: rabbitmq_hosts
   collections:
     - suse.linux_system_roles
@@ -106,7 +106,7 @@
       become: true
       when: provision_rabbitmq | default(true) | bool
 
-- name: Configure Trento components
+- name: Configure Trento components # noqa: fqcn[keyword]
   hosts: trento_server
   collections:
     - suse.linux_system_roles
