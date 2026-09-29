@@ -47,12 +47,13 @@ jobs:
     runs-on: ubuntu-24.04
     container:
       image: registry.suse.com/bci/bci-base:16.0
+      env:
+        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin # ensure standard system paths are included
+        PIP_BREAK_SYSTEM_PACKAGES: "1"
     steps:
       - name: Bootstrap container dependencies
         run: |
           zypper -n in -y $ZYPPER_PACKAGES
-          # required by the ansible-lint GHA
-          echo /usr/bin >> "$GITHUB_PATH"
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -64,6 +65,8 @@ jobs:
 
       - name: Run ansible-lint on main playbook
         uses: ansible/ansible-lint@262624cd0ab22a4221293216856c59671ce7aa5e # v26.6.0
+        with:
+          setup_python: false
 
       - name: List available collections
         run: |
@@ -86,6 +89,8 @@ jobs:
     runs-on: ubuntu-24.04
     container:
       image: registry.suse.com/bci/bci-base:16.0
+      env:
+        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin # ensure standard system paths are included
     concurrency:
       group: test-deploy-host-${{ matrix.target.label }}
       cancel-in-progress: false
@@ -190,10 +195,8 @@ jobs:
           ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
       - name: Install Ansible
-        env:
-          PIPX_BIN_DIR: /usr/local/bin # rootless pipx binaries directory
         run: |
-          pipx install --force --include-deps "ansible~=${{ matrix.control_node.ansible_version }}.0"
+          pipx install --global --force --include-deps "ansible~=${{ matrix.control_node.ansible_version }}.0"
 
       - name: Install galaxy deps
         run: ansible-galaxy install -r requirements.yml
