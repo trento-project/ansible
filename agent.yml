@@ -15,7 +15,7 @@
 
 - name: Provision Trento agents
   hosts: agents
-  collections:
+  collections: # noqa: fqcn[keyword]
     - suse.linux_system_roles
   vars_files:
     - vars/main.yml
