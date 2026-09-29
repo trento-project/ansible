@@ -19,8 +19,6 @@ concurrency:
 
 env:
   ZYPPER_PACKAGES: >-
-    ansible-linux-system-roles
-    bash
     curl
     git
     gzip
@@ -48,7 +46,7 @@ jobs:
     name: Playbook linting
     runs-on: ubuntu-24.04
     container:
-      image: registry.opensuse.org/opensuse/leap:16.0
+      image: registry.suse.com/bci/bci-base:16.0
     steps:
       - name: Bootstrap container dependencies
         run: |
@@ -87,7 +85,7 @@ jobs:
     needs: [ansible-lint, license-header]
     runs-on: ubuntu-24.04
     container:
-      image: registry.opensuse.org/opensuse/leap:16.0
+      image: registry.suse.com/bci/bci-base:16.0
     concurrency:
       group: test-deploy-host-${{ matrix.target.label }}
       cancel-in-progress: false
