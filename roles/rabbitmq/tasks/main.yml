@@ -5,7 +5,7 @@
 ---
 - name: Install RabbitMQ
   community.general.zypper:
-    name: rabbitmq-server
+    name: "rabbitmq-server{{ '=' ~ rabbitmq_version if rabbitmq_version else '' }}"
     state: present
     update_cache: true
 
