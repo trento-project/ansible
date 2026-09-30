@@ -2,6 +2,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
+roles:
+  - name: suseconnect
+    src: https://github.com/SUSE/ansible-suseconnect.git
+    scm: git
+    # To get the version used by the RPM, run:
+    # curl -s "https://api.opensuse.org/public/source/openSUSE:Factory/ansible-linux-system-roles/ansible-linux-system-roles.spec" \
+    # | awk '$2 == "suseconnect_version" { print $3 "-suse" }'
+    version: "1.0.2-suse"
+
 collections:
   - name: community.docker
     version: 4.6.0

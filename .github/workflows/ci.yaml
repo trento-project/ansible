@@ -48,6 +48,30 @@ jobs:
         run: |
           ansible-galaxy collection list
 
+  container-smoke-test:
+    name: Controller container smoke test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+        with:
+          fetch-depth: 0
+          ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
+
+      - name: Build and smoke-test controller container
+        run: |
+          docker build --file docker/Dockerfile --tag trento-ansible:ci .
+          test "$(docker run --rm --entrypoint id trento-ansible:ci -u)" = "1001"
+          docker run --rm --entrypoint ansible-playbook trento-ansible:ci \
+            /lib/trento-ansible/playbook.yml \
+            -i localhost, \
+            -c local \
+            --syntax-check
+          docker run --rm --entrypoint ansible-playbook trento-ansible:ci \
+            /lib/trento-ansible/playbook.yml \
+            -i localhost, \
+            -c local \
+            --list-tasks
+
   test-deploy:
     name: Run ansible${{ matrix.control_node.ansible_version }} on ${{ matrix.install_method }}/${{ matrix.target.label }}
     needs: [ansible-lint]
@@ -149,6 +173,7 @@ jobs:
             trento_server_name='trento-deployment.example.com' \
             web_admin_password='adminpassword' \
             enable_api_key='false' \
+            enable_suseconnect='false' \
             nginx_vhost_listen_port='443' \
             nginx_ssl_cert_as_base64='true' \
             nginx_ssl_key_as_base64='true' \
@@ -201,6 +226,7 @@ jobs:
             trento_server_name='trento-deployment.example.com' \
             web_admin_password='adminpassword' \
             enable_api_key='false' \
+            enable_suseconnect='false' \
             nginx_vhost_listen_port='443' \
             nginx_ssl_cert_as_base64='true' \
             nginx_ssl_key_as_base64='true' \
@@ -220,6 +246,7 @@ jobs:
     needs:
       - ansible-lint
       - test-deploy
+      - container-smoke-test
     uses: trento-project/.github/.github/workflows/publish-containers.yaml@d8679bc6bc759e119793a2d59285098613f52055 # v1.10.0
     with:
       image_name: ansible
