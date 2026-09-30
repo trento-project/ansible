@@ -41,6 +41,7 @@ BuildRequires:  %{modern_python}-distlib
 
 Requires:       ansible-core >= 2.16
 Requires:       ansible >= 9
+Requires:       ansible-linux-system-roles
 
 %description
 Collection of Ansible roles and playbooks for deploying and managing
@@ -59,7 +60,7 @@ cp %{SOURCE2} ./meta/
 
 # Create playbooks directory containing the playbooks
 mkdir ./playbooks/
-cp -r site.yml server.yml agent.yml cleanup.yml ./playbooks/
+cp -r site.yml server.yml agent.yml cleanup.yml vars ./playbooks/
 
 # Move out developer docs, won't be packaged
 mkdir ./docs_unused/

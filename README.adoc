@@ -80,14 +80,21 @@ with a clear message instead of a confusing package/service error.
 *This playbook requires that the host where you are going to install
 Trento server components has an activated license* for one of the
 supported OSs, with the following modules (Change `x` to match your
-current version):
+current version).
 
-* Basesystem Module 15 x86_64 -
-`SUSEConnect -p sle-module-basesystem/15.x/x86_64`
+Instead of registering by hand, set `enable_suseconnect` to `true` in
+your inventory to have every host in the play register the modules above itself.
+
+On SLES 15:
+
+* Basesystem Module 15 x86_64 - `SUSEConnect -p sle-module-basesystem/15.x/x86_64`
 * SUSE Package Hub 15 x86_64 - `SUSEConnect -p PackageHub/15.x/x86_64`
 * Python 3 module - `SUSEConnect -p sle-module-python3/15.x/x86_64`
-* (15.6 only) Legacy Module 15 x86_64 -
-`SUSEConnect -p sle-module-legacy/15.6/x86_64`
+* (15.6 only) Legacy Module 15 x86_64 - `SUSEConnect -p sle-module-legacy/15.6/x86_64`
+
+On SLES 16:
+
+* SUSE Package Hub 16 x86_64 - `SUSEConnect -p PackageHub/16.x/x86_64`
 
 === Agent
 
@@ -213,13 +220,28 @@ all:
 
 === 4. Run the playbooks
 
-Prior to running the playbooks, tell ansible to fetch the required
-modules:
+The playbooks support two distribution and dependency models:
+
+==== Developer workstations and CI (Ansible Galaxy)
+
+When running playbooks from a development environment or CI, install the required
+roles and collections defined in `requirements.yml`:
 
 [source, console]
 ----
-$ ansible-galaxy collection install -r requirements.yml
+$ ansible-galaxy install -r requirements.yml
 ----
+
+This installs the required Galaxy collections and clones the `suseconnect` role from Git.
+
+==== SLES RPM deployments (Production)
+
+When deploying on SLES systems where components are installed via RPM packages:
+
+* Dependencies are fulfilled by system RPM packages such as `ansible-linux-system-roles` (`zypper in ansible-linux-system-roles`).
+* Playbooks declare `collections: [suse.linux_system_roles]` while calling `role: suseconnect`. Ansible resolves the role from the installed SUSE system collection before falling back to standalone role paths.
+
+==== Execute the playbook
 
 Run a playbook:
 
@@ -342,6 +364,11 @@ population of some variables.
 
 | provision_prometheus | Whether to provision Prometheus used by Trento to store
   metrics send by agents | true
+
+| enable_suseconnect | Whether to automatically register the SCC
+  modules required for the host's SLES version via `SUSEConnect`,
+  instead of registering them by hand (see the SUSE Linux Enterprise Users section above).
+  Set it in your inventory, e.g. under `[all:vars]` or in a `group_vars`/`host_vars` file. | true
 
 |===
 
