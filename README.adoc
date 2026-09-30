@@ -931,6 +931,10 @@ More detailed info about usage and defaults available link:https://github.com/tr
 |===
 | Name | Description | Default
 
+| rabbitmq_version | Version of RabbitMQ package to install or pin.
+  If empty or unspecified, the role falls back to installing `rabbitmq-server`
+  without version pinning (using the default version provided by the distribution repositories). | ""
+
 | rabbitmq_port | AMQP port on which RabbitMQ listens | <value of
   `trento_rabbitmq_port`>
 

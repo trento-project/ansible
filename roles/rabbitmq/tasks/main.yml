@@ -5,7 +5,7 @@
 ---
 - name: Install RabbitMQ
   community.general.zypper:
-    name: rabbitmq-server
+    name: "rabbitmq-server{{ '=' ~ rabbitmq_version if rabbitmq_version else '' }}"
     state: present
     update_cache: true
 
@@ -30,11 +30,30 @@
     node: "{{ rabbitmq_node_name }}"
     state: present
 
+- name: Enable RabbitMQ management plugin (SLE 16 rabbitmqctl JSON workaround)
+  ansible.builtin.copy:
+    dest: /etc/rabbitmq/enabled_plugins
+    content: "[rabbitmq_management].\n"
+    mode: "0644"
+
+- name: Restart RabbitMQ to load the management plugin
+  ansible.builtin.service:
+    name: rabbitmq-server
+    state: restarted
+
+- name: Wait for the RabbitMQ management API
+  ansible.builtin.wait_for:
+    port: 15672
+    timeout: 30
+
 - name: Configure rabbitmq trento user
   community.rabbitmq.rabbitmq_user:
     user: "{{ rabbitmq_username }}"
     node: "{{ rabbitmq_node_name }}"
     password: "{{ rabbitmq_password }}"
+    login_host: "{{ (ansible_distribution_major_version == '16') | ternary('localhost', omit) }}"
+    login_user: "{{ (ansible_distribution_major_version == '16') | ternary('guest', omit) }}"
+    login_password: "{{ (ansible_distribution_major_version == '16') | ternary('guest', omit) }}"
     permissions:
       - vhost: "{{ rabbitmq_vhost }}"
         configure_priv: ".*"
