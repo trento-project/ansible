@@ -29,24 +29,26 @@ LABEL io.artifacthub.package.readme-url="https://raw.githubusercontent.com/trent
 
 WORKDIR /lib/trento-ansible
 
-# Set environment variables for Ansible roles/collections paths
+# Add the project roles and collections directories to Ansible's default paths.
 ENV ANSIBLE_ROLES_PATH=/lib/trento-ansible/roles:/usr/share/ansible/roles
 ENV ANSIBLE_COLLECTIONS_PATH=/usr/share/ansible/collections
 
 # Install necessary packages
-RUN set -euo pipefail; zypper refresh && \
+RUN set -euo pipefail; \
+    zypper refresh && \
     zypper install --no-recommends -y python311 python311-pip git openssh-clients shadow && \
     zypper -n clean -a
 
 # Create the non-root runtime user
-RUN set -euo pipefail; groupadd --gid 1001 trento && \
+RUN set -euo pipefail; \
+    groupadd --gid 1001 trento && \
     useradd --uid 1001 --gid trento --create-home --home-dir /home/trento --shell /bin/bash trento
 
 # Install Ansible roles and collections
 COPY requirements.yml .
-RUN set -euo pipefail; mkdir -p /usr/share/ansible/roles /usr/share/ansible/collections && \
+RUN set -euo pipefail; \
     python3.11 -m pip install --disable-pip-version-check --no-cache-dir pipx && \
-    python3.11 -m pipx install --global --force "ansible-core~=${ANSIBLE_CORE_VERSION}.0" && \
+    pipx install --global --force "ansible-core~=${ANSIBLE_CORE_VERSION}.0" && \
     ansible-galaxy install -r requirements.yml
 
 # Copy entrypoint script and Ansible roles, vars, and playbook

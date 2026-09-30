@@ -30,7 +30,7 @@
       become: true
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules_with_packagehub }}"
-      when: enable_suseconnect | default(false) | bool
+      when: enable_suseconnect | default(true) | bool
 
     - role: agent
       become: true

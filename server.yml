@@ -26,7 +26,7 @@
         suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
       when:
         - provision_postgres | default(true) | bool
-        - enable_suseconnect | default(false) | bool
+        - enable_suseconnect | default(true) | bool
 
     - role: port_check
       become: true
@@ -55,7 +55,7 @@
         suseconnect_subscriptions: "{{ suseconnect_base_modules_with_packagehub }}"
       when:
         - provision_prometheus | default(true) | bool
-        - enable_suseconnect | default(false) | bool
+        - enable_suseconnect | default(true) | bool
 
     - role: port_check
       become: true
@@ -90,7 +90,7 @@
         suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
       when:
         - provision_rabbitmq | default(true) | bool
-        - enable_suseconnect | default(false) | bool
+        - enable_suseconnect | default(true) | bool
 
     - role: port_check
       become: true
@@ -126,7 +126,7 @@
       become: true
       vars:
         suseconnect_subscriptions: "{{ suseconnect_base_modules }}"
-      when: enable_suseconnect | default(false) | bool
+      when: enable_suseconnect | default(true) | bool
 
     - role: web
       become: true

@@ -63,12 +63,14 @@ jobs:
           test "$(docker run --rm --entrypoint id trento-ansible:ci -u)" = "1001"
           docker run --rm --entrypoint ansible-playbook trento-ansible:ci \
             /lib/trento-ansible/playbook.yml \
-            -i /lib/trento-ansible/test-inventory.yml \
+            -i localhost, \
+            -c local \
             --extra-vars '@/lib/trento-ansible/vars/main.yml' \
             --syntax-check
           docker run --rm --entrypoint ansible-playbook trento-ansible:ci \
             /lib/trento-ansible/playbook.yml \
-            -i /lib/trento-ansible/test-inventory.yml \
+            -i localhost, \
+            -c local \
             --extra-vars '@/lib/trento-ansible/vars/main.yml' \
             --list-tasks
 
