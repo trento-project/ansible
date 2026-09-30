@@ -27,7 +27,7 @@ LABEL org.opencontainers.image.base.digest="latest"
 LABEL io.artifacthub.package.logo-url="https://www.trento-project.io/images/trento-icon.svg"
 LABEL io.artifacthub.package.readme-url="https://raw.githubusercontent.com/trento-project/ansible/refs/heads/main/README.adoc"
 
-# Install necessary packages
+# Install necessary packages and create a non-privileged user and a group.
 RUN set -euo pipefail; \
     zypper refresh && \
     zypper install --no-recommends -y python311-pip git openssh-clients shadow && \

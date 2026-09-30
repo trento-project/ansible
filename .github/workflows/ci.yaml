@@ -65,13 +65,11 @@ jobs:
             /lib/trento-ansible/playbook.yml \
             -i localhost, \
             -c local \
-            --extra-vars '@/lib/trento-ansible/vars/main.yml' \
             --syntax-check
           docker run --rm --entrypoint ansible-playbook trento-ansible:ci \
             /lib/trento-ansible/playbook.yml \
             -i localhost, \
             -c local \
-            --extra-vars '@/lib/trento-ansible/vars/main.yml' \
             --list-tasks
 
   test-deploy:
