@@ -46,8 +46,6 @@ jobs:
     runs-on: ubuntu-24.04
     container:
       image: registry.suse.com/bci/bci-base:16.0
-      env:
-        PIP_BREAK_SYSTEM_PACKAGES: "1"
     steps:
       - name: Bootstrap container dependencies
         run: |
@@ -57,9 +55,6 @@ jobs:
         with:
           fetch-depth: 0
           ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
-
-      - name: Mark workspace as safe for Git
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Run ansible-lint on main playbook
         uses: ansible/ansible-lint@262624cd0ab22a4221293216856c59671ce7aa5e # v26.6.0
@@ -222,15 +217,6 @@ jobs:
 
       - name: Install galaxy deps
         run: ansible-galaxy install -r requirements.yml
-
-      - name: Verify Ansible installation
-        run: |
-          echo "PATH=$PATH"
-          pipx list --global
-          command -v ansible
-          command -v ansible-playbook
-          command -v ansible-galaxy
-          ansible --version
 
       - name: Run playbook
         id: runplaybook
