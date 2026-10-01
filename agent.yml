@@ -13,14 +13,24 @@
         (ansible_distribution != "SLES_SAP") or
         (ansible_distribution_version is version('15.4', '<'))
 
-- name: Provision Trento agents
+- name: Provision Trento agents # noqa: fqcn[keyword]
   hosts: agents
+  collections:
+    - suse.linux_system_roles
+  vars_files:
+    - vars/main.yml
   roles:
     - role: trento
       vars:
         # Explicitly call the trento role with the passed parameters
         # to please the linter.
         trento_rabbitmq_host_group: "{{ 'rabbitmq_hosts' if (provision_rabbitmq | default(true) | bool) else ''}}"
+
+    - role: suseconnect
+      become: true
+      vars:
+        suseconnect_subscriptions: "{{ suseconnect_base_modules_with_packagehub }}"
+      when: enable_suseconnect | default(true) | bool
 
     - role: agent
       become: true
