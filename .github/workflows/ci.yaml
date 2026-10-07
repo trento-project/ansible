@@ -249,7 +249,7 @@ jobs:
       - ansible-lint
       - test-deploy
       - container-smoke-test
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@d8679bc6bc759e119793a2d59285098613f52055 # v1.10.0
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
     with:
       image_name: ansible
       tag: rolling
@@ -264,7 +264,7 @@ jobs:
     needs:
       - ansible-lint
       - test-deploy
-    uses: trento-project/.github/.github/workflows/obs-sync.yaml@d8679bc6bc759e119793a2d59285098613f52055 # v1.10.0
+    uses: trento-project/.github/.github/workflows/obs-sync.yaml@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
     with:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
       obs_package: ${{ vars.OBS_PACKAGE }}
@@ -289,4 +289,4 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-    uses: trento-project/.github/.github/workflows/dependabot-auto-merge.yaml@d8679bc6bc759e119793a2d59285098613f52055 # v1.10.0
+    uses: trento-project/.github/.github/workflows/dependabot-auto-merge.yaml@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
