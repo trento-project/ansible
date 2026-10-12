@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 ---
 prometheus_web_url: "{{ web_host | default('http://{}'.format(trento_server_name)) }}" # `web_host` is for backwards-compatibility

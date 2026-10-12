@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 ---
 agent_web_api_key: "{{ undef(hint='API key for Trento Web is mandatory') }}"

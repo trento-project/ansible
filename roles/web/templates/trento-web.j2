@@ -1,6 +1,6 @@
 {#
 SPDX-FileCopyrightText: SUSE LLC
-SPDX-License-Identifier: Apache-2.0
+SPDX-License-Identifier: GPL-3.0-or-later
 #}
 LOG_LEVEL={{ web_log_level }}
 AMQP_URL={{ web_amqp_protocol }}://{{ web_rabbitmq_username }}:{{ web_rabbitmq_password }}@{{ web_rabbitmq_host }}:{{ web_rabbitmq_port }}/{{ web_rabbitmq_vhost | urlencode | replace('/', '%2F') }}

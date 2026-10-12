@@ -33,7 +33,7 @@ overriding the variables in this role.
 
 == License
 
-Apache License, Version 2.0
+GNU General Public License v3.0 or later
 
 == Author Information
 

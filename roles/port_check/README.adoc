@@ -41,7 +41,7 @@ This role does not have any dependencies on other roles, nor exports any variabl
 
 == License
 
-Apache License, Version 2.0
+GNU General Public License v3.0 or later
 
 == Author Information
 

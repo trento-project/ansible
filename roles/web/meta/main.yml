@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 galaxy_info:
   author: "trento-developers@suse.com"
   description: Install and configure Trento Web
   company: SUSE
-  license: Apache-2.0
+  license: GPL-3.0-or-later
   min_ansible_version: "2.1"
   galaxy_tags: []
     # List tags for your role here, one per line. A tag is a keyword that describes

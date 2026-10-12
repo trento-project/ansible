@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 galaxy_info:
   author: "trento-developers@suse.com"
   description: Install and configure Trento
   company: SUSE
-  license: Apache-2.0
+  license: GPL-3.0-or-later
   min_ansible_version: "2.1"
   # If this a Container Enabled role, provide the minimum Ansible Container version.
   # min_ansible_container_version:

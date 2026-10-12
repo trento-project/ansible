@@ -23,7 +23,7 @@ Version:        0.0.0
 Release:        0
 Summary:        Collection of Ansible roles and playbooks for setting up Trento
 Group:          Development/Tools/Other
-License:        Apache-2.0
+License:        GPL-3.0-or-later
 URL:            https://github.com/trento-project/ansible
 
 Source0:        %{name}-%{version}.tar.gz
