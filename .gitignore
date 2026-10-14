@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,ansible,vagrant
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,ansible,vagrant
