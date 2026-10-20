@@ -1,13 +1,22 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 # code: language=ansible
 ---
 - name: Install RabbitMQ
   community.general.zypper:
-    name: rabbitmq-server
+    name: "rabbitmq-server{{ '=' ~ rabbitmq_version if rabbitmq_version else '' }}"
     state: present
     update_cache: true
+
+- name: "Configure RabbitMQ to listen on port {{ rabbitmq_port }}"
+  ansible.builtin.lineinfile:
+    path: /etc/rabbitmq/rabbitmq.conf
+    regexp: "^listeners\\.tcp\\.default\\s*="
+    line: "listeners.tcp.default = {{ rabbitmq_port }}"
+    mode: "0644"
+    create: true
+  notify: Restart RabbitMQ
 
 - name: Start RabbitMQ service
   ansible.builtin.service:

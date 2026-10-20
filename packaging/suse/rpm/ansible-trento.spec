@@ -23,7 +23,7 @@ Version:        0.0.0
 Release:        0
 Summary:        Collection of Ansible roles and playbooks for setting up Trento
 Group:          Development/Tools/Other
-License:        Apache-2.0
+License:        GPL-3.0-or-later
 URL:            https://github.com/trento-project/ansible
 
 Source0:        %{name}-%{version}.tar.gz
@@ -41,6 +41,7 @@ BuildRequires:  %{modern_python}-distlib
 
 Requires:       ansible-core >= 2.16
 Requires:       ansible >= 9
+Requires:       ansible-linux-system-roles
 
 %description
 Collection of Ansible roles and playbooks for deploying and managing
@@ -59,7 +60,7 @@ cp %{SOURCE2} ./meta/
 
 # Create playbooks directory containing the playbooks
 mkdir ./playbooks/
-cp -r site.yml server.yml agent.yml cleanup.yml group_vars ./playbooks/
+cp -r site.yml server.yml agent.yml cleanup.yml vars ./playbooks/
 
 # Move out developer docs, won't be packaged
 mkdir ./docs_unused/

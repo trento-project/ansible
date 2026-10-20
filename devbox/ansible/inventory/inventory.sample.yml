@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 ---
 k3s_servers:
@@ -36,6 +36,7 @@ trento_components:
   vars:
     # Common for most components
     trento_server_name: "trento.local"
+    enable_suseconnect: true
 
     # DB passwords
     web_postgres_password: "pass"
@@ -107,6 +108,12 @@ trento_components:
       l0GpzDqUXDQI3wdzi8gVUBgPpjfVa9msafc7m6faT8myjHr/p6TJKj9Z36j58WHv
       mpNiKDOPALNTs+Ukdkt5KlE=
       -----END PRIVATE KEY-----
+
+    # Component provisioning flags
+    provision_postgres: true
+    provision_rabbitmq: true
+    provision_prometheus: true
+    provision_proxy: true
 
 trento_server:
   children:

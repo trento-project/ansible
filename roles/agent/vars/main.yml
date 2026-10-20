@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 ---
 agent_host_pre_16: "{{ ansible_distribution_version is version('15.7', '<=') | bool }}"
