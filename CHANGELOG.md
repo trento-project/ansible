@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.1.0 - 2026-10-20
+
+### What's Changed
+
+* Relicense under GPL-3.0-or-later (#152) @nelsonkopliku
+* Add support for pinning RabbitMQ version in inventory (#149) @vicenteqa
+* Use automerge reusable workflow (#145) @antgamdia
+* Add concurrency to group in CI (#140) @antgamdia
+
+#### Features
+
+* Run CI from containers (#148) @antgamdia
+* Autoregister modules with SUSEConnect (#131) @antgamdia, @skrech
+* Check for colliding ports before each role (#132) @antgamdia
+* Remove global `group_vars` (#147) @antgamdia
+* Extract PostgreSQL and RabbitMQ ports to variables (#139) @antgamdia
+
+#### Dependencies
+
+* Bump the common-workflows group with 5 updates (#151) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the common-workflows group with 4 updates (#146) [@dependabot[bot]](https://github.com/apps/dependabot)
+* Bump apache/skywalking-eyes/header from 0.8.0 to 0.9.0 (#144) [@dependabot[bot]](https://github.com/apps/dependabot)
+
+**Full Changelog**: https://github.com/trento-project/ansible/compare/1.0.1...1.1.0
+
 ## 1.0.1 - 2026-09-10
 
 ### What's Changed
@@ -54,10 +79,8 @@
 * Bump dawidd6/action-ansible-playbook from 2.8.0 to 9 (#110) [@dependabot[bot]](https://github.com/apps/dependabot)
 * Bump ansible/ansible-lint from 25.12.2 to 26.4.0 (#115) [@dependabot[bot]](https://github.com/apps/dependabot)
 * Bump the common-workflows group across 1 directory with 3 updates (#119) [@dependabot[bot]](https://github.com/apps/dependabot)
-
 </details>
 **Full Changelog**: https://github.com/trento-project/ansible/compare/1.0.0...1.0.1
-
 ## 1.0.0 - 2026-01-30
 
 ### What's Changed
