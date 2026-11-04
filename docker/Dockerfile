@@ -47,7 +47,7 @@ COPY --chown=trento:trento --chmod=0755 docker/entrypoint.sh .
 COPY --chown=trento:trento roles ./roles
 COPY --chown=trento:trento vars ./vars
 COPY --chown=trento:trento site.yml playbook.yml
-COPY --chown=trento:trento server.yml agent.yml ./
+COPY --chown=trento:trento server.yml agent.yml mcp.yml ./
 
 # Install Ansible roles and collections
 RUN  ansible-galaxy install -r requirements.yml
