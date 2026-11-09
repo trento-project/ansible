@@ -71,6 +71,7 @@ cat <<EOF > "$vars_json_file"
     "trento_server_name": "$machine_fqdn",
     "rproxy_ssl_cert": "$crt",
     "rproxy_ssl_key": "$key",
+    "rproxy_prometheus_auth": "none"
 }
 EOF
 
@@ -101,16 +102,16 @@ EOF
 
 cat <<EOF > "$inventory_ini_file"
 [trento_server]
-vitellone ansible_user=ec2-user ansible_host=$machine_ip
+vitellone ansible_user=$user ansible_host=$machine_ip
 
 [postgres_hosts]
-vitellone ansible_user=ec2-user ansible_host=$machine_ip
+vitellone ansible_user=$user ansible_host=$machine_ip
 
 [rabbitmq_hosts]
-vitellone ansible_user=ec2-user ansible_host=$machine_ip
+vitellone ansible_user=$user ansible_host=$machine_ip
 
 [prometheus_hosts]
-vitellone ansible_user=ec2-user ansible_host=$machine_ip
+vitellone ansible_user=$user ansible_host=$machine_ip
 EOF
 
 
