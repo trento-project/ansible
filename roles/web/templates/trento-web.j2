@@ -76,3 +76,6 @@ SAML_SIGN_REQUESTS={{ web_saml_sign_requests | string | lower }}
 SAML_SIGN_METADATA={{ web_saml_sign_metadata | string | lower }}
 SAML_SIGNED_ASSERTION={{ web_saml_signed_assertion | string | lower }}
 SAML_SIGNED_ENVELOPES={{ web_saml_signed_envelopes | string | lower}}
+{% if web_checks_interval is defined and web_checks_interval is not none %}
+CHECKS_INTERVAL={{ web_checks_interval }}
+{% endif %}
