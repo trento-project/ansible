@@ -713,6 +713,9 @@ applications. One of `debug`, `info`, `warning` or `error` | info
 | web_saml_signed_envelopes | Require to receive SAML envelopes signed
   from the IDP. Set to false if the IDP doesn’t sign the envelopes |
   true
+
+| web_checks_interval | Minutes time interval to run Clusters and Hosts checks.
+  Defaults to `5` if not set. | null  
 |===
 
 *Wanda role*

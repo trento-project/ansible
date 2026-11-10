@@ -130,3 +130,4 @@
       SAML_SIGN_METADATA: "{{ web_saml_sign_metadata | string | lower }}"
       SAML_SIGNED_ASSERTION: "{{ web_saml_signed_assertion | string | lower }}"
       SAML_SIGNED_ENVELOPES: "{{ web_saml_signed_envelopes | string | lower }}"
+      CHECKS_INTERVAL: "{{ omit if web_checks_interval is not defined or web_checks_interval is none else (web_checks_interval | string) }}"
