@@ -172,9 +172,9 @@ all:
           ansible_host: "your-host"
           ansible_user: "your-user"
           ansible_ssh_private_key_file: "/home/user/.ssh/id_rsa"
-   agents:
-     hosts:
-       vitellone:
+    agents:
+      hosts:
+        vitellone:
           ansible_host: "your-host"
           ansible_user: "your-user"
           ansible_password: "your-password"
@@ -204,12 +204,12 @@ all:
       hosts: ...
 
   vars:
-    trento_server_name": "trento-deployment.example.com",
-    trento_web_admin_password: "adminpassword",
-    trento_web_postgres_password: "postgres",
-    trento_wanda_postgres_password: "postgres",
-    trento_rabbitmq_password: "guest",
-    rproxy_ssl_cert: "<paste your SSL certificate here in base64>",
+    trento_server_name: "trento-deployment.example.com"
+    trento_web_admin_password: "adminpassword"
+    trento_web_postgres_password: "postgres"
+    trento_wanda_postgres_password: "postgres"
+    trento_rabbitmq_password: "guest"
+    rproxy_ssl_cert: "<paste your SSL certificate here in base64>"
     rproxy_ssl_key: "<paste your SSL certificate key here in base64>"
 
     # Prometheus authentication
